@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sweater AI Studio</title>
+<style>
+body{font-family:Arial;background:#f4f4f4;padding:20px}
+.box{max-width:700px;margin:auto;background:white;padding:20px;border-radius:20px}
+input{width:100%;padding:10px;margin:8px 0}
+button{width:100%;padding:12px;background:black;color:white;border:none;border-radius:10px;margin-top:10px}
+canvas{width:100%;border-radius:15px;background:#eee;margin-top:20px}
+</style>
+</head>
+<body>
+<div class="box">
+<h2>🧥 SWEATER AI STUDIO</h2>
+
+<input type="file" id="photo" accept="image/*">
+<input id="code" placeholder="รหัสสินค้า เช่น SW001">
+<input id="name" placeholder="ชื่อสินค้า">
+<input id="price" placeholder="ราคา เช่น 250 บาท">
+<input id="sizes" placeholder="ไซซ์ เช่น S • M • L • XL">
+
+<button onclick="makeImage()">✨ สร้างรูปสินค้า</button>
+
+<canvas id="canvas" width="1080" height="1350"></canvas>
+
+<button onclick="downloadImage()">⬇ ดาวน์โหลดรูป</button>
+</div>
+
+<script>
+let img = new Image();
+
+photo.onchange=(e)=>{
+ const file=e.target.files[0];
+ if(!file) return;
+ const reader=new FileReader();
+ reader.onload=()=>{img.src=reader.result;}
+ reader.readAsDataURL(file);
+}
+
+function makeImage(){
+ const canvas=document.getElementById("canvas");
+ const ctx=canvas.getContext("2d");
+
+ ctx.fillStyle="white";
+ ctx.fillRect(0,0,1080,1350);
+
+ if(img.src){
+   const scale=Math.min(900/img.width,700/img.height);
+   const w=img.width*scale;
+   const h=img.height*scale;
+   ctx.drawImage(img,(1080-w)/2,60,w,h);
+ }
+
+ ctx.fillStyle="#111";
+ ctx.fillRect(40,850,1000,420);
+
+ ctx.fillStyle="white";
+ ctx.font="bold 50px Arial";
+ ctx.fillText(name.value||"SWEATER SHOP",70,930);
+
+ ctx.font="34px Arial";
+ ctx.fillStyle="#FFD54A";
+ ctx.fillText("รหัส : "+code.value,70,1000);
+
+ ctx.fillStyle="white";
+ ctx.fillText("ราคา : "+price.value,70,1060);
+
+ ctx.fillStyle="#7CFC8A";
+ ctx.fillText("SIZE : "+sizes.value,70,1120);
+}
+
+function downloadImage(){
+ const a=document.createElement("a");
+ a.href=canvas.toDataURL("image/png");
+ a.download=(code.value||"sweater")+".png";
+ a.click();
+}
+</script>
+
+</body>
+</html>
