@@ -1,1 +1,0 @@
-Facebook: https://www.facebook.com/share/19SxcnHuyE/\nTikTok: @brphaengtaethay\nWhatsApp: +8562099810747\nAdmin password: ANPHA2026
