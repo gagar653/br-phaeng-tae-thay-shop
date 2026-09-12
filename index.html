@@ -14,3 +14,142 @@
 
     <button onclick="uploadProduct()">อัปโหลดสินค้า</button>
 </section>
+<div class="card">
+
+  <img id="img0" src="รูปแรก">
+
+  <div class="gallery-buttons">
+      <button onclick="prevImage(0)">◀</button>
+      <button onclick="nextImage(0)">▶</button>
+  </div>
+
+  <h3>ANPHA Tee</h3>
+
+</div>
+let currentImages = {};
+
+function nextImage(id){
+    currentImages[id]++;
+}
+
+function prevImage(id){
+    currentImages[id]--;
+}
+async function uploadProduct(){
+
+    const files = document.getElementById("images").files;
+
+    let imageUrls=[];
+
+    for(const file of files){
+
+        const refStorage = ref(storage,"shirts/"+Date.now()+file.name);
+
+        await uploadBytes(refStorage,file);
+
+        const url = await getDownloadURL(refStorage);
+
+        imageUrls.push(url);
+    }
+
+    await addDoc(collection(db,"products"),{
+
+        name:name.value,
+        price:Number(price.value),
+        detail:detail.value,
+        colors:colors.value.split(","),
+        sizes:sizes.value.split(","),
+        images:imageUrls
+
+    });
+
+    alert("เพิ่มสินค้าเรียบร้อย");
+}
+const querySnapshot = await getDocs(collection(db,"products"));
+
+querySnapshot.forEach((doc)=>{
+
+    const p = doc.data();
+
+    createCard(p);
+
+});
+<button class="cartBtn" onclick="addToCart(product)">
+🛒 เพิ่มลงตะกร้า
+</button>
+let cart=[];
+
+function addToCart(product){
+
+    cart.push(product);
+
+    updateCart();
+
+}
+let cart=[];
+
+function addToCart(product){
+
+    cart.push(product);
+
+    updateCart();
+
+}
+🛒 ตะกร้า (3)
+<select class="size">
+
+<option>S</option>
+<option>M</option>
+<option>L</option>
+<option>XL</option>
+
+</select>
+
+<select class="color">
+
+<option>ดำ</option>
+<option>ขาว</option>
+
+</select>
+<button>-</button>
+
+1
+
+<button>+</button>
+quantity++;
+
+quantity--;
+function checkout(){
+
+    let message="สวัสดีครับ ร้าน ANPHA%0A";
+
+    cart.forEach((item,index)=>{
+
+        message += `${index+1}. ${item.name}%0A`;
+
+        message += `ไซส์ : ${item.size}%0A`;
+
+        message += `สี : ${item.color}%0A`;
+
+        message += `จำนวน : ${item.qty}%0A`;
+
+    });
+
+    message += `%0Aยอดรวม : ${total} ₭`;
+
+    window.open(
+      "https://m.me/ชื่อเพจของคุณ?text="+message
+    );
+
+}
+signInWithEmailAndPassword(auth,email,password)
+if(user.email=="yourshop@gmail.com"){
+
+    adminPanel.style.display="block";
+
+}
+adminPanel.style.display="none";
+<input
+placeholder="ค้นหาเสื้อ..."
+onkeyup="searchProduct()">
+status:"NEW"
