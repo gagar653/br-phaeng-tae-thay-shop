@@ -1,0 +1,30 @@
+const PAGE_LINK = "https://www.facebook.com/share/19SxcnHuyE/";
+
+function sendMessengerOrder(){
+
+    if(cart.length===0){
+        alert("ยังไม่มีสินค้าในตะกร้า");
+        return;
+    }
+
+    let total = 0;
+    let text = "🛍️ ອໍເດີສິນຄ້າ ຮ້ານ ອັນພາແຕ້\n\n";
+
+    cart.forEach((item,index)=>{
+        const sum = item.price * item.qty;
+        total += sum;
+
+        text += `${index+1}. ${item.name}\n`;
+        text += `สี: ${item.color}\n`;
+        text += `ไซส์: ${item.size}\n`;
+        text += `จำนวน: ${item.qty}\n`;
+        text += `ราคา: ${sum.toLocaleString()} ₭\n\n`;
+    });
+
+    text += `💰 ราคารวม ${total.toLocaleString()} ₭`;
+
+    window.open(
+        PAGE_LINK + "?text=" + encodeURIComponent(text),
+        "_blank"
+    );
+}
