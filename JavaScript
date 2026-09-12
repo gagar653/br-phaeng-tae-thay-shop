@@ -1,9 +1,0 @@
-let currentImages = {};
-
-function nextImage(id){
-    currentImages[id]++;
-}
-
-function prevImage(id){
-    currentImages[id]--;
-}
