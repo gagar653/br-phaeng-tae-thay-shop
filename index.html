@@ -306,7 +306,23 @@ window.open(
 
 }
 
-</script>
+</script>const PASSWORD = "ANPHATAE2026";
+
+function login() {
+  const pass = prompt("ใส่รหัสผ่านเจ้าของร้าน");
+
+  if (pass === PASSWORD) {
+    document.getElementById("panel").style.display = "block";
+    alert("เข้าสู่หลังร้านสำเร็จ");
+  } else {
+    alert("รหัสผ่านไม่ถูกต้อง");
+  }
+}
 
 </body>
-</html>
+</html><!-- หลังร้าน -->
+<div id="adminLogin" style="position:fixed;bottom:20px;left:20px;">
+  <button onclick="login()" style="background:#ff2b2b;color:white;border:none;padding:12px 18px;border-radius:10px;cursor:pointer;">
+    🔒 หลังร้าน
+  </button>
+</div>
