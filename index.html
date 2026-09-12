@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sweater AI Studio</title>
+<title>ບໍ່ແພງແຕ່ເທ້ວເວັບສ້າງຮູບ</title>
 <style>
 body{font-family:Arial;background:#f4f4f4;padding:20px}
 .box{max-width:700px;margin:auto;background:white;padding:20px;border-radius:20px}
@@ -14,19 +14,19 @@ canvas{width:100%;border-radius:15px;background:#eee;margin-top:20px}
 </head>
 <body>
 <div class="box">
-<h2>🧥 SWEATER AI STUDIO</h2>
+<h2>🧥 ບໍ່ແພງແຕ່ເທ້ວເວັບສ້າງຮູບ</h2>
 
 <input type="file" id="photo" accept="image/*">
-<input id="code" placeholder="รหัสสินค้า เช่น SW001">
-<input id="name" placeholder="ชื่อสินค้า">
-<input id="price" placeholder="ราคา เช่น 250 บาท">
-<input id="sizes" placeholder="ไซซ์ เช่น S • M • L • XL">
+<input id="code" placeholder="ລະຫັດເສື້ອ ">
+<input id="name" placeholder="ຈຳນວນ">
+<input id="price" placeholder="ລາຄາ 49,000ກິບ ">
+<input id="sizes" placeholder="ເບີເສື້ອ S • M • L • XL">
 
-<button onclick="makeImage()">✨ สร้างรูปสินค้า</button>
+<button onclick="makeImage()">✨ ກົດເພື່ແສ້າງ</button>
 
 <canvas id="canvas" width="1080" height="1350"></canvas>
 
-<button onclick="downloadImage()">⬇ ดาวน์โหลดรูป</button>
+<button onclick="downloadImage()">⬇ ດາວໂຫລດຮຸບ</button>
 </div>
 
 <script>
@@ -63,10 +63,10 @@ function makeImage(){
 
  ctx.font="34px Arial";
  ctx.fillStyle="#FFD54A";
- ctx.fillText("รหัส : "+code.value,70,1000);
+ ctx.fillText("ລະຫັດ : "+code.value,70,1000);
 
  ctx.fillStyle="white";
- ctx.fillText("ราคา : "+price.value,70,1060);
+ ctx.fillText("ລາຄາ : "+price.value,70,1060);
 
  ctx.fillStyle="#7CFC8A";
  ctx.fillText("SIZE : "+sizes.value,70,1120);
