@@ -1,60 +1,43 @@
-<!DOCTYPE html>
-<html lang="th">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SWEATER SHOP</title>
-  <style>
-    body{font-family:Arial,sans-serif;background:#f5f5f5;padding:20px}
-    .box{max-width:500px;margin:auto;background:#fff;padding:20px;border-radius:15px}
-    input{width:100%;padding:10px;margin:8px 0}
-    button{width:100%;padding:12px;background:#000;color:#fff;border:none;border-radius:10px;cursor:pointer}
-    canvas{width:100%;margin-top:20px;border-radius:15px}
-  </style>
-</head>
-<body>
-<div class="box">
-<h2>🧥 SWEATER SHOP</h2>
-<input type="file" id="photo" accept="image/*">
-<input id="code" placeholder="รหัสสินค้า เช่น SW001">
-<input id="price" placeholder="ราคา เช่น 250 บาท">
-<input id="size" placeholder="ไซซ์ เช่น S M L XL">
-<button onclick="makeImage()">สร้างรูปสินค้า</button>
-<canvas id="canvas" width="1080" height="1350"></canvas>
-<button onclick="downloadImage()">ดาวน์โหลดรูป</button>
-</div>
+<input type="file" id="upload" accept="image/*">
+
+<button id="aiBtn">✨ AI จัดทรงเสื้อ</button>
+
+<img id="before" width="300">
+<img id="after" width="300">
+
 <script>
-let image=new Image();
-document.getElementById('photo').onchange=(e)=>{
- const file=e.target.files[0];
- const reader=new FileReader();
- reader.onload=()=>image.src=reader.result;
- reader.readAsDataURL(file);
-}
-function makeImage(){
- const canvas=document.getElementById('canvas');
- const ctx=canvas.getContext('2d');
- ctx.fillStyle='white';
- ctx.fillRect(0,0,1080,1350);
- const r=Math.min(1000/image.width,800/image.height);
- const w=image.width*r,h=image.height*r;
- ctx.drawImage(image,(1080-w)/2,40,w,h);
- ctx.fillStyle='black';
- ctx.fillRect(40,900,1000,370);
- ctx.fillStyle='white';
- ctx.font='bold 46px Arial';
- ctx.fillText('SWEATER SHOP',60,970);
- ctx.font='34px Arial';
- ctx.fillText('รหัส : '+code.value,60,1035);
- ctx.fillText('ราคา : '+price.value,60,1095);
- ctx.fillText('ไซซ์ : '+size.value,60,1155);
- }
-function downloadImage(){
- const a=document.createElement('a');
- a.download='Sweater_Product.png';
- a.href=canvas.toDataURL('image/png');
- a.click();
-}
+const upload = document.getElementById("upload");
+const before = document.getElementById("before");
+const after = document.getElementById("after");
+
+let imageFile;
+
+upload.onchange = (e)=>{
+    imageFile = e.target.files[0];
+    before.src = URL.createObjectURL(imageFile);
+};
+
+aiBtn.onclick = async ()=>{
+
+    if(!imageFile){
+        alert("เลือกรูปก่อน");
+        return;
+    }
+
+    aiBtn.innerText = "AI กำลังจัดทรง...";
+
+    const form = new FormData();
+    form.append("image", imageFile);
+
+    const response = await fetch("/api/ai-style", {
+        method:"POST",
+        body:form
+    });
+
+    const result = await response.blob();
+
+    after.src = URL.createObjectURL(result);
+
+    aiBtn.innerText = "✅ เสร็จแล้ว";
+};
 </script>
-</body>
-</html>
