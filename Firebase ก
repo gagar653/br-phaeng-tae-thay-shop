@@ -1,0 +1,9 @@
+const querySnapshot = await getDocs(collection(db,"products"));
+
+querySnapshot.forEach((doc)=>{
+
+    const p = doc.data();
+
+    createCard(p);
+
+});
