@@ -3,16 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin ຮ້ານບໍ່ແພງແຕ່ເທ້ V6.2 - Integrated Shop Hub</title>
+<title>Admin ຮ້ານບໍ່ແພງແຕ່ເທ້ V6.4 - Sticky Studio Hub</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<!-- Tesseract.js สำหรับ AI OCR อ่านตัวเลข/รหัสจากกล้อง -->
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@v5/dist/tesseract.min.js"></script>
 <style>
 :root {
   --bg-main: #06060c;
   --accent-red: #ff2a2a;
   --accent-glow: rgba(255, 42, 42, 0.4);
-  --panel-bg: rgba(18, 18, 26, 0.75);
+  --panel-bg: rgba(18, 18, 26, 0.85);
   --panel-border: rgba(255, 42, 42, 0.25);
-  --input-bg: rgba(10, 10, 16, 0.8);
+  --input-bg: rgba(10, 10, 16, 0.9);
 }
 
 body {
@@ -77,7 +79,7 @@ body {
 
 .header-bar {
   background: linear-gradient(90deg, rgba(15,0,0,0.9) 0%, rgba(40,5,5,0.9) 50%, rgba(15,0,0,0.9) 100%);
-  padding: 15px 25px;
+  padding: 12px 25px;
   border-bottom: 2px solid var(--accent-red);
   box-shadow: 0 4px 25px rgba(255, 42, 42, 0.3);
   backdrop-filter: blur(10px);
@@ -93,30 +95,7 @@ body {
   font-weight: 800;
   letter-spacing: 1px;
   text-shadow: 0 0 12px var(--accent-red);
-  font-size: 18px;
-}
-
-/* NAV TABS SWITCHER */
-.nav-tabs {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-.nav-tab-btn {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #ccc;
-  padding: 8px 16px;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: all 0.3s;
-}
-.nav-tab-btn.active {
-  background: var(--accent-red);
-  color: #fff;
-  border-color: var(--accent-red);
-  box-shadow: 0 0 15px var(--accent-glow);
+  font-size: 16px;
 }
 
 .user-status {
@@ -127,89 +106,138 @@ body {
 .status-badge {
   background: rgba(0, 255, 136, 0.1);
   border: 1px solid #00ff88;
-  padding: 6px 14px;
+  padding: 4px 12px;
   border-radius: 20px;
-  font-size: 13px;
+  font-size: 12px;
   color: #00ff88;
 }
 
-.tab-content {
-  display: none;
+.nav-actions {
+  display: flex;
+  gap: 10px;
 }
-.tab-content.active {
-  display: block;
+.nav-btn {
+  background: rgba(255, 42, 42, 0.15);
+  border: 1px solid var(--accent-red);
+  color: #ff8888;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.nav-btn:hover {
+  background: var(--accent-red);
+  color: #fff;
+  box-shadow: 0 0 10px var(--accent-glow);
 }
 
-.wrap {
+.workspace-layout {
   display: grid;
-  grid-template-columns: 340px 1fr;
-  gap: 24px;
-  padding: 25px;
-  max-width: 1400px;
+  grid-template-columns: 420px 1fr;
+  gap: 20px;
+  padding: 20px;
+  max-width: 1600px;
   margin: auto;
+  align-items: start;
+}
+
+.controls-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+  padding-right: 5px;
+}
+.controls-sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+.controls-sidebar::-webkit-scrollbar-thumb {
+  background: rgba(255, 42, 42, 0.3);
+  border-radius: 4px;
+}
+
+.preview-sticky-container {
+  position: sticky;
+  top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--panel-bg);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--panel-border);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
 }
 
 .panel {
   background: var(--panel-bg);
   backdrop-filter: blur(12px);
   border: 1px solid var(--panel-border);
-  border-radius: 16px;
-  padding: 20px;
-  margin-bottom: 20px;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.4);
 }
 .panel h3 {
   margin-top: 0;
-  margin-bottom: 14px;
-  font-size: 16px;
+  margin-bottom: 12px;
+  font-size: 14px;
   color: #ff5555;
   text-shadow: 0 0 8px rgba(255, 42, 42, 0.4);
+  border-bottom: 1px solid rgba(255, 42, 42, 0.15);
+  padding-bottom: 6px;
 }
 
 input, select, textarea {
   box-sizing: border-box;
   width: 100%;
-  padding: 12px 14px;
-  border-radius: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
   background: var(--input-bg);
   border: 1px solid rgba(255, 42, 42, 0.3);
   color: #fff;
-  margin-top: 8px;
+  margin-top: 6px;
   outline: none;
   font-family: inherit;
+  font-size: 14px;
 }
 input:focus, select:focus, textarea:focus {
   border-color: var(--accent-red);
-  box-shadow: 0 0 10px var(--accent-glow);
+  box-shadow: 0 0 8px var(--accent-glow);
 }
 
 button {
-  padding: 12px;
-  border-radius: 10px;
+  padding: 10px;
+  border-radius: 8px;
   border: none;
   cursor: pointer;
   font-weight: bold;
+  font-family: inherit;
 }
 
 .platform {
   background: rgba(255,255,255,0.05);
   color: #ccc;
   border: 1px solid rgba(255,255,255,0.1);
+  font-size: 13px;
 }
 .platform.active {
   background: var(--accent-red);
   color: #fff;
-  box-shadow: 0 0 15px var(--accent-glow);
+  box-shadow: 0 0 12px var(--accent-glow);
 }
 
 #poster {
-  width: 340px;
+  width: 440px;
   aspect-ratio: 4/5;
   background: #111;
   position: relative;
   overflow: hidden;
-  border-radius: 12px;
-  box-shadow: 0 0 35px rgba(0, 0, 0, 0.9), 0 0 15px rgba(255, 42, 42, 0.3);
+  border-radius: 10px;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.9), 0 0 10px rgba(255, 42, 42, 0.3);
   touch-action: none;
 }
 
@@ -235,8 +263,8 @@ button {
 }
 
 #logoPoster {
-  position: absolute; top: 12px; left: 12px;
-  width: 55px; height: 55px;
+  position: absolute; top: 10px; left: 10px;
+  width: 48px; height: 48px;
   border-radius: 50%; overflow: hidden; display: none;
   border: 2px solid #ff3131;
   z-index: 3;
@@ -246,100 +274,129 @@ button {
 .draggable { position: absolute; cursor: grab; user-select: none; z-index: 3; }
 
 #priceLabel {
-  left: 18px; bottom: 85px;
-  font-size: 46px; font-weight: 900;
+  left: 14px; bottom: 75px;
+  font-size: 42px; font-weight: 900;
   color: #ff3131;
-  padding: 6px 12px; border-radius: 14px;
+  padding: 4px 10px; border-radius: 12px;
   background: rgba(255,255,255,.08);
   border: 2px solid rgba(0,0,0,.85);
   -webkit-text-stroke: 1px #000;
   text-shadow:
     2px 2px 0 #000, -2px 2px 0 #000,
     2px -2px 0 #000, -2px -2px 0 #000,
-    0 4px 8px rgba(0,0,0,.45);
+    0 3px 6px rgba(0,0,0,.45);
 }
-#codeLabel { top: 16px; right: 16px; background: #000c; color: #fff; padding: 5px 8px; border-radius: 8px; font-size: 12px; }
-#stockLabel { left: 18px; bottom: 22px; background: #000c; color: #fff; padding: 7px 10px; border-radius: 10px; }
-#sizeLabel { right: 18px; bottom: 22px; background: #d10000; color: #fff; padding: 7px 10px; border-radius: 10px; }
+#codeLabel { top: 12px; right: 12px; background: #000c; color: #fff; padding: 4px 7px; border-radius: 6px; font-size: 11px; }
+#stockLabel { left: 14px; bottom: 16px; background: #000c; color: #fff; padding: 5px 8px; border-radius: 8px; font-size: 12px; }
+#sizeLabel { right: 14px; bottom: 16px; background: #d10000; color: #fff; padding: 5px 8px; border-radius: 8px; font-size: 12px; }
 
 .btn {
   width: 100%;
   background: linear-gradient(135deg, #ff2a2a 0%, #a90000 100%);
   color: #fff;
   font-weight: bold;
-  font-size: 15px;
-  box-shadow: 0 4px 15px var(--accent-glow);
+  font-size: 14px;
+  box-shadow: 0 4px 12px var(--accent-glow);
 }
 
-/* ================= STYLES FOR UPLOAD PRODUCT TAB ================= */
-.upload-container {
-  max-width: 1100px;
-  margin: 30px auto;
-  padding: 0 20px;
-}
-.upload-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 25px;
-}
-@media(max-width: 900px) {
-  .upload-grid { grid-template-columns: 1fr; }
-  .wrap { grid-template-columns: 1fr; }
-  #poster { width: 100%; }
-}
-
-.preview-dropzone {
-  border: 2px dashed rgba(255, 42, 42, 0.4);
-  border-radius: 14px;
+/* Fullscreen Sub-Pages */
+.sub-page-view {
+  display: none;
   padding: 30px;
-  text-align: center;
-  background: rgba(10, 10, 16, 0.5);
-  cursor: pointer;
-  transition: 0.3s;
+  max-width: 1400px;
+  margin: auto;
 }
-.image-preview-list {
+.sub-page-header {
   display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-top: 15px;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  border-bottom: 2px solid var(--panel-border);
+  padding-bottom: 15px;
 }
-.thumb-box {
-  width: 75px;
-  height: 75px;
-  border-radius: 8px;
+.sub-page-header h2 {
+  margin: 0;
+  color: #ff5555;
+  text-shadow: 0 0 10px rgba(255,42,42,0.3);
+}
+.table-container {
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 12px;
   overflow: hidden;
-  position: relative;
-  border: 1px solid rgba(255,255,255,0.2);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
 }
-.thumb-box img {
+table.custom-table {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 14px;
+}
+table.custom-table th, table.custom-table td {
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+table.custom-table th {
+  background: rgba(255,42,42,0.15);
+  color: #ff8888;
+  font-weight: bold;
+}
+table.custom-table tr:hover {
+  background: rgba(255,255,255,0.02);
+}
+.badge-sold {
+  background: rgba(255,42,42,0.2);
+  color: #ff4444;
+  border: 1px solid #ff4444;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+}
+.badge-ready {
+  background: rgba(0,255,136,0.1);
+  color: #00ff88;
+  border: 1px solid #00ff88;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 12px;
 }
 
-.product-card-preview {
-  background: rgba(15, 15, 22, 0.9);
-  border: 1px solid rgba(255,42,42,0.3);
-  border-radius: 14px;
-  padding: 15px;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.5);
-}
-.product-card-preview .image-wrapper {
-  width: 100%;
-  background: #000;
-  border-radius: 10px;
-  overflow: hidden;
-  display: flex;
+/* Modal สำหรับกล้อง AI สแกน */
+#scannerModal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(8px);
+  z-index: 10000;
+  display: none;
   justify-content: center;
   align-items: center;
 }
-.product-card-preview img {
+.scanner-card {
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 16px;
+  padding: 25px;
+  width: 90%;
+  max-width: 500px;
+  text-align: center;
+  box-shadow: 0 0 40px rgba(255, 42, 42, 0.4);
+}
+.scanner-card video {
   width: 100%;
-  height: auto;
-  max-height: 450px;
-  object-fit: contain;
-  display: block;
-  border-radius: 0;
+  max-height: 320px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 2px solid var(--accent-red);
+  background: #000;
+}
+
+@media(max-width: 900px) {
+  .workspace-layout { grid-template-columns: 1fr; }
+  .controls-sidebar { max-height: none; overflow-y: visible; }
+  .preview-sticky-container { position: relative; top: 0; }
+  #poster { width: 100%; max-width: 460px; }
 }
 </style>
 </head>
@@ -349,285 +406,198 @@ button {
 <div id="loginScreen">
   <div class="login-box">
     <h2>🔒 Admin Access</h2>
-    <p style="color:#aaa;font-size:14px;margin-bottom:20px;">กรุณากรอกรหัสผ่านเพื่อเข้าใช้งานระบบ</p>
+    <p style="color:#aaa;font-size:13px;margin-bottom:15px;">กรุณากรอกรหัสผ่านเพื่อเข้าใช้งานระบบ</p>
     <input type="password" id="passInput" placeholder="Passcode" autofocus>
     <button class="btn" id="loginBtn">เข้าสู่ระบบ</button>
     <div id="loginErr">❌ รหัสผ่านไม่ถูกต้อง!</div>
   </div>
 </div>
 
+<!-- Modal กล้อง AI สแกนรหัสเสื้อ -->
+<div id="scannerModal">
+  <div class="scanner-card">
+    <h3 style="color:#ff5555;margin-top:0">🤖 AI กล้องสแกนรหัสสินค้าด่วน</h3>
+    <p style="color:#aaa;font-size:12px;margin-bottom:10px">ส่องกล้องไปที่ป้ายรหัสสินค้าเพื่อตัดสต็อกอัตโนมัติ</p>
+    <video id="camFeed" autoplay playsinline></video>
+    <canvas id="camCanvas" style="display:none;"></canvas>
+    
+    <div id="aiScanStatus" style="color:#00ff88;font-weight:bold;font-size:13px;margin:10px 0">กำลังรอจับภาพ...</div>
+    
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px">
+      <button class="btn" id="captureScanBtn">📸 ถ่าย & AI ประมวลผล</button>
+      <button id="closeScannerBtn" style="background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.2)">❌ ปิดกล้อง</button>
+    </div>
+  </div>
+</div>
+
 <!-- หน้าโปรแกรมหลัก -->
 <div id="mainApp">
   <div class="header-bar">
-    <h2>⚡ ບໍ່ແພງແຕ່ເທ້ Admin Studio V6.2</h2>
-    
-    <div class="nav-tabs">
-      <button class="nav-tab-btn active" data-target="tabPoster">🎨 ระบบทำป้ายสินค้า</button>
-      <button class="nav-tab-btn" data-target="tabUpload">🛍️ อัปรูปลงขายสินค้า</button>
-      <button class="nav-tab-btn" data-target="tabManage">📋 จัดการสินค้า & วิเคราะห์ยอดขาย</button>
+    <h2>⚡ ບໍ່ແພງແຕ່ເທ້ Studio - Sticky Poster Hub</h2>
+    <div class="nav-actions">
+      <button class="nav-btn" id="openDbBtn">📦 คลังสินค้า & ตัดสต็อก (DB)</button>
     </div>
-
     <div class="user-status">
-      <div class="status-badge">🟢 Authorized Access</div>
-      <button id="logoutBtn" style="background:rgba(255,42,42,0.2);color:#ff5555;border:1px solid rgba(255,42,42,0.4);padding:6px 12px;font-size:12px">ออกจากระบบ</button>
+      <div class="status-badge">🟢 Online</div>
+      <button id="logoutBtn" style="background:rgba(255,42,42,0.2);color:#ff5555;border:1px solid rgba(255,42,42,0.4);padding:4px 10px;font-size:11px">ออก</button>
     </div>
   </div>
 
-  <!-- TAB 1: ระบบทำป้ายสินค้า (Poster Studio) -->
-  <div id="tabPoster" class="tab-content active">
-    <div class="wrap">
-      <div>
-        <div class="panel">
-          <h3>🖼️ ຮູບພື້ນຫຼັງ (Background)</h3>
-          <input type="file" id="bgUpload" accept="image/*">
-          <button id="removeBgBtn" type="button" style="width:100%;margin-top:8px;background:rgba(255,42,42,0.2);color:#ff5555;border:1px solid rgba(255,42,42,0.4)">❌ ລຶບຮູບພື້ນຫຼັງ</button>
+  <!-- Workspace หลัก (ตัวทำโปสเตอร์) -->
+  <div id="workspaceView" class="workspace-layout">
+    <!-- ฝั่งซ้าย: แผงควบคุมเลื่อนได้ -->
+    <div class="controls-sidebar">
+      
+      <div class="panel">
+        <h3>📱 เลือกสัดส่วนแพลตฟอร์ม</h3>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px">
+          <button class="platform active" data-ratio="4/5">Facebook</button>
+          <button class="platform" data-ratio="9/16">TikTok</button>
+          <button class="platform" data-ratio="16/9">YouTube</button>
+          <button class="platform" data-ratio="1/1">Instagram</button>
         </div>
-
-        <div class="panel">
-          <h3>🏪 ໂລໂກ້ຮ້ານ</h3>
-          <input type="file" id="logoUpload" accept="image/*">
-          <label style="display:block;margin-top:10px;"><input type="checkbox" id="showLogo" checked style="width:auto"> ສະແດງໂລໂກ້</label>
-        </div>
-
-        <div class="panel">
-          <h3>👕 ເລືອກຮູບສິນຄ້າ</h3>
-          <input type="file" id="shirtUpload" accept="image/*">
-          <button class="btn" id="cutoutBtn" type="button" style="margin-top:12px">✂️ AI ໄດຄັດພື້ນຫຼັງ</button>
-          <button id="restoreBtn" type="button" style="width:100%;margin-top:8px;background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.2)">↩️ ກັບໄປຮູບເດີມ</button>
-          
-          <div id="aiLoading" style="display:none;margin-top:12px">
-            <div style="color:#ff3131;font-weight:bold">🤖 AI ກຳລັງໄດຄັດພື້ນຫຼັງ...</div>
-            <div style="width:100%;height:10px;background:#1a1a24;border-radius:8px;margin-top:8px;overflow:hidden">
-              <div id="loadingBar" style="width:0%;height:100%;background:var(--accent-red);border-radius:8px;transition:width 0.3s"></div>
-            </div>
-            <div id="loadingText" style="font-size:13px;margin-top:5px;text-align:right">0%</div>
-          </div>
-        </div>
-
-        <div class="panel">
-          <h3>📝 ລายລະອຽດສິນຄ້າ</h3>
-          <input id="codeInput" placeholder="AP001">
-          <input id="priceInput" placeholder="299000">
-          <input id="stockInput" placeholder="18">
-          <select id="sizeSelect">
-            <option>S</option>
-            <option selected>M</option>
-            <option>L</option>
-            <option>XL</option>
-            <option value="custom">ພິມເອງ</option>
-          </select>
-          <input id="sizeCustom" style="display:none" placeholder="3XL / Free Size">
-        </div>
-
-        <div class="panel">
-          <h3>📱 ຊ່ອງທາງ</h3>
-          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">
-            <button class="platform active" data-ratio="4/5">Facebook</button>
-            <button class="platform" data-ratio="9/16">TikTok</button>
-            <button class="platform" data-ratio="16/9">YouTube</button>
-            <button class="platform" data-ratio="1/1">Instagram</button>
-          </div>
-          <p id="platformInfo" style="color:#aaa;font-size:13px;margin-bottom:0">1080×1350 Facebook</p>
-        </div>
+        <p id="platformInfo" style="color:#aaa;font-size:12px;margin:8px 0 0 0">1080×1350 Facebook</p>
       </div>
 
-      <div>
-        <div class="panel">
-          <h3>🎨 ຕົວຢ່າງຮູບ</h3>
-          <div style="display:flex;justify-content:center;padding:10px 0">
-            <div id="poster">
-              <img id="bgImg">
-              <img id="shirt">
-              <div id="logoPoster"><img id="logoPreview"></div>
-              <div id="codeLabel" class="draggable">AP001</div>
-              <div id="priceLabel" class="draggable">299,000 ₭</div>
-              <div id="stockLabel" class="draggable">📦 ມີ 0 ໂຕ</div>
-              <div id="sizeLabel" class="draggable">M</div>
-            </div>
+      <div class="panel">
+        <h3>👕 จัดการรูปสินค้า & AI</h3>
+        <input type="file" id="shirtUpload" accept="image/*">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px">
+          <button class="btn" id="cutoutBtn" type="button" style="font-size:13px">✂️ AI ไดคັດ</button>
+          <button id="restoreBtn" type="button" style="background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.2);font-size:13px">↩️ รูปเดิม</button>
+        </div>
+        
+        <div id="aiLoading" style="display:none;margin-top:10px">
+          <div style="color:#ff3131;font-weight:bold;font-size:12px">🤖 AI กำลังไดคัทพื้นหลัง...</div>
+          <div style="width:100%;height:8px;background:#1a1a24;border-radius:6px;margin-top:6px;overflow:hidden">
+            <div id="loadingBar" style="width:0%;height:100%;background:var(--accent-red);border-radius:6px;transition:width 0.3s"></div>
           </div>
         </div>
 
-        <div class="panel">
-          <h3>👕 ປັບຮູບສິນຄ້າ (Shirt Controls)</h3>
-          <label>ซูมสินค้า</label><input type="range" id="zoom" min="30" max="300" value="100">
-          <label style="margin-top:10px;display:block">หมุนสินค้า (องศา)</label><input type="range" id="shirtRotate" min="-180" max="180" value="0">
-          <label style="margin-top:10px;display:block">ความเบลอสินค้า (Blur)</label><input type="range" id="shirtBlur" min="0" max="20" value="0">
-        </div>
-
-        <div class="panel">
-          <h3>🖼️ ປັບຮູບພື້ນຫຼັງ (Background Controls)</h3>
-          <label>ซูมพื้นหลัง</label><input type="range" id="bgZoom" min="30" max="300" value="100">
-          <label style="margin-top:10px;display:block">หมุนพื้นหลัง (องศา)</label><input type="range" id="bgRotate" min="-180" max="180" value="0">
-          <label style="margin-top:10px;display:block">ความเบลอพื้นหลัง (Blur FX)</label><input type="range" id="bgBlur" min="0" max="25" value="0">
-        </div>
-
-        <div class="panel">
-          <h3>🎨 ສີຂໍຄວາມ</h3>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-            <div><label>ສີລາຄາ</label><input type="color" id="priceColor" value="#ff3131"></div>
-            <div><label>ສີລະຫັດ</label><input type="color" id="codeColor" value="#ffffff"></div>
-            <div><label>ສີຈຳນວນສິນຄ້າ</label><input type="color" id="stockColor" value="#ffffff"></div>
-            <div><label>ສີເບີເສື້ອ</label><input type="color" id="sizeColor" value="#ffffff"></div>
-          </div>
-
-          <hr style="border-color:rgba(255,42,42,0.2);margin:20px 0">
-
-          <h3>📏 ຂະໜາດຂໍ້ຄວາມ</h3>
-          <label>ขนาดยอดราคา</label><input type="range" id="priceSize" min="18" max="70" value="46">
-          <label style="margin-top:10px;display:block">ຂະໜາດລະຫັດສິນຄ້າ</label><input type="range" id="codeSize" min="8" max="30" value="12">
-          <label style="margin-top:10px;display:block">ຂະໜາດຂໍ້ຄວາມສິນຄ້າ</label><input type="range" id="stockSize" min="10" max="28" value="14">
-          <label style="margin-top:10px;display:block">ຂະໜາດເບີເສື້ອ</label><input type="range" id="sizeSize" min="10" max="28" value="14">
-        </div>
-
-        <div class="panel">
-          <h3>👁️ ສະແດງ / ປິດ / ຂໍ້ມູນ</h3>
-          <label style="margin-right:15px"><input type="checkbox" id="togglePrice" checked style="width:auto"> ສະແດງລາຄາ</label>
-          <label style="margin-right:15px"><input type="checkbox" id="toggleCode" checked style="width:auto"> ສະແດງລະຫັດສິນຄ້າ</label><br><br>
-          <label style="margin-right:15px"><input type="checkbox" id="toggleStock" checked style="width:auto"> ສະແດງຈຳນວນສິນຄ້າ</label>
-          <label><input type="checkbox" id="toggleSize" checked style="width:auto"> ສະແດງເບີເສື້ອ</label>
-        </div>
-
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-          <button class="btn" id="downloadBtn" style="padding:15px; font-size:16px; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2);">📥 ໂຫລດຮູບ PNG</button>
-          <button class="btn" id="sendPosterToShopBtn" style="padding:15px; font-size:16px;">🚀 ส่งป้ายนี้เข้าหน้าร้าน</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- TAB 2: ระบบอัปรูปลงขายสินค้า (Product Upload Manager) -->
-  <div id="tabUpload" class="tab-content">
-    <div class="upload-container">
-      <div class="panel" style="margin-bottom: 25px;">
-        <h3 style="font-size: 20px; color: #ff3131;">🚀 ระบบอัปโหลดและลงขายสินค้าใหม่ (Product Listing Hub)</h3>
-        <p style="color: #aaa; font-size: 14px;">กรอกรายละเอียดและอัปโหลดรูปภาพสินค้าเพื่อเตรียมลงระบบร้านค้าออนไลน์ของคุณแบบฟรีสไตล์</p>
+        <label style="font-size:13px;margin-top:10px;display:block">ซูมสินค้า</label><input type="range" id="zoom" min="30" max="300" value="100">
+        <label style="font-size:13px;margin-top:8px;display:block">หมุนสินค้า (องศา)</label><input type="range" id="shirtRotate" min="-180" max="180" value="0">
+        <label style="font-size:13px;margin-top:8px;display:block">ความเบลอสินค้า (Blur)</label><input type="range" id="shirtBlur" min="0" max="20" value="0">
       </div>
 
-      <div class="upload-grid">
-        <!-- ฟอร์มกรอกข้อมูลสินค้า -->
-        <div class="panel">
-          <h3>📝 ข้อมูลสินค้าและตั้งค่าราคา</h3>
-          <label>ชื่อสินค้า / เสื้อผ้า</label>
-          <input type="text" id="upTitle" placeholder="เช่น เสื้อยืดสตรีทโอเวอร์ไซส์ ลายเท่ๆ">
-          
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
-            <div>
-              <label>รหัสสินค้า (SKU)</label>
-              <input type="text" id="upSKU" placeholder="SKU-001">
-            </div>
-            <div>
-              <label>ราคาขาย (₭)</label>
-              <input type="text" id="upPrice" placeholder="299,000">
-            </div>
-          </div>
+      <div class="panel">
+        <h3>🖼️ จัดการรูปพื้นหลัง (Background)</h3>
+        <input type="file" id="bgUpload" accept="image/*">
+        <button id="removeBgBtn" type="button" style="width:100%;margin-top:6px;background:rgba(255,42,42,0.2);color:#ff5555;border:1px solid rgba(255,42,42,0.4);font-size:13px">❌ ลบพื้นหลัง</button>
 
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
-            <div>
-              <label>หมวดหมู่</label>
-              <select id="upCategory">
-                <option>เสื้อผ้าผู้ชาย</option>
-                <option>เสื้อผ้าผู้หญิง</option>
-                <option>แนวสตรีท / Oversize</option>
-                <option>สินค้า Limited</option>
-              </select>
-            </div>
-            <div>
-              <label>จำนวนสต็อกตั้งต้น</label>
-              <input type="number" id="upStock" value="50">
-            </div>
-          </div>
-
-          <!-- ฟิลด์เพิ่มเติมสำหรับระบบติดตามการขาย (เปอร์เซ็นต์และสถานะ) -->
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
-            <div>
-              <label>จำนวนที่ขายไปแล้ว (ชิ้น)</label>
-              <input type="number" id="upSold" value="0" min="0">
-            </div>
-            <div>
-              <label>สถานะการขาย</label>
-              <select id="upSalesStatus">
-                <option value="hot">🔥 ขายดีมาก (Hot)</option>
-                <option value="normal" selected>⚡ ปกติ</option>
-                <option value="slow">🧊 ขายออกช้า</option>
-                <option value="soldout">❌ ขายหมดแล้ว (Sold Out)</option>
-              </select>
-            </div>
-          </div>
-
-          <label style="margin-top: 10px; display: block;">รายละเอียดเพิ่มเติม / คำอธิบาย</label>
-          <textarea id="upDesc" rows="4" placeholder="ระบุเนื้อผ้า ไซส์ สี หรือรายละเอียดโปรโมชั่น..."></textarea>
-
-          <label style="margin-top: 15px; display: block;">📤 อัปโหลดรูปภาพสินค้า (เลือกได้หลายรูป)</label>
-          <input type="file" id="productImagesInput" accept="image/*" multiple style="margin-top: 5px;">
-          
-          <div class="image-preview-list" id="imagePreviewList"></div>
-
-          <button class="btn" id="saveProductBtn" style="margin-top: 20px; padding: 15px; font-size: 16px;">✨ บันทึกและส่งสินค้าเข้าหน้าร้านทันที</button>
-        </div>
-
-        <!-- ตัวอย่างพรีวิวการ์ดสินค้าที่จะแสดงผลจริง -->
-        <div>
-          <div class="panel">
-            <h3>👁️ ตัวอย่างการแสดงผลหน้าร้าน (Live Card Preview)</h3>
-            <div class="product-card-preview" id="cardPreviewBox">
-              <div class="image-wrapper">
-                <img id="previewMainImg" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='220'><rect width='100%25' height='100%25' fill='%23111'/><text x='50%25' y='50%25' fill='%23555' dominant-baseline='middle' text-anchor='middle'>ยังไม่มีรูปสินค้า</text></svg>">
-              </div>
-              <div style="margin-top: 15px;">
-                <div style="display: flex; gap: 5px; flex-wrap: wrap;">
-                  <span id="pBadge" style="background: var(--accent-red); color: #fff; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: bold;">NEW</span>
-                  <span id="pSalesBadge" style="background: rgba(0,255,138,0.2); color: #00ff88; border: 1px solid #00ff88; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: bold;">⚡ สถานะ: ปกติ</span>
-                </div>
-                <h4 id="pTitleShow" style="margin: 8px 0 5px 0; font-size: 18px; color: #fff;">ชื่อสินค้าตัวอย่าง</h4>
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
-                  <span id="pPriceShow" style="color: #ff3131; font-weight: bold; font-size: 20px;">299,000 ₭</span>
-                  <span id="pStockShow" style="color: #00ff88; font-size: 13px;">📦 สต็อก: 50 ชิ้น</span>
-                </div>
-                <div id="pPercentShow" style="margin-top: 8px; font-size: 13px; color: #ffaa00;">📊 อัตราการขาย: 0% (ขายไป 0/50)</div>
-                <p id="pDescShow" style="color: #aaa; font-size: 13px; margin-top: 8px; line-height: 1.4;">คำอธิบายรายละเอียดสินค้าจะแสดงที่นี่...</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- TAB 3: ระบบจัดการรายการสินค้า & วิเคราะห์ยอดขาย (Product Management Hub) -->
-  <div id="tabManage" class="tab-content">
-    <div class="upload-container">
-      <div class="panel" style="margin-bottom: 25px;">
-        <h3 style="font-size: 20px; color: #ff3131;">📊 ระบบจัดการสินค้า & วิเคราะห์เปอร์เซ็นต์การขาย (Sales Analytics Hub)</h3>
-        <p style="color: #aaa; font-size: 14px;">ติดตามยอดขาย เปอร์เซ็นต์ความสำเร็จ สถานะสินค้า (ขายดี / ขายออกแล้ว / ค้างสต็อก) พร้อมแก้ไขหรืออัปเดตข้อมูลได้ทันที</p>
+        <label style="font-size:13px;margin-top:10px;display:block">ซูมพื้นหลัง</label><input type="range" id="bgZoom" min="30" max="300" value="100">
+        <label style="font-size:13px;margin-top:8px;display:block">หมุนพื้นหลัง</label><input type="range" id="bgRotate" min="-180" max="180" value="0">
+        <label style="font-size:13px;margin-top:8px;display:block">ความเบลอพื้นหลัง</label><input type="range" id="bgBlur" min="0" max="25" value="0">
       </div>
 
-      <!-- สรุปภาพรวมสถิติร้านค้า -->
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 25px;">
-        <div class="panel" style="margin-bottom: 0; text-align: center;">
-          <h4 style="margin: 0; color: #aaa; font-size: 13px;">📦 สินค้าทั้งหมดในระบบ</h4>
-          <div id="statTotalItems" style="font-size: 26px; font-weight: bold; color: #fff; margin-top: 8px;">0 ชิ้น</div>
+      <div class="panel">
+        <h3>🏪 โลโก้ร้าน</h3>
+        <input type="file" id="logoUpload" accept="image/*">
+        <label style="display:block;margin-top:8px;font-size:13px;"><input type="checkbox" id="showLogo" checked style="width:auto"> แสดงโลโก้</label>
+      </div>
+
+      <div class="panel">
+        <h3>📝 รายละเอียดสินค้า</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+          <div><label style="font-size:12px">รหัสสินค้า</label><input id="codeInput" value="AP001"></div>
+          <div><label style="font-size:12px">ราคา (₭)</label><input id="priceInput" value="299000"></div>
         </div>
-        <div class="panel" style="margin-bottom: 0; text-align: center;">
-          <h4 style="margin: 0; color: #aaa; font-size: 13px;">🔥 สินค้าขายดี (Hot / ขายออกสูง)</h4>
-          <div id="statHotItems" style="font-size: 26px; font-weight: bold; color: #ff3131; margin-top: 8px;">0 ชิ้น</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
+          <div><label style="font-size:12px">จำนวน (ตัว)</label><input id="stockInput" value="18"></div>
+          <div>
+            <label style="font-size:12px">ไซส์</label>
+            <select id="sizeSelect">
+              <option>S</option><option selected>M</option><option>L</option><option>XL</option><option value="custom">พิมพ์เอง</option>
+            </select>
+          </div>
         </div>
-        <div class="panel" style="margin-bottom: 0; text-align: center;">
-          <h4 style="margin: 0; color: #aaa; font-size: 13px;">✅ ขายออกไปแล้วรวม</h4>
-          <div id="statTotalSold" style="font-size: 26px; font-weight: bold; color: #00ff88; margin-top: 8px;">0 ชิ้น</div>
+        <input id="sizeCustom" style="display:none;margin-top:6px" placeholder="3XL / Free Size">
+      </div>
+
+      <div class="panel">
+        <h3>🎨 สี & ขนาดตัวอักษร</h3>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">
+          <div><label style="font-size:11px">สีราคา</label><input type="color" id="priceColor" value="#ff3131" style="padding:2px;height:30px"></div>
+          <div><label style="font-size:11px">สีรหัส</label><input type="color" id="codeColor" value="#ffffff" style="padding:2px;height:30px"></div>
+          <div><label style="font-size:11px">สีจำนวน</label><input type="color" id="stockColor" value="#ffffff" style="padding:2px;height:30px"></div>
+          <div><label style="font-size:11px">สีไซส์</label><input type="color" id="sizeColor" value="#ffffff" style="padding:2px;height:30px"></div>
         </div>
-        <div class="panel" style="margin-bottom: 0; text-align: center;">
-          <h4 style="margin: 0; color: #aaa; font-size: 13px;">📈 อัตราการขายเฉลี่ย (Sales Rate)</h4>
-          <div id="statAvgRate" style="font-size: 26px; font-weight: bold; color: #ffaa00; margin-top: 8px;">0%</div>
+        
+        <label style="font-size:12px;margin-top:8px;display:block">ขนาดยอดราคา</label><input type="range" id="priceSize" min="18" max="70" value="42">
+        <label style="font-size:12px;margin-top:6px;display:block">ขนาดข้อความอื่นๆ</label>
+        <div style="display:flex;gap:6px">
+          <input type="range" id="codeSize" min="8" max="25" value="11" title="รหัส">
+          <input type="range" id="stockSize" min="10" max="25" value="12" title="จำนวน">
+          <input type="range" id="sizeSize" min="10" max="25" value="12" title="ไซส์">
         </div>
       </div>
 
       <div class="panel">
-        <div id="adminProductList" style="display: flex; flex-direction: column; gap: 15px;">
-          <!-- รายการสินค้าจะถูกโหลดมาแสดงอัตโนมัติพร้อมข้อมูลเปอร์เซ็นต์การขายและปุ่มอัปเดตยอดขาย -->
+        <h3>👁️ เปิด / ปิด การแสดงผล</h3>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;font-size:13px">
+          <label><input type="checkbox" id="togglePrice" checked style="width:auto"> ราคา</label>
+          <label><input type="checkbox" id="toggleCode" checked style="width:auto"> รหัส</label>
+          <label><input type="checkbox" id="toggleStock" checked style="width:auto"> จำนวน</label>
+          <label><input type="checkbox" id="toggleSize" checked style="width:auto"> ไซส์</label>
         </div>
       </div>
+
+    </div>
+
+    <!-- ฝั่งขวา: ตรึงหน้าจอแสดงรูป -->
+    <div class="preview-sticky-container">
+      <h3 style="margin-top:0;margin-bottom:10px;color:#ff5555;font-size:15px;text-shadow:0 0 8px rgba(255,42,42,0.4)">🎨 ตัวอย่างรูปโปสเตอร์ (Real-time Preview)</h3>
+      <div id="poster">
+        <img id="bgImg">
+        <img id="shirt">
+        <div id="logoPoster"><img id="logoPreview"></div>
+        <div id="codeLabel" class="draggable">AP001</div>
+        <div id="priceLabel" class="draggable">299,000 ₭</div>
+        <div id="stockLabel" class="draggable">📦 ມີ 18 ໂຕ</div>
+        <div id="sizeLabel" class="draggable">M</div>
+      </div>
+      
+      <button class="btn" id="downloadBtn" style="margin-top:15px;padding:12px;font-size:15px;width:100%;">📥 โหลดรูปป้ายสินค้า PNG (บันทึกรหัสอัตโนมัติ)</button>
     </div>
   </div>
+
+  <!-- หน้าใหม่: ระบบจัดการคลังสินค้าและตัดสต็อก -->
+  <div id="inventoryView" class="sub-page-view">
+    <div class="sub-page-header">
+      <h2>📦 ระบบจัดการคลังสินค้า & ตัดสต็อกด่วน (Master Database)</h2>
+      <div style="display:flex;gap:10px;">
+        <button class="nav-btn" id="openScannerBtn" style="background:#00ff88;color:#000;border-color:#00ff88">📸 เปิดกล้อง AI สแกนรหัส</button>
+        <button class="nav-btn" id="backToStudioBtn" style="background:rgba(255,255,255,0.1);color:#fff;border-color:rgba(255,255,255,0.2)">⬅️ กลับสู่หน้าทำโปสเตอร์</button>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-bottom:20px">
+      <h3 style="color:#00ff88">➕ เพิ่มรหัสเสื้อใหม่เข้าฐานข้อมูล</h3>
+      <div style="display:grid;grid-template-columns:2fr 2fr 2fr 1fr;gap:10px;align-items:end">
+        <div><label style="font-size:12px">รหัสสินค้า</label><input id="newCode" placeholder="เช่น AP101"></div>
+        <div><label style="font-size:12px">ราคา (₭)</label><input id="newPrice" value="299000"></div>
+        <div><label style="font-size:12px">ไซส์</label><input id="newSize" value="M"></div>
+        <button class="btn" id="addShirtDbBtn" style="height:41px">บันทึกรหัส</button>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>รหัสสินค้า</th>
+            <th>ราคา</th>
+            <th>ไซส์</th>
+            <th>สถานะปัจจุบัน</th>
+            <th style="text-align:right">จัดการตัดสต็อก / ดึงข้อมูล</th>
+          </tr>
+        </thead>
+        <tbody id="inventoryTableBody">
+          <!-- Data rows generated by JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
 </div>
 
 <script>
@@ -665,48 +635,212 @@ if (sessionStorage.getItem("admin_auth") === "true") {
   mainApp.style.display = "block";
 }
 
-// TAB SWITCHING LOGIC
-const tabButtons = document.querySelectorAll(".nav-tab-btn");
-tabButtons.forEach(btn => {
-  btn.onclick = () => {
-    tabButtons.forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-    
-    document.querySelectorAll(".tab-content").forEach(content => {
-      content.classList.remove("active");
+// ================= NAVIGATION =================
+const workspaceView = document.getElementById("workspaceView");
+const inventoryView = document.getElementById("inventoryView");
+const openDbBtn = document.getElementById("openDbBtn");
+const backToStudioBtn = document.getElementById("backToStudioBtn");
+
+openDbBtn.onclick = () => {
+  workspaceView.style.display = "none";
+  inventoryView.style.display = "block";
+  renderInventoryTable();
+};
+
+backToStudioBtn.onclick = () => {
+  inventoryView.style.display = "none";
+  workspaceView.style.display = "grid";
+};
+
+// ================= INVENTORY & AUTO-SAVE DATABASE LOGIC =================
+let shirtDatabase = JSON.parse(localStorage.getItem("admin_shirts_db")) || [
+  { code: "AP001", price: "299,000", size: "M", status: "พร้อมขาย" },
+  { code: "AP002", price: "299,000", size: "L", status: "พร้อมขาย" },
+  { code: "AP003", price: "350,000", size: "XL", status: "ขายแล้ว (Sold)" },
+  { code: "AP004", price: "299,000", size: "S", status: "พร้อมขาย" }
+];
+
+function saveDatabase() {
+  localStorage.setItem("admin_shirts_db", JSON.stringify(shirtDatabase));
+}
+
+// ฟังก์ชันบันทึกอัตโนมัติเมื่อกดดาวน์โหลด/เซฟป้ายสินค้า
+function autoSaveCurrentShirtToDb() {
+  const code = document.getElementById("codeInput").value.trim().toUpperCase();
+  const rawPrice = document.getElementById("priceInput").value.trim();
+  const formattedPrice = rawPrice ? Number(rawPrice.replace(/,/g, "")).toLocaleString() : "299,000";
+  
+  let size = document.getElementById("sizeSelect").value;
+  if (size === "custom") {
+    size = document.getElementById("sizeCustom").value.trim() || "Free Size";
+  }
+
+  if (!code) return;
+
+  // ค้นหาว่ามีรหัสนี้อยู่ในฐานข้อมูลหรือยัง
+  const existingIndex = shirtDatabase.findIndex(item => item.code.toUpperCase() === code);
+  
+  if (existingIndex !== -1) {
+    // ถ้ามีอยู่แล้ว อัปเดตราคาและไซส์ล่าสุด
+    shirtDatabase[existingIndex].price = formattedPrice;
+    shirtDatabase[existingIndex].size = size;
+  } else {
+    // ถ้ายังไม่มี ให้เพิ่มใหม่เข้าฐานข้อมูลอัตโนมัติที่แถวแรก
+    shirtDatabase.unshift({
+      code: code,
+      price: formattedPrice,
+      size: size,
+      status: "พร้อมขาย"
     });
-    
-    const targetTab = document.getElementById(btn.dataset.target);
-    if(targetTab) targetTab.classList.add("active");
+  }
+  saveDatabase();
+}
 
-    if(btn.dataset.target === "tabManage") {
-      renderAdminTable();
-    }
-  };
-});
-
-// ================= IMAGE COMPRESSION HELPER =================
-function compressImage(dataUrl, maxWidth = 800, quality = 0.7) {
-  return new Promise((resolve) => {
-    const img = new Image();
-    img.src = dataUrl;
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      let width = img.width;
-      let height = img.height;
-      if (width > maxWidth) {
-        height = Math.round((height * maxWidth) / width);
-        width = maxWidth;
-      }
-      canvas.width = width;
-      canvas.height = height;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0, width, height);
-      resolve(canvas.toDataURL('image/jpeg', quality));
-    };
-    img.onerror = () => resolve(dataUrl);
+function renderInventoryTable() {
+  const tbody = document.getElementById("inventoryTableBody");
+  tbody.innerHTML = "";
+  shirtDatabase.forEach((item, index) => {
+    const tr = document.createElement("tr");
+    const isSold = item.status.includes("ขายแล้ว");
+    tr.innerHTML = `
+      <td style="font-weight:bold;color:#ff8888">${item.code}</td>
+      <td>${item.price} ₭</td>
+      <td>${item.size}</td>
+      <td><span class="${isSold ? 'badge-sold' : 'badge-ready'}">${item.status}</span></td>
+      <td style="text-align:right">
+        <button onclick="toggleSoldStatus(${index})" style="background:${isSold ? 'rgba(0,255,136,0.2)' : 'rgba(255,42,42,0.2)'};color:${isSold ? '#00ff88' : '#ff5555'};border:1px solid ${isSold ? '#00ff88' : '#ff5555'};padding:5px 10px;border-radius:6px;font-size:12px;cursor:pointer;margin-right:6px">
+          ${isSold ? '↩️ ยกเลิกขายแล้ว' : '❌ ตัดสต็อก (Sold)'}
+        </button>
+        <button onclick="loadIntoStudio('${item.code}', '${item.price}', '${item.size}')" style="background:var(--accent-red);color:#fff;padding:5px 10px;border-radius:6px;font-size:12px;cursor:pointer">
+          🎨 ดึงไปทำป้าย
+        </button>
+      </td>
+    `;
+    tbody.appendChild(tr);
   });
 }
+
+window.toggleSoldStatus = function(index) {
+  shirtDatabase[index].status = shirtDatabase[index].status.includes("ขายแล้ว") ? "พร้อมขาย" : "ขายแล้ว (Sold)";
+  saveDatabase();
+  renderInventoryTable();
+};
+
+window.loadIntoStudio = function(code, price, size) {
+  document.getElementById("codeInput").value = code;
+  document.getElementById("codeLabel").textContent = code;
+  
+  const cleanPrice = price.replace(/,/g, "");
+  document.getElementById("priceInput").value = cleanPrice;
+  document.getElementById("priceLabel").textContent = Number(cleanPrice).toLocaleString() + " ₭";
+  
+  document.getElementById("sizeSelect").value = size;
+  document.getElementById("sizeLabel").textContent = size;
+  
+  inventoryView.style.display = "none";
+  workspaceView.style.display = "grid";
+};
+
+document.getElementById("addShirtDbBtn").onclick = () => {
+  const code = document.getElementById("newCode").value.trim();
+  const price = document.getElementById("newPrice").value.trim();
+  const size = document.getElementById("newSize").value.trim();
+  if(!code) { alert("กรุณากรอกรหัสสินค้า"); return; }
+  
+  shirtDatabase.unshift({ code, price: Number(price).toLocaleString(), size, status: "พร้อมขาย" });
+  saveDatabase();
+  renderInventoryTable();
+  
+  document.getElementById("newCode").value = "";
+  document.getElementById("newPrice").value = "299000";
+  document.getElementById("newSize").value = "M";
+};
+
+// ================= AI WEBCAM SCANNER (TESSERACT OCR) =================
+const scannerModal = document.getElementById("scannerModal");
+const openScannerBtn = document.getElementById("openScannerBtn");
+const closeScannerBtn = document.getElementById("closeScannerBtn");
+const captureScanBtn = document.getElementById("captureScanBtn");
+const camFeed = document.getElementById("camFeed");
+const camCanvas = document.getElementById("camCanvas");
+const aiScanStatus = document.getElementById("aiScanStatus");
+let mediaStream = null;
+
+openScannerBtn.onclick = async () => {
+  scannerModal.style.display = "flex";
+  aiScanStatus.textContent = "กำลังเปิดกล้อง...";
+  try {
+    mediaStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+    camFeed.srcObject = mediaStream;
+    aiScanStatus.textContent = "พร้อมสแกนรหัสสินค้าด้วย AI";
+  } catch (err) {
+    aiScanStatus.textContent = "❌ ไม่สามารถเปิดกล้องได้";
+    console.error(err);
+  }
+};
+
+closeScannerBtn.onclick = () => {
+  if (mediaStream) {
+    mediaStream.getTracks().forEach(track => track.stop());
+  }
+  scannerModal.style.display = "none";
+};
+
+captureScanBtn.onclick = async () => {
+  if (!mediaStream) return;
+  aiScanStatus.textContent = "🤖 AI กำลังประมวลผลตัวอักษร/รหัส...";
+  
+  camCanvas.width = camFeed.videoWidth || 640;
+  camCanvas.height = camFeed.videoHeight || 480;
+  const ctx = camCanvas.getContext("2d");
+  ctx.drawImage(camFeed, 0, 0, camCanvas.width, camCanvas.height);
+  
+  const imageDataUrl = camCanvas.toDataURL("image/png");
+
+  try {
+    // ใช้ Tesseract.js อ่านตัวหนังสือจากภาพที่สแกน
+    const { data: { text } } = await Tesseract.recognize(imageDataUrl, 'eng+tha', {
+      logger: m => {
+        if (m.status === 'recognizing text') {
+          aiScanStatus.textContent = `🤖 กำลังสแกน... ${Math.round(m.progress * 100)}%`;
+        }
+      }
+    });
+
+    console.log("OCR Result:", text);
+    
+    // ค้นหารหัสสินค้าที่ตรงกับรูปแบบในฐานข้อมูล (เช่น AP001, AP101 ฯลฯ)
+    let foundMatch = null;
+    const cleanText = text.replace(/\s+/g, "").toUpperCase();
+    
+    for (let item of shirtDatabase) {
+      if (cleanText.includes(item.code.toUpperCase())) {
+        foundMatch = item;
+        break;
+      }
+    }
+
+    if (foundMatch) {
+      // ทำการตัดสต็อกอัตโนมัติ (เปลี่ยนเป็นขายแล้ว)
+      const targetIndex = shirtDatabase.findIndex(i => i.code === foundMatch.code);
+      if (targetIndex !== -1) {
+        shirtDatabase[targetIndex].status = "ขายแล้ว (Sold)";
+        saveDatabase();
+        renderInventoryTable();
+      }
+      aiScanStatus.textContent = `✅ สแกนสำเร็จ! ตัดสต็อกรหัส ${foundMatch.code} เรียบร้อย`;
+      setTimeout(() => {
+        closeScannerBtn.click();
+      }, 1500);
+    } else {
+      aiScanStatus.textContent = `⚠️ ไม่พบรหัสสินค้าในระบบจากภาพนี้ (อ่านได้: ${text.substring(0, 20)}...)`;
+    }
+
+  } catch (err) {
+    aiScanStatus.textContent = "❌ เกิดข้อผิดพลาดในการประมวลผล AI";
+    console.error(err);
+  }
+};
 
 // ================= POSTER STUDIO SCRIPTS =================
 let zoomScale = 1, shirtX = 0, shirtY = 0, shirtRot = 0, shirtB = 0;
@@ -857,7 +991,11 @@ document.getElementById("toggleCode").onchange = (e) => document.getElementById(
 document.getElementById("toggleStock").onchange = (e) => document.getElementById("stockLabel").style.display = e.target.checked ? "block" : "none";
 document.getElementById("toggleSize").onchange = (e) => document.getElementById("sizeLabel").style.display = e.target.checked ? "block" : "none";
 
+// เพิ่มการเรียกใช้งาน autoSaveCurrentShirtToDb() ทันทีที่กดดาวน์โหลดรูป
 document.getElementById("downloadBtn").onclick = () => {
+  // บันทึกรหัสและข้อมูลเสื้อตัวปัจจุบันลงฐานข้อมูลอัตโนมัติ
+  autoSaveCurrentShirtToDb();
+
   html2canvas(poster, { scale: 2, backgroundColor: null }).then(c => {
     const a = document.createElement("a");
     a.download = "poster.png";
@@ -866,55 +1004,17 @@ document.getElementById("downloadBtn").onclick = () => {
   });
 };
 
-document.getElementById("sendPosterToShopBtn").onclick = async () => {
-  const canvas = await html2canvas(poster, { scale: 1.5, backgroundColor: null });
-  const rawDataUrl = canvas.toDataURL("image/jpeg", 0.8);
-  const posterDataUrl = await compressImage(rawDataUrl, 800, 0.7);
-
-  const code = document.getElementById("codeInput").value || "AP001";
-  const rawPrice = document.getElementById("priceInput").value || "299000";
-  const stockVal = parseInt(document.getElementById("stockInput").value) || 10;
-
-  const productItem = {
-    id: "POSTER-" + Date.now(),
-    title: "เสื้อรหัส " + code,
-    sku: code,
-    price: rawPrice,
-    stock: stockVal,
-    sold: 0,
-    salesStatus: "normal",
-    category: "สินค้าจากป้ายแต่งอัตโนมัติ",
-    desc: "สินค้าจัดทำพิเศษจากระบบป้ายแต่งร้าน V6.2",
-    images: [posterDataUrl],
-    image: posterDataUrl,
-    img: posterDataUrl
-  };
-
-  try {
-    let shopProducts = JSON.parse(localStorage.getItem("shop_products") || "[]");
-    shopProducts.unshift(productItem);
-    localStorage.setItem("shop_products", JSON.stringify(shopProducts));
-    alert("🚀 ส่งป้ายสินค้า '" + code + "' เข้าสู่หน้าร้านค้าออนไลน์เรียบร้อยแล้ว!");
-  } catch (err) {
-    alert("❌ พื้นที่จัดเก็บเต็ม กรุณาลบสินค้าเก่าออกบางส่วนครับ");
-  }
-};
-
 document.getElementById("cutoutBtn").onclick = async () => {
   if (!shirt.src) { alert("ເລືອກຮູບເສື້ອກ່ອນ"); return; }
   const aiLoading = document.getElementById("aiLoading");
   const loadingBar = document.getElementById("loadingBar");
-  const loadingText = document.getElementById("loadingText");
   
   aiLoading.style.display = "block";
   loadingBar.style.width = "0%";
-  loadingText.textContent = "0%";
   
   for (let i = 1; i <= 15; i++) {
     await new Promise(r => setTimeout(r, 100));
-    const p = i / 15 * 100;
-    loadingBar.style.width = p + "%";
-    loadingText.textContent = Math.round(p) + "%";
+    loadingBar.style.width = (i / 15 * 100) + "%";
   }
   
   try {
@@ -932,279 +1032,6 @@ document.getElementById("cutoutBtn").onclick = async () => {
 document.getElementById("restoreBtn").onclick = () => {
   if (originalShirtSrc) { shirt.src = originalShirtSrc; updateShirt(); }
 };
-
-// ================= PRODUCT UPLOAD HUB SCRIPTS =================
-const upTitle = document.getElementById("upTitle");
-const upPrice = document.getElementById("upPrice");
-const upStock = document.getElementById("upStock");
-const upSold = document.getElementById("upSold");
-const upSalesStatus = document.getElementById("upSalesStatus");
-const upSKU = document.getElementById("upSKU");
-const upCategory = document.getElementById("upCategory");
-const upDesc = document.getElementById("upDesc");
-const productImagesInput = document.getElementById("productImagesInput");
-const imagePreviewList = document.getElementById("imagePreviewList");
-
-let uploadedImageUrls = [];
-
-const previewMainImg = document.getElementById("previewMainImg");
-const pTitleShow = document.getElementById("pTitleShow");
-const pPriceShow = document.getElementById("pPriceShow");
-const pStockShow = document.getElementById("pStockShow");
-const pDescShow = document.getElementById("pDescShow");
-const pSalesBadge = document.getElementById("pSalesBadge");
-const pPercentShow = document.getElementById("pPercentShow");
-
-function updatePreviewStats() {
-  const stockVal = parseInt(upStock.value) || 0;
-  const soldVal = parseInt(upSold.value) || 0;
-  const totalBase = stockVal + soldVal;
-  const percent = totalBase > 0 ? Math.round((soldVal / totalBase) * 100) : 0;
-
-  pStockShow.textContent = "📦 สต็อกเหลือ: " + stockVal + " ชิ้น";
-  pPercentShow.textContent = `📊 อัตราการขาย: ${percent}% (ขายไป ${soldVal}/${totalBase})`;
-
-  const statusVal = upSalesStatus.value;
-  if(statusVal === 'hot') {
-    pSalesBadge.style.background = 'rgba(255,42,42,0.2)';
-    pSalesBadge.style.color = '#ff3131';
-    pSalesBadge.style.borderColor = '#ff3131';
-    pSalesBadge.textContent = '🔥 ขายดีมาก (Hot)';
-  } else if(statusVal === 'slow') {
-    pSalesBadge.style.background = 'rgba(0,170,255,0.2)';
-    pSalesBadge.style.color = '#00aaff';
-    pSalesBadge.style.borderColor = '#00aaff';
-    pSalesBadge.textContent = '🧊 ขายออกช้า';
-  } else if(statusVal === 'soldout') {
-    pSalesBadge.style.background = 'rgba(255,170,0,0.2)';
-    pSalesBadge.style.color = '#ffaa00';
-    pSalesBadge.style.borderColor = '#ffaa00';
-    pSalesBadge.textContent = '❌ ขายหมดแล้ว';
-  } else {
-    pSalesBadge.style.background = 'rgba(0,255,138,0.2)';
-    pSalesBadge.style.color = '#00ff88';
-    pSalesBadge.style.borderColor = '#00ff88';
-    pSalesBadge.textContent = '⚡ สถานะ: ปกติ';
-  }
-}
-
-upTitle.oninput = (e) => pTitleShow.textContent = e.target.value || "ชื่อสินค้าตัวอย่าง";
-upPrice.oninput = (e) => pPriceShow.textContent = (e.target.value || "0") + " ₭";
-upStock.oninput = updatePreviewStats;
-upSold.oninput = updatePreviewStats;
-upSalesStatus.onchange = updatePreviewStats;
-upDesc.oninput = (e) => pDescShow.textContent = e.target.value || "คำอธิบายรายละเอียดสินค้าจะแสดงที่นี่...";
-
-productImagesInput.onchange = (e) => {
-  const files = e.target.files;
-  if(!files.length) return;
-  imagePreviewList.innerHTML = "";
-  uploadedImageUrls = [];
-  
-  Array.from(files).forEach((file, index) => {
-    const r = new FileReader();
-    r.onload = (ev) => {
-      const base64Str = ev.target.result;
-      uploadedImageUrls.push(base64Str);
-      
-      if(index === 0) {
-        previewMainImg.src = base64Str;
-      }
-
-      const div = document.createElement("div");
-      div.className = "thumb-box";
-      div.innerHTML = `<img src="${base64Str}">`;
-      imagePreviewList.appendChild(div);
-    };
-    r.readAsDataURL(file);
-  });
-};
-
-document.getElementById("saveProductBtn").onclick = async () => {
-  const title = upTitle.value.trim();
-  if(!title) {
-    alert("❌ กรุณากรอกชื่อสินค้าก่อนบันทึก");
-    upTitle.focus();
-    return;
-  }
-
-  let finalImgList = [];
-  for (let imgUrl of uploadedImageUrls) {
-    const compressed = await compressImage(imgUrl, 800, 0.7);
-    finalImgList.push(compressed);
-  }
-  if (!finalImgList.length) {
-    finalImgList = [await compressImage(previewMainImg.src, 800, 0.7)];
-  }
-
-  const newProduct = {
-    id: "PROD-" + Date.now(),
-    title: title,
-    sku: upSKU.value || "SKU-001",
-    price: upPrice.value || "299,000",
-    stock: parseInt(upStock.value) || 50,
-    sold: parseInt(upSold.value) || 0,
-    salesStatus: upSalesStatus.value || "normal",
-    category: upCategory.value,
-    desc: upDesc.value || "-",
-    images: finalImgList,
-    image: finalImgList[0],
-    img: finalImgList[0]
-  };
-
-  try {
-    let shopProducts = JSON.parse(localStorage.getItem("shop_products") || "[]");
-    shopProducts.unshift(newProduct);
-    localStorage.setItem("shop_products", JSON.stringify(shopProducts));
-    alert("🎉 บันทึกและส่งสินค้า '" + title + "' เข้าสู่ระบบร้านค้าออนไลน์เรียบร้อยแล้ว!");
-  } catch (err) {
-    alert("❌ หน่วยความจำ LocalStorage เต็ม ไม่สามารถบันทึกเพิ่มได้ กรุณาลบสินค้าเก่าออกก่อน");
-  }
-};
-
-// ================= PRODUCT MANAGEMENT & SALES ANALYTICS =================
-function renderAdminTable() {
-  const container = document.getElementById("adminProductList");
-  const products = JSON.parse(localStorage.getItem("shop_products") || "[]");
-
-  let totalItemsCount = products.length;
-  let hotItemsCount = products.filter(p => p.salesStatus === 'hot' || (p.sold && p.stock && (p.sold / (p.sold + p.stock) >= 0.7))).length;
-  let totalSoldSum = products.reduce((acc, p) => acc + (parseInt(p.sold) || 0), 0);
-  let totalStockSum = products.reduce((acc, p) => acc + (parseInt(p.stock) || 0), 0);
-  let overallBase = totalSoldSum + totalStockSum;
-  let avgSalesRate = overallBase > 0 ? Math.round((totalSoldSum / overallBase) * 100) : 0;
-
-  document.getElementById("statTotalItems").textContent = totalItemsCount + " ชิ้น";
-  document.getElementById("statHotItems").textContent = hotItemsCount + " ชิ้น";
-  document.getElementById("statTotalSold").textContent = totalSoldSum + " ชิ้น";
-  document.getElementById("statAvgRate").textContent = avgSalesRate + "%";
-
-  if (products.length === 0) {
-    container.innerHTML = `<p style="color: #777; text-align: center; padding: 30px;">ยังไม่มีสินค้าในระบบ</p>`;
-    return;
-  }
-
-  container.innerHTML = "";
-  products.forEach(item => {
-    const stock = parseInt(item.stock) || 0;
-    const sold = parseInt(item.sold) || 0;
-    const total = stock + sold;
-    const percent = total > 0 ? Math.round((sold / total) * 100) : 0;
-
-    let statusBadgeHtml = '';
-    if(item.salesStatus === 'hot') {
-      statusBadgeHtml = `<span style="background:rgba(255,42,42,0.2); color:#ff3131; border:1px solid #ff3131; padding:2px 8px; border-radius:6px; font-size:11px; font-weight:bold;">🔥 ขายดีมาก</span>`;
-    } else if(item.salesStatus === 'slow') {
-      statusBadgeHtml = `<span style="background:rgba(0,170,255,0.2); color:#00aaff; border:1px solid #00aaff; padding:2px 8px; border-radius:6px; font-size:11px; font-weight:bold;">🧊 ขายออกช้า</span>`;
-    } else if(item.salesStatus === 'soldout') {
-      statusBadgeHtml = `<span style="background:rgba(255,170,0,0.2); color:#ffaa00; border:1px solid #ffaa00; padding:2px 8px; border-radius:6px; font-size:11px; font-weight:bold;">❌ ขายหมดแล้ว</span>`;
-    } else {
-      statusBadgeHtml = `<span style="background:rgba(0,255,138,0.2); color:#00ff88; border:1px solid #00ff88; padding:2px 8px; border-radius:6px; font-size:11px; font-weight:bold;">⚡ ปกติ</span>`;
-    }
-
-    const div = document.createElement("div");
-    div.style.cssText = "display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,42,42,0.2); padding: 15px; border-radius: 10px; gap: 15px; flex-wrap: wrap;";
-    
-    const imgSrc = (item.images && item.images[0]) ? item.images[0] : (item.image || item.img || "");
-
-    div.innerHTML = `
-      <div style="display: flex; align-items: center; gap: 15px; flex: 1; min-width: 280px;">
-        <img src="${imgSrc}" style="width: 65px; height: 65px; object-fit: cover; border-radius: 8px; background: #000;">
-        <div>
-          <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 4px;">
-            <h4 style="margin: 0; color: #fff; font-size: 16px;">${item.title}</h4>
-            ${statusBadgeHtml}
-          </div>
-          <p style="margin: 0; color: #aaa; font-size: 13px;">SKU: ${item.sku} | ราคา: <span style="color: #ff3131; font-weight: bold;">${item.price} ₭</span></p>
-          <p style="margin: 4px 0 0 0; color: #ffaa00; font-size: 13px;">📊 เปอร์เซ็นต์การขาย: <b>${percent}%</b> (ขายแล้ว ${sold} / สต็อกเหลือ ${stock} ชิ้น)</p>
-        </div>
-      </div>
-      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-        <button onclick="quickUpdateSales('${item.id}')" style="background: rgba(0,255,136,0.2); color: #00ff88; border: 1px solid rgba(0,255,136,0.4); padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 13px;">📈 อัปเดตยอดขาย</button>
-        <button onclick="editProduct('${item.id}')" style="background: rgba(255,170,0,0.2); color: #ffaa00; border: 1px solid rgba(255,170,0,0.4); padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 13px;">✏️ แก้ไข</button>
-        <button onclick="deleteProduct('${item.id}')" style="background: rgba(255,42,42,0.2); color: #ff5555; border: 1px solid rgba(255,42,42,0.4); padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 13px;">🗑️ ลบ</button>
-      </div>
-    `;
-    container.appendChild(div);
-  });
-}
-
-function quickUpdateSales(productId) {
-  let products = JSON.parse(localStorage.getItem("shop_products") || "[]");
-  let item = products.find(p => p.id === productId);
-  if (!item) return;
-
-  let currentSold = item.sold || 0;
-  let currentStock = item.stock || 0;
-
-  let inputSold = prompt(`อัปเดตจำนวนที่ขายไปแล้ว (ปัจจุบัน ${currentSold} ชิ้น):`, currentSold);
-  if (inputSold === null) return;
-  let newSold = parseInt(inputSold);
-  if (isNaN(newSold) || newSold < 0) {
-    alert("❌ กรุณากรอกตัวเลขที่ถูกต้อง");
-    return;
-  }
-
-  let inputStock = prompt(`อัปเดตจำนวนสต็อกคงเหลือ (ปัจจุบัน ${currentStock} ชิ้น):`, currentStock);
-  if (inputStock === null) return;
-  let newStock = parseInt(inputStock);
-  if (isNaN(newStock) || newStock < 0) {
-    alert("❌ กรุณากรอกตัวเลขที่ถูกต้อง");
-    return;
-  }
-
-  let total = newSold + newStock;
-  let ratio = total > 0 ? newSold / total : 0;
-  let autoStatus = item.salesStatus;
-  if(ratio >= 0.75) autoStatus = 'hot';
-  else if(newStock === 0) autoStatus = 'soldout';
-  else if(ratio < 0.2 && total > 10) autoStatus = 'slow';
-  else autoStatus = 'normal';
-
-  item.sold = newSold;
-  item.stock = newStock;
-  item.salesStatus = autoStatus;
-
-  localStorage.setItem("shop_products", JSON.stringify(products));
-  renderAdminTable();
-  alert("📈 อัปเดตข้อมูลการขายเรียบร้อยแล้ว!");
-}
-
-function deleteProduct(productId) {
-  if (!confirm("คุณต้องการลบสินค้ารายการนี้ใช่หรือไม่?")) return;
-  let products = JSON.parse(localStorage.getItem("shop_products") || "[]");
-  products = products.filter(p => p.id !== productId);
-  localStorage.setItem("shop_products", JSON.stringify(products));
-  renderAdminTable();
-  alert("🗑️ ลบสินค้าเรียบร้อยแล้ว");
-}
-
-function editProduct(productId) {
-  let products = JSON.parse(localStorage.getItem("shop_products") || "[]");
-  let item = products.find(p => p.id === productId);
-  if (!item) return;
-
-  let newTitle = prompt("แก้ไขชื่อสินค้า:", item.title);
-  if (newTitle === null) return;
-  
-  let newPrice = prompt("แก้ไขราคา (₭):", item.price);
-  if (newPrice === null) return;
-  
-  let newStock = prompt("แก้ไขจำนวนสต็อกคงเหลือ:", item.stock);
-  if (newStock === null) return;
-
-  let newSold = prompt("แก้ไขจำนวนที่ขายไปแล้ว:", item.sold || 0);
-  if (newSold === null) return;
-
-  item.title = newTitle.trim() || item.title;
-  item.price = newPrice.trim() || item.price;
-  item.stock = parseInt(newStock) || item.stock;
-  item.sold = parseInt(newSold) || item.sold;
-
-  localStorage.setItem("shop_products", JSON.stringify(products));
-  renderAdminTable();
-  alert("✏️ แก้ไขข้อมูลสินค้าเรียบร้อยแล้ว");
-}
 </script>
 </body>
 </html>
