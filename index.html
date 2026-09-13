@@ -679,7 +679,6 @@ tabButtons.forEach(btn => {
     const targetTab = document.getElementById(btn.dataset.target);
     if(targetTab) targetTab.classList.add("active");
 
-    // ถ้ากดเข้าแท็บจัดการสินค้า ให้โหลดข้อมูลรายการสินค้าและคำนวณสถิติยอดขายขึ้นมาแสดง
     if(btn.dataset.target === "tabManage") {
       renderAdminTable();
     }
@@ -844,7 +843,7 @@ document.getElementById("downloadBtn").onclick = () => {
   });
 };
 
-// ฟังก์ชันกดส่งป้ายสินค้าจาก Tab 1 ตรงเข้าไปยังหน้าร้านค้าออนไลน์ผ่าน localStorage พร้อมระบบเริ่มต้นข้อมูลยอดขาย
+// [ส่วนที่แก้ไข] เพิ่มความครอบคลุมในการเก็บรูปภาพรองรับทุกคีย์ที่หน้าบ้านมักจะเรียกใช้ (images, image, img)
 document.getElementById("sendPosterToShopBtn").onclick = () => {
   html2canvas(poster, { scale: 2, backgroundColor: null }).then(canvas => {
     const posterDataUrl = canvas.toDataURL("image/png");
@@ -859,10 +858,12 @@ document.getElementById("sendPosterToShopBtn").onclick = () => {
       price: rawPrice,
       stock: stockVal,
       sold: 0,
-      salesStatus: "normal", // hot, normal, slow, soldout
+      salesStatus: "normal",
       category: "สินค้าจากป้ายแต่งอัตโนมัติ",
       desc: "สินค้าจัดทำพิเศษจากระบบป้ายแต่งร้าน V6.2",
-      images: [posterDataUrl]
+      images: [posterDataUrl],
+      image: posterDataUrl,  // สำรองเผื่อหน้าร้านเรียกใช้ .image เดี่ยวๆ
+      img: posterDataUrl     // สำรองเผื่อหน้าร้านเรียกใช้ .img เดี่ยวๆ
     };
 
     let shopProducts = JSON.parse(localStorage.getItem("shop_products") || "[]");
@@ -993,6 +994,7 @@ productImagesInput.onchange = (e) => {
   });
 };
 
+// [ส่วนที่แก้ไข] เพิ่มความครอบคลุมคีย์รูปภาพรองรับ .images, .image และ .img เช่นกันในหน้าอัปโหลดสินค้า
 document.getElementById("saveProductBtn").onclick = () => {
   const title = upTitle.value.trim();
   if(!title) {
@@ -1000,6 +1002,8 @@ document.getElementById("saveProductBtn").onclick = () => {
     upTitle.focus();
     return;
   }
+
+  const finalImgList = uploadedImageUrls.length ? uploadedImageUrls : [previewMainImg.src];
 
   const newProduct = {
     id: "PROD-" + Date.now(),
@@ -1011,7 +1015,9 @@ document.getElementById("saveProductBtn").onclick = () => {
     salesStatus: upSalesStatus.value || "normal",
     category: upCategory.value,
     desc: upDesc.value || "-",
-    images: uploadedImageUrls.length ? uploadedImageUrls : [previewMainImg.src]
+    images: finalImgList,
+    image: finalImgList[0], // สำรองเผื่อหน้าร้านเรียกใช้ .image เดี่ยวๆ
+    img: finalImgList[0]    // สำรองเผื่อหน้าร้านเรียกใช้ .img เดี่ยวๆ
   };
 
   let shopProducts = JSON.parse(localStorage.getItem("shop_products") || "[]");
@@ -1026,7 +1032,6 @@ function renderAdminTable() {
   const container = document.getElementById("adminProductList");
   const products = JSON.parse(localStorage.getItem("shop_products") || "[]");
 
-  // อัปเดตกล่องสถิติภาพรวม
   let totalItemsCount = products.length;
   let hotItemsCount = products.filter(p => p.salesStatus === 'hot' || (p.sold && p.stock && (p.sold / (p.sold + p.stock) >= 0.7))).length;
   let totalSoldSum = products.reduce((acc, p) => acc + (parseInt(p.sold) || 0), 0);
@@ -1065,7 +1070,9 @@ function renderAdminTable() {
     const div = document.createElement("div");
     div.style.cssText = "display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,42,42,0.2); padding: 15px; border-radius: 10px; gap: 15px; flex-wrap: wrap;";
     
-    const imgSrc = item.images && item.images[0] ? item.images[0] : "";
+    // [ส่วนที่แก้ไข] ดึงรูปจากคีย์ไหนก็ได้เพื่อให้พรีวิวในหน้าจัดการขึ้นรูปเสมอ
+    const imgSrc = (item.images && item.images[0]) ? item.images[0] : (item.image || item.img || "");
+
     div.innerHTML = `
       <div style="display: flex; align-items: center; gap: 15px; flex: 1; min-width: 280px;">
         <img src="${imgSrc}" style="width: 65px; height: 65px; object-fit: cover; border-radius: 8px; background: #000;">
@@ -1112,7 +1119,6 @@ function quickUpdateSales(productId) {
     return;
   }
 
-  // คำนวณสถานะอัตโนมัติหรือให้เลือก
   let total = newSold + newStock;
   let ratio = total > 0 ? newSold / total : 0;
   let autoStatus = item.salesStatus;
