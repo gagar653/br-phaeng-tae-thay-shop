@@ -1,660 +1,149 @@
-<!DOCTYPE html>
-<html lang="th">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin ຮ້ານບໍ່ແພງແຕ່ເທ້ V5.2 - Protected</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<style>
-:root {
-  --bg-main: #06060c;
-  --accent-red: #ff2a2a;
-  --accent-glow: rgba(255, 42, 42, 0.4);
-  --panel-bg: rgba(18, 18, 26, 0.75);
-  --panel-border: rgba(255, 42, 42, 0.25);
-  --input-bg: rgba(10, 10, 16, 0.8);
-}
-
-body {
-  margin: 0;
-  background-color: var(--bg-main);
-  background-image: 
-    radial-gradient(circle at 15% 20%, rgba(255, 0, 60, 0.15) 0%, transparent 45%),
-    radial-gradient(circle at 85% 80%, rgba(120, 0, 255, 0.1) 0%, transparent 45%),
-    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-  background-size: 100% 100%, 100% 100%, 30px 30px, 30px 30px;
-  background-attachment: fixed;
-  color: #fff;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  min-height: 100vh;
-}
-
-/* ================= LOGIN SCREEN ================= */
-#loginScreen {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  background: var(--bg-main);
-  z-index: 9999;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.login-box {
-  background: var(--panel-bg);
-  backdrop-filter: blur(15px);
-  border: 1px solid var(--panel-border);
-  border-radius: 20px;
-  padding: 40px;
-  width: 100%;
-  max-width: 360px;
-  text-align: center;
-  box-shadow: 0 0 30px rgba(255, 42, 42, 0.2);
-}
-.login-box h2 {
-  margin-top: 0;
-  color: #fff;
-  text-shadow: 0 0 10px var(--accent-red);
-}
-.login-box input {
-  text-align: center;
-  font-size: 18px;
-  letter-spacing: 2px;
-  margin-bottom: 15px;
-}
-#loginErr {
-  color: #ff4444;
-  font-size: 14px;
-  margin-top: 10px;
-  display: none;
-}
-
-/* ================= MAIN CONTENT ================= */
-#mainApp {
-  display: none; /* ซ่อนไว้ก่อนจนกว่าจะล็อกอินสำเร็จ */
-}
-
-.header-bar {
-  background: linear-gradient(90deg, rgba(15,0,0,0.9) 0%, rgba(40,5,5,0.9) 50%, rgba(15,0,0,0.9) 100%);
-  padding: 15px 25px;
-  border-bottom: 2px solid var(--accent-red);
-  box-shadow: 0 4px 25px rgba(255, 42, 42, 0.3);
-  backdrop-filter: blur(10px);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.header-bar h2 {
-  color: #fff;
-  margin: 0;
-  font-weight: 800;
-  letter-spacing: 1px;
-  text-shadow: 0 0 12px var(--accent-red);
-  font-size: 20px;
-}
-.user-status {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.status-badge {
-  background: rgba(0, 255, 136, 0.1);
-  border: 1px solid #00ff88;
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 13px;
-  color: #00ff88;
-}
-
-.wrap {
-  display: grid;
-  grid-template-columns: 340px 1fr;
-  gap: 24px;
-  padding: 25px;
-  max-width: 1400px;
-  margin: auto;
-}
-
-.panel {
-  background: var(--panel-bg);
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--panel-border);
-  border-radius: 16px;
-  padding: 20px;
-  margin-bottom: 20px;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
-}
-.panel h3 {
-  margin-top: 0;
-  margin-bottom: 14px;
-  font-size: 16px;
-  color: #ff5555;
-  text-shadow: 0 0 8px rgba(255, 42, 42, 0.4);
-}
-
-input, select {
-  box-sizing: border-box;
-  width: 100%;
-  padding: 12px 14px;
-  border-radius: 10px;
-  background: var(--input-bg);
-  border: 1px solid rgba(255, 42, 42, 0.3);
-  color: #fff;
-  margin-top: 8px;
-  outline: none;
-}
-input:focus, select:focus {
-  border-color: var(--accent-red);
-  box-shadow: 0 0 10px var(--accent-glow);
-}
-
-button {
-  padding: 12px;
-  border-radius: 10px;
-  border: none;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.platform {
-  background: rgba(255,255,255,0.05);
-  color: #ccc;
-  border: 1px solid rgba(255,255,255,0.1);
-}
-.platform.active {
-  background: var(--accent-red);
-  color: #fff;
-  box-shadow: 0 0 15px var(--accent-glow);
-}
-
-#poster {
-  width: 340px;
-  aspect-ratio: 4/5;
-  background: #111;
-  position: relative;
-  overflow: hidden;
-  border-radius: 12px;
-  box-shadow: 0 0 35px rgba(0, 0, 0, 0.9), 0 0 15px rgba(255, 42, 42, 0.3);
-  touch-action: none;
-}
-
-/* Layer 1: รูปพื้นหลัง */
-#bgImg {
-  position: absolute;
-  left: 50%; top: 50%;
-  transform-origin: center center;
-  z-index: 1;
-  display: none;
-  cursor: grab;
-  user-select: none;
-}
-
-/* Layer 2: รูปเสื้อ */
-#shirt {
-  position: absolute;
-  left: 50%; top: 50%;
-  max-width: 100%; max-height: 100%;
-  transform-origin: center center;
-  object-fit: contain;
-  cursor: grab;
-  z-index: 2;
-  user-select: none;
-}
-
-/* Layer 3: โลโก้และข้อความ */
-#logoPoster {
-  position: absolute; top: 12px; left: 12px;
-  width: 55px; height: 55px;
-  border-radius: 50%; overflow: hidden; display: none;
-  border: 2px solid #ff3131;
-  z-index: 3;
-}
-#logoPoster img { width: 100%; height: 100%; object-fit: cover; }
-
-.draggable { position: absolute; cursor: grab; user-select: none; z-index: 3; }
-
-#priceLabel {
-  left: 18px; bottom: 85px;
-  font-size: 46px; font-weight: 900;
-  color: #ff3131;
-  padding: 6px 12px; border-radius: 14px;
-  background: rgba(255,255,255,.08);
-  border: 2px solid rgba(0,0,0,.85);
-  -webkit-text-stroke: 1px #000;
-  text-shadow:
-    2px 2px 0 #000, -2px 2px 0 #000,
-    2px -2px 0 #000, -2px -2px 0 #000,
-    0 4px 8px rgba(0,0,0,.45);
-}
-#codeLabel { top: 16px; right: 16px; background: #000c; color: #fff; padding: 5px 8px; border-radius: 8px; font-size: 12px; }
-#stockLabel { left: 18px; bottom: 22px; background: #000c; color: #fff; padding: 7px 10px; border-radius: 10px; }
-#sizeLabel { right: 18px; bottom: 22px; background: #d10000; color: #fff; padding: 7px 10px; border-radius: 10px; }
-
-.btn {
-  width: 100%;
-  background: linear-gradient(135deg, #ff2a2a 0%, #a90000 100%);
-  color: #fff;
-  font-weight: bold;
-  font-size: 15px;
-  box-shadow: 0 4px 15px var(--accent-glow);
-}
-
-@media(max-width: 900px) {
-  .wrap { grid-template-columns: 1fr; }
-  #poster { width: 100%; }
-}
-</style>
-</head>
-<body>
-
-<!-- หน้าเข้าสู่ระบบ -->
-<div id="loginScreen">
-  <div class="login-box">
-    <h2>🔒 Admin Access</h2>
-    <p style="color:#aaa;font-size:14px;margin-bottom:20px;">กรุณากรอกรหัสผ่านเพื่อเข้าใช้งานระบบ</p>
-    <input type="password" id="passInput" placeholder="Passcode" autofocus>
-    <button class="btn" id="loginBtn">เข้าสู่ระบบ</button>
-    <div id="loginErr">❌ รหัสผ่านไม่ถูกต้อง!</div>
-  </div>
-</div>
-
-<!-- หน้าโปรแกรมหลัก -->
-<div id="mainApp">
-  <div class="header-bar">
-    <h2>⚡ ບໍ່ແພງແຕ່ເທ້ Admin Studio V5.2</h2>
-    <div class="user-status">
-      <div class="status-badge">🟢 Authorized Access</div>
-      <button id="logoutBtn" style="background:rgba(255,42,42,0.2);color:#ff5555;border:1px solid rgba(255,42,42,0.4);padding:6px 12px;font-size:12px">ออกจากระบบ</button>
-    </div>
-  </div>
-
-  <div class="wrap">
-    <!-- ฝั่งซ้าย: เครื่องมือตั้งค่า -->
-    <div>
-      <div class="panel">
-        <h3>🖼️ ຮູບພື້ນຫຼັງ (Background)</h3>
-        <input type="file" id="bgUpload" accept="image/*">
-        <button id="removeBgBtn" type="button" style="width:100%;margin-top:8px;background:rgba(255,42,42,0.2);color:#ff5555;border:1px solid rgba(255,42,42,0.4)">❌ ລຶບຮູບພື້ນຫຼັງ</button>
-      </div>
-
-      <div class="panel">
-        <h3>🏪 ໂລໂກ້ຮ້ານ</h3>
-        <input type="file" id="logoUpload" accept="image/*">
-        <label style="display:block;margin-top:10px;"><input type="checkbox" id="showLogo" checked style="width:auto"> ສະແດງໂລໂກ້</label>
-      </div>
-
-      <div class="panel">
-        <h3>👕 ເລືອກຮູບສິນຄ້າ</h3>
-        <input type="file" id="shirtUpload" accept="image/*">
-        <button class="btn" id="cutoutBtn" type="button" style="margin-top:12px">✂️ AI ໄດຄັດພື້ນຫຼັງ</button>
-        <button id="restoreBtn" type="button" style="width:100%;margin-top:8px;background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.2)">↩️ ກັບໄປຮູບເດີມ</button>
-        
-        <div id="aiLoading" style="display:none;margin-top:12px">
-          <div style="color:#ff3131;font-weight:bold">🤖 AI ກຳລັງໄດຄັດພື້ນຫຼັງ...</div>
-          <div style="width:100%;height:10px;background:#1a1a24;border-radius:8px;margin-top:8px;overflow:hidden">
-            <div id="loadingBar" style="width:0%;height:100%;background:var(--accent-red);border-radius:8px;transition:width 0.3s"></div>
-          </div>
-          <div id="loadingText" style="font-size:13px;margin-top:5px;text-align:right">0%</div>
+transition">
+                    <svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div id="cart-items" class="flex-1 overflow-y-auto p-4 space-y-4">
+                <!-- Cart items injected here -->
+            </div>
+            <div class="p-4 border-t border-slate-200 bg-slate-50">
+                <div class="flex justify-between mb-4 font-bold text-lg">
+                    <span>ยอดรวมทั้งหมด:</span>
+                    <span id="cart-total" class="text-indigo-600">฿0</span>
+                </div>
+                <button onclick="checkout()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-bold transition shadow-lg shadow-indigo-600/30">
+                    ยืนยันการสั่งซื้อ / ชำระเงิน
+                </button>
+            </div>
         </div>
-      </div>
-
-      <div class="panel">
-        <h3>📝 ລາຍລະອຽດສິນຄ້າ</h3>
-        <input id="codeInput" placeholder="AP001">
-        <input id="priceInput" placeholder="299000">
-        <input id="stockInput" placeholder="18">
-        <select id="sizeSelect">
-          <option>S</option>
-          <option selected>M</option>
-          <option>L</option>
-          <option>XL</option>
-          <option value="custom">ພິມເອງ</option>
-        </select>
-        <input id="sizeCustom" style="display:none" placeholder="3XL / Free Size">
-      </div>
-
-      <div class="panel">
-        <h3>📱 ຊ່ອງທາງ</h3>
-        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">
-          <button class="platform active" data-ratio="4/5">Facebook</button>
-          <button class="platform" data-ratio="9/16">TikTok</button>
-          <button class="platform" data-ratio="16/9">YouTube</button>
-          <button class="platform" data-ratio="1/1">Instagram</button>
-        </div>
-        <p id="platformInfo" style="color:#aaa;font-size:13px;margin-bottom:0">1080×1350 Facebook</p>
-      </div>
     </div>
 
-    <!-- ฝั่งขวา: แสดงผล และปรับขนาด/เอฟเฟกต์ -->
-    <div>
-      <div class="panel">
-        <h3>🎨 ຕົວຢ່າງຮູບ</h3>
-        <div style="display:flex;justify-content:center;padding:10px 0">
-          <div id="poster">
-            <img id="bgImg">
-            <img id="shirt">
-            <div id="logoPoster"><img id="logoPreview"></div>
-            <div id="codeLabel" class="draggable">AP001</div>
-            <div id="priceLabel" class="draggable">299,000 ₭</div>
-            <div id="stockLabel" class="draggable">📦 ມີ 0 ໂຕ</div>
-            <div id="sizeLabel" class="draggable">M</div>
-          </div>
-        </div>
-      </div>
+    <script>
+        const products = [
+            { id: 1, name: "เสื้อยืด Minimalist Oversized", price: 350, image: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500&auto=format&fit=crop&q=60", desc: "เสื้อยืดผ้าคอตตอนพรีเมียม นุ่ม ใส่สบาย ดีไซน์มินิมอล เหมาะกับทุกโอกาส" },
+            { id: 2, name: "ฮู้ดดี้สตรีทแวร์ Cool Vibes", price: 790, image: "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=500&auto=format&fit=crop&q=60", desc: "ฮู้ดดี้กันหนาวเนื้อผ้าหนานุ่ม ทรงสวยสไตล์สตรีทแฟชั่น" },
+            { id: 3, name: "เสื้อเชิ้ต Casual Linen", price: 490, image: "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=500&auto=format&fit=crop&q=60", desc: "เสื้อเชิ้ตผ้าลินินผสม ระบายอากาศได้ดีเยี่ยม ลุคชิลๆ ใส่เที่ยวทะเลหรือคาเฟ่" }
+        ];
 
-      <div class="panel">
-        <h3>👕 ປັບຮູບສິນຄ້າ (Shirt Controls)</h3>
-        <label>ซูมสินค้า</label><input type="range" id="zoom" min="30" max="300" value="100">
-        <label style="margin-top:10px;display:block">หมุนสินค้า (องศา)</label><input type="range" id="shirtRotate" min="-180" max="180" value="0">
-        <label style="margin-top:10px;display:block">ความเบลอสินค้า (Blur)</label><input type="range" id="shirtBlur" min="0" max="20" value="0">
-      </div>
+        let cart = [];
 
-      <div class="panel">
-        <h3>🖼️ ປັບຮູບພື້ນຫຼັງ (Background Controls)</h3>
-        <label>ซูมพื้นหลัง</label><input type="range" id="bgZoom" min="30" max="300" value="100">
-        <label style="margin-top:10px;display:block">หมุนพื้นหลัง (องศา)</label><input type="range" id="bgRotate" min="-180" max="180" value="0">
-        <label style="margin-top:10px;display:block">ความเบลอพื้นหลัง (Blur FX)</label><input type="range" id="bgBlur" min="0" max="25" value="0">
-      </div>
+        function renderProducts() {
+            const grid = document.getElementById('product-grid');
+            grid.innerHTML = products.map(p => `
+                <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-xl transition flex flex-col group cursor-pointer" onclick="openDetail(${p.id})">
+                    <div class="aspect-square overflow-hidden bg-slate-100">
+                        <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                    </div>
+                    <div class="p-4 flex flex-col flex-1 justify-between">
+                        <div>
+                            <h3 class="font-bold text-slate-800 line-clamp-1">${p.name}</h3>
+                            <p class="text-indigo-600 font-bold mt-1">฿${p.price.toLocaleString()}</p>
+                        </div>
+                        <button class="mt-4 w-full bg-slate-100 hover:bg-indigo-600 hover:text-white text-slate-700 py-2 rounded-xl text-sm font-semibold transition">
+                            ดูรายละเอียด
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
 
-      <div class="panel">
-        <h3>🎨 ສີຂໍຄວາມ</h3>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-          <div><label>ສີລາຄາ</label><input type="color" id="priceColor" value="#ff3131"></div>
-          <div><label>ສີລະຫັດ</label><input type="color" id="codeColor" value="#ffffff"></div>
-          <div><label>ສີຈຳນວນສິນຄ້າ</label><input type="color" id="stockColor" value="#ffffff"></div>
-          <div><label>ສີເບີເສື້ອ</label><input type="color" id="sizeColor" value="#ffffff"></div>
-        </div>
+        function openDetail(id) {
+            const p = products.find(item => item.id === id);
+            const modal = document.getElementById('detail-modal');
+            const content = document.getElementById('modal-content');
+            
+            content.innerHTML = `
+                <div class="aspect-video bg-slate-100">
+                    <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover">
+                </div>
+                <div class="p-6">
+                    <h2 class="text-xl font-bold text-slate-900">${p.name}</h2>
+                    <p class="text-2xl font-bold text-indigo-600 mt-2">฿${p.price.toLocaleString()}</p>
+                    <p class="text-slate-600 text-sm mt-3 leading-relaxed">${p.desc}</p>
+                    <div class="mt-6 flex space-x-3">
+                        <button onclick="addToCart(${p.id}); closeModal();" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-bold transition shadow-lg shadow-indigo-600/30">
+                            หยิบใส่ตะกร้า
+                        </button>
+                    </div>
+                </div>
+            `;
+            modal.classList.remove('hidden');
+        }
 
-        <hr style="border-color:rgba(255,42,42,0.2);margin:20px 0">
+        function closeModal() {
+            document.getElementById('detail-modal').classList.add('hidden');
+        }
 
-        <h3>📏 ຂະໜາດຂໍ້ຄວາມ</h3>
-        <label>ขนาดยอดราคา</label><input type="range" id="priceSize" min="18" max="70" value="46">
-        <label style="margin-top:10px;display:block">ຂະໜາດລະຫັດສິນຄ້າ</label><input type="range" id="codeSize" min="8" max="30" value="12">
-        <label style="margin-top:10px;display:block">ຂະໜາດຂໍ້ຄວາມສິນຄ້າ</label><input type="range" id="stockSize" min="10" max="28" value="14">
-        <label style="margin-top:10px;display:block">ຂະໜາດເບີເສື້ອ</label><input type="range" id="sizeSize" min="10" max="28" value="14">
-      </div>
+        function toggleCart() {
+            const drawer = document.getElementById('cart-drawer');
+            drawer.classList.toggle('hidden');
+            renderCart();
+        }
 
-      <div class="panel">
-        <h3>👁️ ສະແດງ / ປິດ / ຂໍ້ມູນ</h3>
-        <label style="margin-right:15px"><input type="checkbox" id="togglePrice" checked style="width:auto"> ສະແດງລາຄາ</label>
-        <label style="margin-right:15px"><input type="checkbox" id="toggleCode" checked style="width:auto"> ສະແດງລະຫັດສິນຄ້າ</label><br><br>
-        <label style="margin-right:15px"><input type="checkbox" id="toggleStock" checked style="width:auto"> ສະແດງຈຳນວນສິນຄ້າ</label>
-        <label><input type="checkbox" id="toggleSize" checked style="width:auto"> ສະແດງເບີເສື້ອ</label>
-      </div>
+        function addToCart(id) {
+            const p = products.find(item => item.id === id);
+            const existing = cart.find(item => item.id === id);
+            if (existing) {
+                existing.qty += 1;
+            } else {
+                cart.push({ ...p, qty: 1 });
+            }
+            updateCartBadge();
+        }
 
-      <button class="btn" id="downloadBtn" style="padding:15px;font-size:18px">📥 ໂຫລດຮູບ PNG</button>
-    </div>
-  </div>
-</div>
+        function updateCartBadge() {
+            const badge = document.getElementById('cart-badge');
+            const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+            if (totalQty > 0) {
+                badge.textContent = totalQty;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
 
-<script>
-// Authentication Logic
-const SECRET_PASS = "55884249";
-const loginScreen = document.getElementById("loginScreen");
-const mainApp = document.getElementById("mainApp");
-const passInput = document.getElementById("passInput");
-const loginBtn = document.getElementById("loginBtn");
-const loginErr = document.getElementById("loginErr");
-const logoutBtn = document.getElementById("logoutBtn");
+        function renderCart() {
+            const container = document.getElementById('cart-items');
+            const totalEl = document.getElementById('cart-total');
+            
+            if (cart.length === 0) {
+                container.innerHTML = `<div class="text-center py-12 text-slate-400">ตะกร้าสินค้าว่างเปล่า</div>`;
+                totalEl.textContent = '฿0';
+                return;
+            }
 
-function checkLogin() {
-  if (passInput.value === SECRET_PASS) {
-    sessionStorage.setItem("admin_auth", "true");
-    loginScreen.style.display = "none";
-    mainApp.style.display = "block";
-    loginErr.style.display = "none";
-  } else {
-    loginErr.style.display = "block";
-    passInput.value = "";
-  }
-}
+            container.innerHTML = cart.map(item => `
+                <div class="flex items-center space-x-4 bg-slate-50 p-3 rounded-xl">
+                    <img src="${item.image}" class="w-16 h-16 object-cover rounded-lg">
+                    <div class="flex-1">
+                        <h4 class="font-bold text-sm text-slate-800">${item.name}</h4>
+                        <p class="text-indigo-600 font-semibold text-sm">฿${item.price.toLocaleString()} x ${item.qty}</p>
+                    </div>
+                    <button onclick="removeFromCart(${item.id})" class="text-slate-400 hover:text-red-500 p-1">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                    </button>
+                </div>
+            `).join('');
 
-loginBtn.onclick = checkLogin;
-passInput.onkeypress = (e) => { if (e.key === "Enter") checkLogin(); };
+            const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            totalEl.textContent = `฿${total.toLocaleString()}`;
+        }
 
-logoutBtn.onclick = () => {
-  sessionStorage.removeItem("admin_auth");
-  location.reload();
-};
+        function removeFromCart(id) {
+            cart = cart.filter(item => item.id !== id);
+            renderCart();
+            updateCartBadge();
+        }
 
-// Check Existing Session
-if (sessionStorage.getItem("admin_auth") === "true") {
-  loginScreen.style.display = "none";
-  mainApp.style.display = "block";
-}
+        function checkout() {
+            if (cart.length === 0) return alert('กรุณาเลือกสินค้าอย่างน้อย 1 ชิ้นครับ');
+            alert('ระบบจำลองการสั่งซื้อสำเร็จ! ขอบคุณที่อุดหนุนครับ');
+            cart = [];
+            renderCart();
+            updateCartBadge();
+            toggleCart();
+        }
 
-// App State & Studio Variables
-let zoomScale = 1, shirtX = 0, shirtY = 0, shirtRot = 0, shirtB = 0;
-let bgZoomScale = 1, bgX = 0, bgY = 0, bgRot = 0, bgB = 0;
-let originalShirtSrc = "";
-
-const shirt = document.getElementById("shirt");
-const bgImg = document.getElementById("bgImg");
-const zoom = document.getElementById("zoom");
-const bgZoom = document.getElementById("bgZoom");
-const poster = document.getElementById("poster");
-
-function updateShirt() {
-  shirt.style.transform = `translate(calc(-50% + ${shirtX}px), calc(-50% + ${shirtY}px)) scale(${zoomScale}) rotate(${shirtRot}deg)`;
-  shirt.style.filter = `blur(${shirtB}px)`;
-}
-
-function updateBg() {
-  bgImg.style.transform = `translate(calc(-50% + ${bgX}px), calc(-50% + ${bgY}px)) scale(${bgZoomScale}) rotate(${bgRot}deg)`;
-  bgImg.style.filter = `blur(${bgB}px)`;
-}
-
-// Background Controls
-document.getElementById("bgUpload").onchange = e => {
-  const f = e.target.files[0]; if (!f) return;
-  const r = new FileReader();
-  r.onload = x => {
-    bgImg.src = x.target.result;
-    bgImg.style.display = "block";
-    updateBg();
-  };
-  r.readAsDataURL(f);
-};
-
-document.getElementById("removeBgBtn").onclick = () => {
-  bgImg.src = "";
-  bgImg.style.display = "none";
-  document.getElementById("bgUpload").value = "";
-};
-
-bgZoom.oninput = () => { bgZoomScale = parseFloat(bgZoom.value) / 100; updateBg(); };
-document.getElementById("bgRotate").oninput = (e) => { bgRot = e.target.value; updateBg(); };
-document.getElementById("bgBlur").oninput = (e) => { bgB = e.target.value; updateBg(); };
-
-// Shirt Controls
-zoom.oninput = () => { zoomScale = parseFloat(zoom.value) / 100; updateShirt(); };
-document.getElementById("shirtRotate").oninput = (e) => { shirtRot = e.target.value; updateShirt(); };
-document.getElementById("shirtBlur").oninput = (e) => { shirtB = e.target.value; updateShirt(); };
-
-// Shirt Dragging
-let draggingShirt = false, sx = 0, sy = 0;
-shirt.addEventListener("pointerdown", (e) => {
-  draggingShirt = true;
-  sx = e.clientX; sy = e.clientY;
-  shirt.setPointerCapture(e.pointerId);
-});
-shirt.addEventListener("pointermove", (e) => {
-  if (!draggingShirt) return;
-  shirtX += e.clientX - sx;
-  shirtY += e.clientY - sy;
-  sx = e.clientX; sy = e.clientY;
-  updateShirt();
-});
-shirt.addEventListener("pointerup", () => draggingShirt = false);
-
-// Background Dragging
-let draggingBg = false, bsx = 0, bsy = 0;
-bgImg.addEventListener("pointerdown", (e) => {
-  draggingBg = true;
-  bsx = e.clientX; bsy = e.clientY;
-  bgImg.setPointerCapture(e.pointerId);
-});
-bgImg.addEventListener("pointermove", (e) => {
-  if (!draggingBg) return;
-  bgX += e.clientX - bsx;
-  bgY += e.clientY - bsy;
-  bsx = e.clientX; bsy = e.clientY;
-  updateBg();
-});
-bgImg.addEventListener("pointerup", () => draggingBg = false);
-
-// Logo Controls
-document.getElementById("logoUpload").onchange = e => {
-  const f = e.target.files[0]; if (!f) return;
-  const r = new FileReader();
-  r.onload = x => {
-    document.getElementById("logoPreview").src = x.target.result;
-    document.getElementById("logoPoster").style.display = document.getElementById("showLogo").checked ? "block" : "none";
-  };
-  r.readAsDataURL(f);
-};
-document.getElementById("showLogo").onchange = () => {
-  document.getElementById("logoPoster").style.display = (document.getElementById("showLogo").checked && document.getElementById("logoPreview").src) ? "block" : "none";
-};
-
-// Shirt Upload
-document.getElementById("shirtUpload").onchange = e => {
-  const f = e.target.files[0]; if (!f) return;
-  const r = new FileReader();
-  r.onload = x => {
-    shirt.src = x.target.result;
-    originalShirtSrc = x.target.result;
-    updateShirt();
-  };
-  r.readAsDataURL(f);
-};
-
-// Text Fields Input
-document.getElementById("codeInput").oninput = (e) => document.getElementById("codeLabel").textContent = e.target.value || "AP001";
-document.getElementById("priceInput").oninput = (e) => {
-  const n = Number(e.target.value.replace(/,/g, ""));
-  if (e.target.value) document.getElementById("priceLabel").textContent = n.toLocaleString() + " ₭";
-};
-document.getElementById("stockInput").oninput = (e) => document.getElementById("stockLabel").textContent = "📦 ມີ " + e.target.value + " ໂຕ";
-document.getElementById("sizeSelect").onchange = (e) => {
-  if (e.target.value === "custom") {
-    document.getElementById("sizeCustom").style.display = "block";
-  } else {
-    document.getElementById("sizeCustom").style.display = "none";
-    document.getElementById("sizeLabel").textContent = e.target.value;
-  }
-};
-document.getElementById("sizeCustom").oninput = (e) => document.getElementById("sizeLabel").textContent = e.target.value;
-
-// Wheel Zoom
-poster.addEventListener("wheel", (e) => {
-  e.preventDefault();
-  const delta = e.deltaY < 0 ? 0.05 : -0.05;
-  zoomScale = Math.max(0.3, Math.min(3, zoomScale + delta));
-  zoom.value = Math.round(zoomScale * 100);
-  updateShirt();
-}, { passive: false });
-
-// Platform Ratios
-const info = { "4/5": "1080×1350 Facebook", "9/16": "1080×1920 TikTok", "16/9": "1280×720 YouTube", "1/1": "1080×1080 Instagram" };
-document.querySelectorAll(".platform").forEach(btn => btn.onclick = () => {
-  document.querySelectorAll(".platform").forEach(b => b.classList.remove("active"));
-  btn.classList.add("active");
-  poster.style.aspectRatio = btn.dataset.ratio;
-  document.getElementById("platformInfo").textContent = info[btn.dataset.ratio];
-  updateShirt();
-});
-
-// Text Dragging
-function drag(el) {
-  let active = false, startX, startY, startLeft, startTop;
-  el.addEventListener("pointerdown", (e) => {
-    active = true;
-    const r = el.getBoundingClientRect();
-    const p = poster.getBoundingClientRect();
-    startLeft = r.left - p.left;
-    startTop = r.top - p.top;
-    startX = e.clientX; startY = e.clientY;
-    el.style.left = startLeft + "px";
-    el.style.top = startTop + "px";
-    el.style.right = "auto";
-    el.style.bottom = "auto";
-    el.setPointerCapture(e.pointerId);
-  });
-  el.addEventListener("pointermove", (e) => {
-    if (!active) return;
-    const x = startLeft + (e.clientX - startX);
-    const y = startTop + (e.clientY - startY);
-    el.style.left = Math.max(0, Math.min(x, poster.clientWidth - el.offsetWidth)) + "px";
-    el.style.top = Math.max(0, Math.min(y, poster.clientHeight - el.offsetHeight)) + "px";
-  });
-  el.addEventListener("pointerup", () => active = false);
-}
-["priceLabel", "codeLabel", "stockLabel", "sizeLabel"].forEach(id => drag(document.getElementById(id)));
-
-// Styling Controls
-document.getElementById("priceSize").oninput = (e) => document.getElementById("priceLabel").style.fontSize = e.target.value + "px";
-document.getElementById("priceColor").oninput = (e) => document.getElementById("priceLabel").style.color = e.target.value;
-document.getElementById("codeColor").oninput = (e) => document.getElementById("codeLabel").style.color = e.target.value;
-document.getElementById("stockColor").oninput = (e) => document.getElementById("stockLabel").style.color = e.target.value;
-document.getElementById("sizeColor").oninput = (e) => document.getElementById("sizeLabel").style.color = e.target.value;
-
-document.getElementById("codeSize").oninput = (e) => document.getElementById("codeLabel").style.fontSize = e.target.value + "px";
-document.getElementById("stockSize").oninput = (e) => document.getElementById("stockLabel").style.fontSize = e.target.value + "px";
-document.getElementById("sizeSize").oninput = (e) => document.getElementById("sizeLabel").style.fontSize = e.target.value + "px";
-
-document.getElementById("togglePrice").onchange = (e) => document.getElementById("priceLabel").style.display = e.target.checked ? "block" : "none";
-document.getElementById("toggleCode").onchange = (e) => document.getElementById("codeLabel").style.display = e.target.checked ? "block" : "none";
-document.getElementById("toggleStock").onchange = (e) => document.getElementById("stockLabel").style.display = e.target.checked ? "block" : "none";
-document.getElementById("toggleSize").onchange = (e) => document.getElementById("sizeLabel").style.display = e.target.checked ? "block" : "none";
-
-// Download Image
-document.getElementById("downloadBtn").onclick = () => {
-  html2canvas(poster, { scale: 2, backgroundColor: null }).then(c => {
-    const a = document.createElement("a");
-    a.download = "poster.png";
-    a.href = c.toDataURL("image/png");
-    a.click();
-  });
-};
-
-// Cutout AI & Restore
-document.getElementById("cutoutBtn").onclick = async () => {
-  if (!shirt.src) { alert("ເລືອກຮູບເສື້ອກ່ອນ"); return; }
-  const aiLoading = document.getElementById("aiLoading");
-  const loadingBar = document.getElementById("loadingBar");
-  const loadingText = document.getElementById("loadingText");
-  
-  aiLoading.style.display = "block";
-  loadingBar.style.width = "0%";
-  loadingText.textContent = "0%";
-  
-  for (let i = 1; i <= 15; i++) {
-    await new Promise(r => setTimeout(r, 100));
-    const p = i / 15 * 100;
-    loadingBar.style.width = p + "%";
-    loadingText.textContent = Math.round(p) + "%";
-  }
-  
-  try {
-    const m = await import("https://cdn.jsdelivr.net/npm/@imgly/background-removal/+esm");
-    const blob = await m.removeBackground(shirt.src);
-    shirt.src = URL.createObjectURL(blob);
-    updateShirt();
-  } catch (e) {
-    alert("AI ບໍ່ສາມາດໄດຄັດໄດ້ ກວດເຊັກອິນເຕີເນັດ");
-    console.error(e);
-  }
-  aiLoading.style.display = "none";
-};
-
-document.getElementById("restoreBtn").onclick = () => {
-  if (originalShirtSrc) {
-    shirt.src = originalShirtSrc;
-    updateShirt();
-  }
-};
-</script>
+        renderProducts();
+    </script>
 </body>
 </html>
