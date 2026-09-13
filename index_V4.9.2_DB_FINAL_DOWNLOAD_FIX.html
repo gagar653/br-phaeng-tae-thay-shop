@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Studio V4.9</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+body{margin:0;background:#070707;color:#fff;font-family:Arial}
+.wrap{display:grid;grid-template-columns:300px 1fr;gap:20px;padding:20px;max-width:1300px;margin:auto}
+.panel{background:#111;border:1px solid #550000;border-radius:20px;padding:15px}
+input,select{width:100%;padding:10px;border-radius:10px;background:#181818;border:1px solid #550000;color:#fff;margin-top:8px}
+button{padding:10px;border-radius:10px;border:none;cursor:pointer}
+.platform.active{background:#d10000;color:#fff}.platform{background:#222;color:#fff}
+#poster{width:340px;aspect-ratio:4/5;background:#fff;position:relative;overflow:hidden}
+#shirt{
+ position:absolute;
+ left:50%;top:50%;
+ width:auto;height:auto;
+ max-width:100%;max-height:100%;
+ transform:translate(-50%,-50%) scale(1);
+ transform-origin:center center;
+ object-fit:contain;
+ cursor:grab;
+}
+#shirt:active{cursor:grabbing}
+#logoPoster{position:absolute;top:12px;left:12px;width:55px;height:55px;border-radius:50%;overflow:hidden;display:none;border:2px solid #f33}
+#logoPoster img{width:100%;height:100%;object-fit:cover}
+.draggable{position:absolute;cursor:grab;user-select:none}
+.dragging{cursor:grabbing}
+#priceLabel{
+ left:18px;
+ bottom:85px;
+ font-size:46px;
+ font-weight:900;
+ color:#ff3131;
+ padding:6px 12px;
+ border-radius:14px;
+ background:rgba(255,255,255,.08);
+ border:2px solid rgba(0,0,0,.85);
+ -webkit-text-stroke:1px #000;
+ text-shadow:
+   2px 2px 0 #000,
+   -2px 2px 0 #000,
+   2px -2px 0 #000,
+   -2px -2px 0 #000,
+   0 4px 8px rgba(0,0,0,.45);
+}
+#codeLabel{top:16px;right:16px;background:#000c;color:#fff;padding:5px 8px;border-radius:8px;font-size:12px}
+#stockLabel{left:18px;bottom:22px;background:#000c;color:#fff;padding:7px 10px;border-radius:10px}
+#sizeLabel{right:18px;bottom:22px;background:#d10000;color:#fff;padding:7px 10px;border-radius:10px}
+.btn{width:100%;background:#d10000;color:#fff;font-weight:bold}
+@media(max-width:900px){.wrap{grid-template-columns:1fr}#poster{width:100%}}
+</style>
+</head>
+<body>
+<div style="background:#090909;padding:15px;border-bottom:2px solid #700"><h2 style="color:#ff2d2d;margin:0">ບໍ່ແພງແຕ່ເທ້ Admin Studio V4.9</h2></div>
+
+<button id="openDB" style="position:fixed;top:16px;right:20px;z-index:9999;
+background:#007AFF;color:white;border:none;padding:10px 16px;
+border-radius:12px;font-weight:bold;cursor:pointer;">
+📦 คลังรหัส
+</button>
+
+<div class="wrap">
+<div>
+<div class="panel"><h3>🏪 โลโก้ร้าน</h3><input type=file id=logoUpload accept="image/*"><label><input type=checkbox id=showLogo checked style="width:auto"> แสดงโลโก้</label></div>
+<div class="panel"><h3>👕 รูปสินค้า</h3><input type=file id=shirtUpload accept="image/*"></div>
+<div class="panel"><h3>📝 ข้อมูลสินค้า</h3>
+<input id=codeInput placeholder="AP001">
+<input id=priceInput placeholder="299000">
+<input id=stockInput placeholder="18">
+<select id=sizeSelect><option>S</option><option selected>M</option><option>L</option><option>XL</option><option value=custom>พิมพ์เอง...</option></select>
+<input id=sizeCustom style="display:none" placeholder="3XL / Free Size">
+</div>
+<div class="panel"><h3>📱 แพลตฟอร์ม</h3>
+<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">
+<button class="platform active" data-ratio="4/5">Facebook</button>
+<button class=platform data-ratio="9/16">TikTok</button>
+<button class=platform data-ratio="16/9">YouTube</button>
+<button class=platform data-ratio="1/1">Instagram</button>
+</div>
+<p id=platformInfo>1080×1350 Facebook</p>
+</div>
+<div class="panel"><h3>🖱️ V4.9 ใหม่</h3>
+<p style="font-size:13px;color:#ccc">✔ ลากราคา / รหัส / จำนวน / ไซซ์ ได้</p>
+<p style="font-size:13px;color:#ccc">✔ ลากรูปเสื้อได้</p>
+<p style="font-size:13px;color:#ccc">✔ ใช้ลูกกลิ้งเมาส์ซูมรูปได้</p>
+</div>
+</div>
+
+<div>
+<div class="panel">
+<h3>🎨 ตัวอย่างโพสต์สินค้า</h3>
+<div style="display:flex;justify-content:center">
+<div id=poster>
+<img id=shirt>
+<div id=logoPoster><img id=logoPreview></div>
+<div id=codeLabel class=draggable>AP001</div>
+<div id=priceLabel class=draggable>299,000 ₭</div>
+<div id=stockLabel class=draggable>📦 เหลือ 18 ตัว</div>
+<div id=sizeLabel class=draggable>M</div>
+</div>
+</div>
+</div>
+<div class="panel">
+<h3>⚙️ ปรับขนาด</h3>
+<label>ซูมรูป</label><input type=range id=zoom min=50 max=250 value=100>
+<label>ขนาดราคา</label><input type=range id=priceSize min=18 max=70 value=46>
+</div>
+
+<div class="panel">
+<h3>🎨 สีข้อความ (กลับมาแล้ว)</h3>
+<label>สีราคา</label><input type="color" id="priceColor" value="#ff3131">
+<label>สีรหัสสินค้า</label><input type="color" id="codeColor" value="#ffffff">
+<label>สีจำนวนสินค้า</label><input type="color" id="stockColor" value="#ffffff">
+<label>สีเบอร์เสื้อ</label><input type="color" id="sizeColor" value="#ffffff">
+
+<hr style="border-color:#550000;margin:15px 0">
+
+<h3>📏 ขนาดข้อความ (กลับมาแล้ว)</h3>
+<label>ขนาดรหัสสินค้า</label><input type="range" id="codeSize" min="8" max="30" value="12">
+<label>ขนาดจำนวนสินค้า</label><input type="range" id="stockSize" min="10" max="28" value="14">
+<label>ขนาดเบอร์เสื้อ</label><input type="range" id="sizeSize" min="10" max="28" value="14">
+</div>
+
+
+<div class="panel">
+<h3>👁️ แสดง / ซ่อน ข้อมูล</h3>
+<label><input type="checkbox" id="togglePrice" checked style="width:auto"> แสดงราคา</label><br><br>
+<label><input type="checkbox" id="toggleCode" checked style="width:auto"> แสดงรหัสสินค้า</label><br><br>
+<label><input type="checkbox" id="toggleStock" checked style="width:auto"> แสดงจำนวนสินค้า</label><br><br>
+<label><input type="checkbox" id="toggleSize" checked style="width:auto"> แสดงเบอร์เสื้อ</label>
+</div>
+
+<button class=btn id=downloadBtn>📥 ดาวน์โหลด PNG</button>
+</div>
+</div>
+
+<script>
+let zoomScale=1,shirtX=0,shirtY=0;
+function updateShirt(){
+ shirt.style.transform=`translate(calc(-50% + ${shirtX}px), calc(-50% + ${shirtY}px)) scale(${zoomScale})`;
+}
+logoUpload.onchange=e=>{
+ const f=e.target.files[0];if(!f)return;
+ const r=new FileReader();
+ r.onload=x=>{logoPreview.src=x.target.result;logoPoster.style.display=showLogo.checked?"block":"none"};
+ r.readAsDataURL(f);
+};
+showLogo.onchange=()=>logoPoster.style.display=(showLogo.checked&&logoPreview.src)?"block":"none";
+shirtUpload.onchange=e=>{
+ const f=e.target.files[0];if(!f)return;
+ const r=new FileReader();
+ r.onload=x=>shirt.src=x.target.result;
+ r.readAsDataURL(f);
+};
+codeInput.oninput=()=>codeLabel.textContent=codeInput.value||"AP001";
+priceInput.oninput=()=>{
+ const n=Number(priceInput.value.replace(/,/g,""));
+ if(priceInput.value) priceLabel.textContent=n.toLocaleString()+" ₭";
+};
+stockInput.oninput=()=>stockLabel.textContent="📦 เหลือ "+stockInput.value+" ตัว";
+sizeSelect.onchange=()=>{if(sizeSelect.value==="custom"){sizeCustom.style.display="block"}else{sizeCustom.style.display="none";sizeLabel.textContent=sizeSelect.value}};
+sizeCustom.oninput=()=>sizeLabel.textContent=sizeCustom.value;
+
+zoom.oninput=()=>{zoomScale=zoom.value/100;updateShirt()};
+
+poster.addEventListener("wheel",(e)=>{
+ e.preventDefault();
+ zoomScale += e.deltaY<0 ? 0.05 : -0.05;
+ zoomScale=Math.max(0.5,Math.min(2.5,zoomScale));
+ zoom.value=zoomScale*100;
+ updateShirt();
+},{passive:false});
+
+let draggingImg=false,sx=0,sy=0;
+shirt.addEventListener("pointerdown",(e)=>{
+ draggingImg=true;
+ sx=e.clientX; sy=e.clientY;
+ shirt.setPointerCapture(e.pointerId);
+});
+shirt.addEventListener("pointermove",(e)=>{
+ if(!draggingImg)return;
+ shirtX += e.clientX-sx;
+ shirtY += e.clientY-sy;
+ sx=e.clientX; sy=e.clientY;
+ updateShirt();
+});
+shirt.addEventListener("pointerup",()=>draggingImg=false);
+
+const info={"4/5":"1080×1350 Facebook","9/16":"1080×1920 TikTok","16/9":"1280×720 YouTube","1/1":"1080×1080 Instagram"};
+document.querySelectorAll(".platform").forEach(btn=>btn.onclick=()=>{
+ document.querySelectorAll(".platform").forEach(b=>b.classList.remove("active"));
+ btn.classList.add("active");
+ poster.style.aspectRatio=btn.dataset.ratio;
+ platformInfo.textContent=info[btn.dataset.ratio];
+ updateShirt();
+});
+
+function drag(el){
+ let active=false,startX,startY,startLeft,startTop;
+ el.addEventListener("pointerdown",(e)=>{
+   active=true;
+   const r=el.getBoundingClientRect();
+   const p=poster.getBoundingClientRect();
+   startLeft=r.left-p.left;
+   startTop=r.top-p.top;
+   startX=e.clientX; startY=e.clientY;
+   el.style.left=startLeft+"px";
+   el.style.top=startTop+"px";
+   el.style.right="auto";
+   el.style.bottom="auto";
+   el.setPointerCapture(e.pointerId);
+ });
+ el.addEventListener("pointermove",(e)=>{
+   if(!active)return;
+   const x=startLeft+(e.clientX-startX);
+   const y=startTop+(e.clientY-startY);
+   el.style.left=Math.max(0,Math.min(x,poster.clientWidth-el.offsetWidth))+"px";
+   el.style.top=Math.max(0,Math.min(y,poster.clientHeight-el.offsetHeight))+"px";
+ });
+ el.addEventListener("pointerup",()=>active=false);
+}
+["priceLabel","codeLabel","stockLabel","sizeLabel"].forEach(id=>drag(document.getElementById(id)));
+
+priceSize.oninput=()=>priceLabel.style.fontSize=priceSize.value+"px";
+
+
+priceColor.oninput=()=>priceLabel.style.color=priceColor.value;
+codeColor.oninput=()=>codeLabel.style.color=codeColor.value;
+stockColor.oninput=()=>stockLabel.style.color=stockColor.value;
+sizeColor.oninput=()=>sizeLabel.style.color=sizeColor.value;
+
+codeSize.oninput=()=>codeLabel.style.fontSize=codeSize.value+"px";
+stockSize.oninput=()=>stockLabel.style.fontSize=stockSize.value+"px";
+sizeSize.oninput=()=>sizeLabel.style.fontSize=sizeSize.value+"px";
+
+
+
+togglePrice.onchange=()=>priceLabel.style.display=togglePrice.checked?"block":"none";
+toggleCode.onchange=()=>codeLabel.style.display=toggleCode.checked?"block":"none";
+toggleStock.onchange=()=>stockLabel.style.display=toggleStock.checked?"block":"none";
+toggleSize.onchange=()=>sizeLabel.style.display=toggleSize.checked?"block":"none";
+
+
+
+// ===== คลังรหัสเสื้อ V4.9.2 (เพิ่มอย่างเดียว) =====
+const DB_KEY = "ANPHA_CODE_DB";
+
+function getCodes(){
+  return JSON.parse(localStorage.getItem(DB_KEY) || "[]");
+}
+
+function saveCodes(list){
+  localStorage.setItem(DB_KEY, JSON.stringify(list));
+}
+
+function saveCurrentCode(){
+  const code = codeInput.value || codeLabel.textContent;
+  if(!code) return;
+
+  const list = getCodes();
+  if(!list.includes(code)){
+    list.unshift(code);
+    saveCodes(list);
+  }
+}
+
+function renderCodes(){
+  const list = getCodes();
+  dbList.innerHTML = "";
+
+  if(list.length===0){
+    dbList.innerHTML = "<p style='color:#aaa;text-align:center'>ยังไม่มีรหัสสินค้า</p>";
+    return;
+  }
+
+  list.forEach((code,index)=>{
+    const row = document.createElement("div");
+    row.style.cssText="display:flex;justify-content:space-between;align-items:center;background:#1d1d1d;border:1px solid #333;border-radius:10px;padding:10px;";
+    row.innerHTML = `
+      <div style="font-size:18px;font-weight:bold;color:#ff5050">${code}</div>
+      <button style="background:#ff3b30;color:white;border:none;padding:6px 10px;border-radius:8px;">ลบ</button>
+    `;
+    row.querySelector("button").onclick=()=>{
+      const data=getCodes();
+      data.splice(index,1);
+      saveCodes(data);
+      renderCodes();
+    };
+    dbList.appendChild(row);
+  });
+}
+
+window.openDatabase=function(){ dbModal.style.display="flex"; renderCodes(); };
+openDB.onclick=openDatabase;
+
+window.closeDatabase=function(){ dbModal.style.display="none"; }
+
+closeDB.addEventListener("click", closeDatabase);
+
+// กดพื้นหลังสีดำเพื่อปิด
+dbModal.addEventListener("click",(e)=>{
+  if(e.target===dbModal){
+    closeDatabase();
+  }
+});
+
+// กด ESC เพื่อปิด
+document.addEventListener("keydown",(e)=>{
+  if(e.key==="Escape" && dbModal.style.display==="block"){
+    closeDatabase();
+  }
+});
+
+
+clearDB.onclick=()=>{
+  if(confirm("ล้างรหัสทั้งหมด?")){
+    localStorage.removeItem(DB_KEY);
+    renderCodes();
+  }
+};
+// ===== จบระบบคลังรหัส =====
+
+
+downloadBtn.onclick=()=>{
+  saveCurrentCode();
+ html2canvas(poster,{scale:2,backgroundColor:"#fff"}).then(c=>{
+  const a=document.createElement("a");
+  a.download="poster.png";
+  a.href=c.toDataURL("image/png");
+  a.click();
+ });
+};
+</script>
+
+<div id="dbModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:10000;padding:20px;">
+  <div style="max-width:520px;margin:20px auto;background:#111;border:2px solid #ff3333;
+  border-radius:18px;padding:20px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <h2 style="margin:0;color:#ff4040;">📦 คลังรหัสเสื้อ</h2>
+      <button id="closeDB" onclick="closeDatabase()" style="background:#333;color:#fff;border:none;padding:8px 12px;border-radius:8px;">✕</button>
+    </div>
+
+    <div id="dbList" style="margin-top:18px;display:flex;flex-direction:column;gap:10px;"></div>
+
+    <button id="clearDB" style="margin-top:18px;width:100%;padding:12px;
+    background:#8b0000;color:white;border:none;border-radius:10px;font-weight:bold;">
+      🗑️ ล้างคลังรหัสทั้งหมด
+    </button>
+  </div>
+</div>
+
+</body>
+</html>
