@@ -433,9 +433,12 @@ bgBlur.addEventListener("input", () => {
 
     if (bgImage === "") return;
 
+    // ใช้ blur กับพื้นหลังที่อัปโหลด
     poster.style.backgroundImage = `url(${bgImage})`;
     poster.style.backgroundSize = "cover";
     poster.style.backgroundPosition = "center";
+    poster.style.filter = `blur(${bgBlur.value}px)`;
+});
 
     // เบลอรูปพื้นหลังจริง
     poster.style.filter = `blur(${bgBlur.value}px)`;
