@@ -3,10 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin ຮ້ານບໍ່ແພງແຕ່ເທ້ V6.4 - Sticky Studio Hub</title>
+<title>Admin ຮ້ານບໍ່ແພງແຕ່ເທ້ V7.1 - Sticky Studio Hub & DB</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<!-- Tesseract.js สำหรับ AI OCR อ่านตัวเลข/รหัสจากกล้อง -->
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@v5/dist/tesseract.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
 :root {
   --bg-main: #06060c;
@@ -32,7 +31,6 @@ body {
   min-height: 100vh;
 }
 
-/* ================= LOGIN SCREEN ================= */
 #loginScreen {
   position: fixed;
   top: 0; left: 0;
@@ -64,6 +62,13 @@ body {
   font-size: 18px;
   letter-spacing: 2px;
   margin-bottom: 15px;
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--input-bg);
+  border: 1px solid rgba(255, 42, 42, 0.3);
+  color: #fff;
+  outline: none;
 }
 #loginErr {
   color: #ff4444;
@@ -72,7 +77,6 @@ body {
   display: none;
 }
 
-/* ================= MAIN CONTENT ================= */
 #mainApp {
   display: none;
 }
@@ -82,7 +86,6 @@ body {
   padding: 12px 25px;
   border-bottom: 2px solid var(--accent-red);
   box-shadow: 0 4px 25px rgba(255, 42, 42, 0.3);
-  backdrop-filter: blur(10px);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -93,44 +96,7 @@ body {
   color: #fff;
   margin: 0;
   font-weight: 800;
-  letter-spacing: 1px;
-  text-shadow: 0 0 12px var(--accent-red);
   font-size: 16px;
-}
-
-.user-status {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.status-badge {
-  background: rgba(0, 255, 136, 0.1);
-  border: 1px solid #00ff88;
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  color: #00ff88;
-}
-
-.nav-actions {
-  display: flex;
-  gap: 10px;
-}
-.nav-btn {
-  background: rgba(255, 42, 42, 0.15);
-  border: 1px solid var(--accent-red);
-  color: #ff8888;
-  padding: 6px 14px;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.nav-btn:hover {
-  background: var(--accent-red);
-  color: #fff;
-  box-shadow: 0 0 10px var(--accent-glow);
 }
 
 .workspace-layout {
@@ -151,13 +117,8 @@ body {
   overflow-y: auto;
   padding-right: 5px;
 }
-.controls-sidebar::-webkit-scrollbar {
-  width: 6px;
-}
-.controls-sidebar::-webkit-scrollbar-thumb {
-  background: rgba(255, 42, 42, 0.3);
-  border-radius: 4px;
-}
+.controls-sidebar::-webkit-scrollbar { width: 6px; }
+.controls-sidebar::-webkit-scrollbar-thumb { background: rgba(255, 42, 42, 0.3); border-radius: 4px; }
 
 .preview-sticky-container {
   position: sticky;
@@ -166,27 +127,22 @@ body {
   flex-direction: column;
   align-items: center;
   background: var(--panel-bg);
-  backdrop-filter: blur(12px);
   border: 1px solid var(--panel-border);
   border-radius: 16px;
   padding: 20px;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
 }
 
 .panel {
   background: var(--panel-bg);
-  backdrop-filter: blur(12px);
   border: 1px solid var(--panel-border);
   border-radius: 14px;
   padding: 16px;
-  box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.4);
 }
 .panel h3 {
   margin-top: 0;
   margin-bottom: 12px;
   font-size: 14px;
   color: #ff5555;
-  text-shadow: 0 0 8px rgba(255, 42, 42, 0.4);
   border-bottom: 1px solid rgba(255, 42, 42, 0.15);
   padding-bottom: 6px;
 }
@@ -203,10 +159,6 @@ input, select, textarea {
   outline: none;
   font-family: inherit;
   font-size: 14px;
-}
-input:focus, select:focus, textarea:focus {
-  border-color: var(--accent-red);
-  box-shadow: 0 0 8px var(--accent-glow);
 }
 
 button {
@@ -227,7 +179,6 @@ button {
 .platform.active {
   background: var(--accent-red);
   color: #fff;
-  box-shadow: 0 0 12px var(--accent-glow);
 }
 
 #poster {
@@ -237,30 +188,18 @@ button {
   position: relative;
   overflow: hidden;
   border-radius: 10px;
-  box-shadow: 0 0 25px rgba(0, 0, 0, 0.9), 0 0 10px rgba(255, 42, 42, 0.3);
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.9);
   touch-action: none;
 }
 
-#bgImg {
+#bgImg, #shirt {
   position: absolute;
   left: 50%; top: 50%;
   transform-origin: center center;
-  z-index: 1;
-  display: none;
-  cursor: grab;
   user-select: none;
 }
-
-#shirt {
-  position: absolute;
-  left: 50%; top: 50%;
-  max-width: 100%; max-height: 100%;
-  transform-origin: center center;
-  object-fit: contain;
-  cursor: grab;
-  z-index: 2;
-  user-select: none;
-}
+#bgImg { z-index: 1; display: none; cursor: grab; }
+#shirt { max-width: 100%; max-height: 100%; object-fit: contain; z-index: 2; cursor: grab; }
 
 #logoPoster {
   position: absolute; top: 10px; left: 10px;
@@ -280,11 +219,6 @@ button {
   padding: 4px 10px; border-radius: 12px;
   background: rgba(255,255,255,.08);
   border: 2px solid rgba(0,0,0,.85);
-  -webkit-text-stroke: 1px #000;
-  text-shadow:
-    2px 2px 0 #000, -2px 2px 0 #000,
-    2px -2px 0 #000, -2px -2px 0 #000,
-    0 3px 6px rgba(0,0,0,.45);
 }
 #codeLabel { top: 12px; right: 12px; background: #000c; color: #fff; padding: 4px 7px; border-radius: 6px; font-size: 11px; }
 #stockLabel { left: 14px; bottom: 16px; background: #000c; color: #fff; padding: 5px 8px; border-radius: 8px; font-size: 12px; }
@@ -294,103 +228,23 @@ button {
   width: 100%;
   background: linear-gradient(135deg, #ff2a2a 0%, #a90000 100%);
   color: #fff;
-  font-weight: bold;
   font-size: 14px;
-  box-shadow: 0 4px 12px var(--accent-glow);
 }
 
-/* Fullscreen Sub-Pages */
-.sub-page-view {
-  display: none;
-  padding: 30px;
-  max-width: 1400px;
-  margin: auto;
-}
-.sub-page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 25px;
-  border-bottom: 2px solid var(--panel-border);
-  padding-bottom: 15px;
-}
-.sub-page-header h2 {
-  margin: 0;
-  color: #ff5555;
-  text-shadow: 0 0 10px rgba(255,42,42,0.3);
-}
-.table-container {
-  background: var(--panel-bg);
-  border: 1px solid var(--panel-border);
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-}
-table.custom-table {
+.db-table {
   width: 100%;
   border-collapse: collapse;
+  margin-top: 8px;
+  font-size: 12px;
+}
+.db-table th, .db-table td {
+  border: 1px solid rgba(255,42,42,0.2);
+  padding: 6px 8px;
   text-align: left;
-  font-size: 14px;
 }
-table.custom-table th, table.custom-table td {
-  padding: 14px 18px;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-}
-table.custom-table th {
-  background: rgba(255,42,42,0.15);
-  color: #ff8888;
-  font-weight: bold;
-}
-table.custom-table tr:hover {
-  background: rgba(255,255,255,0.02);
-}
-.badge-sold {
-  background: rgba(255,42,42,0.2);
-  color: #ff4444;
-  border: 1px solid #ff4444;
-  padding: 3px 8px;
-  border-radius: 6px;
-  font-size: 12px;
-}
-.badge-ready {
-  background: rgba(0,255,136,0.1);
-  color: #00ff88;
-  border: 1px solid #00ff88;
-  padding: 3px 8px;
-  border-radius: 6px;
-  font-size: 12px;
-}
-
-/* Modal สำหรับกล้อง AI สแกน */
-#scannerModal {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  background: rgba(0,0,0,0.85);
-  backdrop-filter: blur(8px);
-  z-index: 10000;
-  display: none;
-  justify-content: center;
-  align-items: center;
-}
-.scanner-card {
-  background: var(--panel-bg);
-  border: 1px solid var(--panel-border);
-  border-radius: 16px;
-  padding: 25px;
-  width: 90%;
-  max-width: 500px;
-  text-align: center;
-  box-shadow: 0 0 40px rgba(255, 42, 42, 0.4);
-}
-.scanner-card video {
-  width: 100%;
-  max-height: 320px;
-  object-fit: cover;
-  border-radius: 10px;
-  border: 2px solid var(--accent-red);
-  background: #000;
-}
+.db-table th { background: rgba(255,42,42,0.2); color: #ff8888; }
+.badge-sold { background: rgba(255,42,42,0.2); color: #ff4444; border: 1px solid #ff4444; padding: 2px 6px; border-radius: 4px; font-size: 10px; }
+.badge-stock { background: rgba(0,255,136,0.1); color: #00ff88; border: 1px solid #00ff88; padding: 2px 6px; border-radius: 4px; font-size: 10px; }
 
 @media(max-width: 900px) {
   .workspace-layout { grid-template-columns: 1fr; }
@@ -402,7 +256,6 @@ table.custom-table tr:hover {
 </head>
 <body>
 
-<!-- หน้าเข้าสู่ระบบ -->
 <div id="loginScreen">
   <div class="login-box">
     <h2>🔒 Admin Access</h2>
@@ -413,41 +266,50 @@ table.custom-table tr:hover {
   </div>
 </div>
 
-<!-- Modal กล้อง AI สแกนรหัสเสื้อ -->
-<div id="scannerModal">
-  <div class="scanner-card">
-    <h3 style="color:#ff5555;margin-top:0">🤖 AI กล้องสแกนรหัสสินค้าด่วน</h3>
-    <p style="color:#aaa;font-size:12px;margin-bottom:10px">ส่องกล้องไปที่ป้ายรหัสสินค้าเพื่อตัดสต็อกอัตโนมัติ</p>
-    <video id="camFeed" autoplay playsinline></video>
-    <canvas id="camCanvas" style="display:none;"></canvas>
-    
-    <div id="aiScanStatus" style="color:#00ff88;font-weight:bold;font-size:13px;margin:10px 0">กำลังรอจับภาพ...</div>
-    
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px">
-      <button class="btn" id="captureScanBtn">📸 ถ่าย & AI ประมวลผล</button>
-      <button id="closeScannerBtn" style="background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.2)">❌ ปิดกล้อง</button>
-    </div>
-  </div>
-</div>
-
-<!-- หน้าโปรแกรมหลัก -->
 <div id="mainApp">
   <div class="header-bar">
-    <h2>⚡ ບໍ່ແພງແຕ່ເທ້ Studio - Sticky Poster Hub</h2>
-    <div class="nav-actions">
-      <button class="nav-btn" id="openDbBtn">📦 คลังสินค้า & ตัดสต็อก (DB)</button>
-    </div>
+    <h2>⚡ ບໍ່ແພງແຕ່ເທ້ Studio - Sticky Poster Hub & Databases</h2>
     <div class="user-status">
-      <div class="status-badge">🟢 Online</div>
+      <div class="status-badge" style="background:rgba(0,255,136,0.1);border:1px solid #00ff88;padding:4px 12px;border-radius:20px;font-size:12px;color:#00ff88;">🟢 Online</div>
       <button id="logoutBtn" style="background:rgba(255,42,42,0.2);color:#ff5555;border:1px solid rgba(255,42,42,0.4);padding:4px 10px;font-size:11px">ออก</button>
     </div>
   </div>
 
-  <!-- Workspace หลัก (ตัวทำโปสเตอร์) -->
-  <div id="workspaceView" class="workspace-layout">
-    <!-- ฝั่งซ้าย: แผงควบคุมเลื่อนได้ -->
+  <div class="workspace-layout">
     <div class="controls-sidebar">
       
+      <div class="panel" style="border: 2px solid #ff3131;">
+        <h3>📌 ฟังก์ชัน 1: คลังรหัสเสื้อ & AI กล้องสแกนขายออก</h3>
+        
+        <div style="background: rgba(0,0,0,0.3); padding: 8px; border-radius: 8px; margin-top: 4px;">
+          <label style="font-size:12px; color:#ff8888; font-weight:bold;">📷 ระบบกล้อง AI สแกนเลขรหัส (ตัดสต็อกขาย)</label>
+          <input type="file" id="scanInput" accept="image/*" capture="environment" style="margin-top:6px;">
+          <div id="scanStatus" style="font-size:12px; color:#00ff88; margin-top:6px;">สถานะ: พร้อมสแกนภาพกล่อง/ป้ายรหัส...</div>
+        </div>
+
+        <div style="max-height: 120px; overflow-y: auto; margin-top: 8px;">
+          <table class="db-table" id="codeOnlyTable">
+            <thead>
+              <tr><th>รหัสเสื้อ</th><th>สถานะ</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>🗂️ ฟังก์ชัน 2: คลังข้อมูลรายละเอียดทั้งหมด (ไม่เก็บรูป)</h3>
+        
+        <div style="max-height: 150px; overflow-y: auto; margin-top: 8px;">
+          <table class="db-table" id="allDataTable">
+            <thead>
+              <tr><th>รหัส</th><th>ราคา</th><th>จำนวน</th><th>ไซส์</th><th>สถานะ</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
       <div class="panel">
         <h3>📱 เลือกสัดส่วนแพลตฟอร์ม</h3>
         <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px">
@@ -468,7 +330,7 @@ table.custom-table tr:hover {
         </div>
         
         <div id="aiLoading" style="display:none;margin-top:10px">
-          <div style="color:#ff3131;font-weight:bold;font-size:12px">🤖 AI กำลังไดคัทพื้นหลัง...</div>
+          <div style="color:#ff3131;font-weight:bold;font-size:12px">🤖 AI กำลังไดคัทพ้นหลัง...</div>
           <div style="width:100%;height:8px;background:#1a1a24;border-radius:6px;margin-top:6px;overflow:hidden">
             <div id="loadingBar" style="width:0%;height:100%;background:var(--accent-red);border-radius:6px;transition:width 0.3s"></div>
           </div>
@@ -543,9 +405,8 @@ table.custom-table tr:hover {
 
     </div>
 
-    <!-- ฝั่งขวา: ตรึงหน้าจอแสดงรูป -->
     <div class="preview-sticky-container">
-      <h3 style="margin-top:0;margin-bottom:10px;color:#ff5555;font-size:15px;text-shadow:0 0 8px rgba(255,42,42,0.4)">🎨 ตัวอย่างรูปโปสเตอร์ (Real-time Preview)</h3>
+      <h3 style="margin-top:0;margin-bottom:10px;color:#ff5555;font-size:15px">🎨 ตัวอย่างรูปโปสเตอร์ (Real-time Preview)</h3>
       <div id="poster">
         <img id="bgImg">
         <img id="shirt">
@@ -556,52 +417,13 @@ table.custom-table tr:hover {
         <div id="sizeLabel" class="draggable">M</div>
       </div>
       
-      <button class="btn" id="downloadBtn" style="margin-top:15px;padding:12px;font-size:15px;width:100%;">📥 โหลดรูปป้ายสินค้า PNG (บันทึกรหัสอัตโนมัติ)</button>
+      <button class="btn" id="downloadBtn" style="margin-top:15px;padding:12px;font-size:15px;width:100%;">📥 โหลดรูปป้ายสินค้า PNG (บันทึกอัตโนมัติ)</button>
     </div>
   </div>
-
-  <!-- หน้าใหม่: ระบบจัดการคลังสินค้าและตัดสต็อก -->
-  <div id="inventoryView" class="sub-page-view">
-    <div class="sub-page-header">
-      <h2>📦 ระบบจัดการคลังสินค้า & ตัดสต็อกด่วน (Master Database)</h2>
-      <div style="display:flex;gap:10px;">
-        <button class="nav-btn" id="openScannerBtn" style="background:#00ff88;color:#000;border-color:#00ff88">📸 เปิดกล้อง AI สแกนรหัส</button>
-        <button class="nav-btn" id="backToStudioBtn" style="background:rgba(255,255,255,0.1);color:#fff;border-color:rgba(255,255,255,0.2)">⬅️ กลับสู่หน้าทำโปสเตอร์</button>
-      </div>
-    </div>
-
-    <div class="panel" style="margin-bottom:20px">
-      <h3 style="color:#00ff88">➕ เพิ่มรหัสเสื้อใหม่เข้าฐานข้อมูล</h3>
-      <div style="display:grid;grid-template-columns:2fr 2fr 2fr 1fr;gap:10px;align-items:end">
-        <div><label style="font-size:12px">รหัสสินค้า</label><input id="newCode" placeholder="เช่น AP101"></div>
-        <div><label style="font-size:12px">ราคา (₭)</label><input id="newPrice" value="299000"></div>
-        <div><label style="font-size:12px">ไซส์</label><input id="newSize" value="M"></div>
-        <button class="btn" id="addShirtDbBtn" style="height:41px">บันทึกรหัส</button>
-      </div>
-    </div>
-
-    <div class="table-container">
-      <table class="custom-table">
-        <thead>
-          <tr>
-            <th>รหัสสินค้า</th>
-            <th>ราคา</th>
-            <th>ไซส์</th>
-            <th>สถานะปัจจุบัน</th>
-            <th style="text-align:right">จัดการตัดสต็อก / ดึงข้อมูล</th>
-          </tr>
-        </thead>
-        <tbody id="inventoryTableBody">
-          <!-- Data rows generated by JS -->
-        </tbody>
-      </table>
-    </div>
-  </div>
-
 </div>
 
 <script>
-// Authentication Logic
+// แยกและป้องกันส่วนล็อกอินให้อ่านค่าได้แน่นอน
 const SECRET_PASS = "55884249";
 const loginScreen = document.getElementById("loginScreen");
 const mainApp = document.getElementById("mainApp");
@@ -611,236 +433,157 @@ const loginErr = document.getElementById("loginErr");
 const logoutBtn = document.getElementById("logoutBtn");
 
 function checkLogin() {
-  if (passInput.value === SECRET_PASS) {
+  if (passInput && passInput.value === SECRET_PASS) {
     sessionStorage.setItem("admin_auth", "true");
-    loginScreen.style.display = "none";
-    mainApp.style.display = "block";
-    loginErr.style.display = "none";
+    if(loginScreen) loginScreen.style.display = "none";
+    if(mainApp) mainApp.style.display = "block";
+    if(loginErr) loginErr.style.display = "none";
   } else {
-    loginErr.style.display = "block";
-    passInput.value = "";
+    if(loginErr) loginErr.style.display = "block";
+    if(passInput) passInput.value = "";
   }
 }
 
-loginBtn.onclick = checkLogin;
-passInput.onkeypress = (e) => { if (e.key === "Enter") checkLogin(); };
+if(loginBtn) loginBtn.onclick = checkLogin;
+if(passInput) {
+  passInput.onkeydown = (e) => { 
+    if (e.key === "Enter") {
+      e.preventDefault();
+      checkLogin(); 
+    }
+  };
+}
 
-logoutBtn.onclick = () => {
-  sessionStorage.removeItem("admin_auth");
-  location.reload();
-};
+if(logoutBtn) {
+  logoutBtn.onclick = () => {
+    sessionStorage.removeItem("admin_auth");
+    location.reload();
+  };
+}
 
 if (sessionStorage.getItem("admin_auth") === "true") {
-  loginScreen.style.display = "none";
-  mainApp.style.display = "block";
+  if(loginScreen) loginScreen.style.display = "none";
+  if(mainApp) mainApp.style.display = "block";
 }
 
-// ================= NAVIGATION =================
-const workspaceView = document.getElementById("workspaceView");
-const inventoryView = document.getElementById("inventoryView");
-const openDbBtn = document.getElementById("openDbBtn");
-const backToStudioBtn = document.getElementById("backToStudioBtn");
+// ================= DATABASE STORAGE SYSTEM =================
+let codeOnlyDB = JSON.parse(localStorage.getItem("codeOnlyDB") || "[]");
+let allDataDB = JSON.parse(localStorage.getItem("allDataDB") || "[]");
 
-openDbBtn.onclick = () => {
-  workspaceView.style.display = "none";
-  inventoryView.style.display = "block";
-  renderInventoryTable();
-};
-
-backToStudioBtn.onclick = () => {
-  inventoryView.style.display = "none";
-  workspaceView.style.display = "grid";
-};
-
-// ================= INVENTORY & AUTO-SAVE DATABASE LOGIC =================
-let shirtDatabase = JSON.parse(localStorage.getItem("admin_shirts_db")) || [
-  { code: "AP001", price: "299,000", size: "M", status: "พร้อมขาย" },
-  { code: "AP002", price: "299,000", size: "L", status: "พร้อมขาย" },
-  { code: "AP003", price: "350,000", size: "XL", status: "ขายแล้ว (Sold)" },
-  { code: "AP004", price: "299,000", size: "S", status: "พร้อมขาย" }
-];
-
-function saveDatabase() {
-  localStorage.setItem("admin_shirts_db", JSON.stringify(shirtDatabase));
-}
-
-// ฟังก์ชันบันทึกอัตโนมัติเมื่อกดดาวน์โหลด/เซฟป้ายสินค้า
-function autoSaveCurrentShirtToDb() {
-  const code = document.getElementById("codeInput").value.trim().toUpperCase();
-  const rawPrice = document.getElementById("priceInput").value.trim();
-  const formattedPrice = rawPrice ? Number(rawPrice.replace(/,/g, "")).toLocaleString() : "299,000";
-  
-  let size = document.getElementById("sizeSelect").value;
-  if (size === "custom") {
-    size = document.getElementById("sizeCustom").value.trim() || "Free Size";
-  }
-
-  if (!code) return;
-
-  // ค้นหาว่ามีรหัสนี้อยู่ในฐานข้อมูลหรือยัง
-  const existingIndex = shirtDatabase.findIndex(item => item.code.toUpperCase() === code);
-  
-  if (existingIndex !== -1) {
-    // ถ้ามีอยู่แล้ว อัปเดตราคาและไซส์ล่าสุด
-    shirtDatabase[existingIndex].price = formattedPrice;
-    shirtDatabase[existingIndex].size = size;
-  } else {
-    // ถ้ายังไม่มี ให้เพิ่มใหม่เข้าฐานข้อมูลอัตโนมัติที่แถวแรก
-    shirtDatabase.unshift({
-      code: code,
-      price: formattedPrice,
-      size: size,
-      status: "พร้อมขาย"
-    });
-  }
-  saveDatabase();
-}
-
-function renderInventoryTable() {
-  const tbody = document.getElementById("inventoryTableBody");
-  tbody.innerHTML = "";
-  shirtDatabase.forEach((item, index) => {
-    const tr = document.createElement("tr");
-    const isSold = item.status.includes("ขายแล้ว");
-    tr.innerHTML = `
-      <td style="font-weight:bold;color:#ff8888">${item.code}</td>
-      <td>${item.price} ₭</td>
-      <td>${item.size}</td>
-      <td><span class="${isSold ? 'badge-sold' : 'badge-ready'}">${item.status}</span></td>
-      <td style="text-align:right">
-        <button onclick="toggleSoldStatus(${index})" style="background:${isSold ? 'rgba(0,255,136,0.2)' : 'rgba(255,42,42,0.2)'};color:${isSold ? '#00ff88' : '#ff5555'};border:1px solid ${isSold ? '#00ff88' : '#ff5555'};padding:5px 10px;border-radius:6px;font-size:12px;cursor:pointer;margin-right:6px">
-          ${isSold ? '↩️ ยกเลิกขายแล้ว' : '❌ ตัดสต็อก (Sold)'}
-        </button>
-        <button onclick="loadIntoStudio('${item.code}', '${item.price}', '${item.size}')" style="background:var(--accent-red);color:#fff;padding:5px 10px;border-radius:6px;font-size:12px;cursor:pointer">
-          🎨 ดึงไปทำป้าย
-        </button>
-      </td>
-    `;
-    tbody.appendChild(tr);
-  });
-}
-
-window.toggleSoldStatus = function(index) {
-  shirtDatabase[index].status = shirtDatabase[index].status.includes("ขายแล้ว") ? "พร้อมขาย" : "ขายแล้ว (Sold)";
-  saveDatabase();
-  renderInventoryTable();
-};
-
-window.loadIntoStudio = function(code, price, size) {
-  document.getElementById("codeInput").value = code;
-  document.getElementById("codeLabel").textContent = code;
-  
-  const cleanPrice = price.replace(/,/g, "");
-  document.getElementById("priceInput").value = cleanPrice;
-  document.getElementById("priceLabel").textContent = Number(cleanPrice).toLocaleString() + " ₭";
-  
-  document.getElementById("sizeSelect").value = size;
-  document.getElementById("sizeLabel").textContent = size;
-  
-  inventoryView.style.display = "none";
-  workspaceView.style.display = "grid";
-};
-
-document.getElementById("addShirtDbBtn").onclick = () => {
-  const code = document.getElementById("newCode").value.trim();
-  const price = document.getElementById("newPrice").value.trim();
-  const size = document.getElementById("newSize").value.trim();
-  if(!code) { alert("กรุณากรอกรหัสสินค้า"); return; }
-  
-  shirtDatabase.unshift({ code, price: Number(price).toLocaleString(), size, status: "พร้อมขาย" });
-  saveDatabase();
-  renderInventoryTable();
-  
-  document.getElementById("newCode").value = "";
-  document.getElementById("newPrice").value = "299000";
-  document.getElementById("newSize").value = "M";
-};
-
-// ================= AI WEBCAM SCANNER (TESSERACT OCR) =================
-const scannerModal = document.getElementById("scannerModal");
-const openScannerBtn = document.getElementById("openScannerBtn");
-const closeScannerBtn = document.getElementById("closeScannerBtn");
-const captureScanBtn = document.getElementById("captureScanBtn");
-const camFeed = document.getElementById("camFeed");
-const camCanvas = document.getElementById("camCanvas");
-const aiScanStatus = document.getElementById("aiScanStatus");
-let mediaStream = null;
-
-openScannerBtn.onclick = async () => {
-  scannerModal.style.display = "flex";
-  aiScanStatus.textContent = "กำลังเปิดกล้อง...";
-  try {
-    mediaStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
-    camFeed.srcObject = mediaStream;
-    aiScanStatus.textContent = "พร้อมสแกนรหัสสินค้าด้วย AI";
-  } catch (err) {
-    aiScanStatus.textContent = "❌ ไม่สามารถเปิดกล้องได้";
-    console.error(err);
-  }
-};
-
-closeScannerBtn.onclick = () => {
-  if (mediaStream) {
-    mediaStream.getTracks().forEach(track => track.stop());
-  }
-  scannerModal.style.display = "none";
-};
-
-captureScanBtn.onclick = async () => {
-  if (!mediaStream) return;
-  aiScanStatus.textContent = "🤖 AI กำลังประมวลผลตัวอักษร/รหัส...";
-  
-  camCanvas.width = camFeed.videoWidth || 640;
-  camCanvas.height = camFeed.videoHeight || 480;
-  const ctx = camCanvas.getContext("2d");
-  ctx.drawImage(camFeed, 0, 0, camCanvas.width, camCanvas.height);
-  
-  const imageDataUrl = camCanvas.toDataURL("image/png");
-
-  try {
-    // ใช้ Tesseract.js อ่านตัวหนังสือจากภาพที่สแกน
-    const { data: { text } } = await Tesseract.recognize(imageDataUrl, 'eng+tha', {
-      logger: m => {
-        if (m.status === 'recognizing text') {
-          aiScanStatus.textContent = `🤖 กำลังสแกน... ${Math.round(m.progress * 100)}%`;
-        }
-      }
-    });
-
-    console.log("OCR Result:", text);
-    
-    // ค้นหารหัสสินค้าที่ตรงกับรูปแบบในฐานข้อมูล (เช่น AP001, AP101 ฯลฯ)
-    let foundMatch = null;
-    const cleanText = text.replace(/\s+/g, "").toUpperCase();
-    
-    for (let item of shirtDatabase) {
-      if (cleanText.includes(item.code.toUpperCase())) {
-        foundMatch = item;
-        break;
-      }
-    }
-
-    if (foundMatch) {
-      // ทำการตัดสต็อกอัตโนมัติ (เปลี่ยนเป็นขายแล้ว)
-      const targetIndex = shirtDatabase.findIndex(i => i.code === foundMatch.code);
-      if (targetIndex !== -1) {
-        shirtDatabase[targetIndex].status = "ขายแล้ว (Sold)";
-        saveDatabase();
-        renderInventoryTable();
-      }
-      aiScanStatus.textContent = `✅ สแกนสำเร็จ! ตัดสต็อกรหัส ${foundMatch.code} เรียบร้อย`;
-      setTimeout(() => {
-        closeScannerBtn.click();
-      }, 1500);
+function renderDatabases() {
+  const codeTableBody = document.querySelector("#codeOnlyTable tbody");
+  if(codeTableBody) {
+    codeTableBody.innerHTML = "";
+    if(codeOnlyDB.length === 0) {
+      codeTableBody.innerHTML = `<tr><td colspan="2" style="text-align:center;color:#777">ยังไม่มีข้อมูลรหัสเสื้อ</td></tr>`;
     } else {
-      aiScanStatus.textContent = `⚠️ ไม่พบรหัสสินค้าในระบบจากภาพนี้ (อ่านได้: ${text.substring(0, 20)}...)`;
+      codeOnlyDB.forEach(item => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td><b>${item.code}</b></td><td>${item.status === 'sold' ? '<span class="badge-sold">ขายออกแล้ว</span>' : '<span class="badge-stock">ปกติ</span>'}</td>`;
+        codeTableBody.appendChild(tr);
+      });
     }
-
-  } catch (err) {
-    aiScanStatus.textContent = "❌ เกิดข้อผิดพลาดในการประมวลผล AI";
-    console.error(err);
   }
-};
+
+  const allTableBody = document.querySelector("#allDataTable tbody");
+  if(allTableBody) {
+    allTableBody.innerHTML = "";
+    if(allDataDB.length === 0) {
+      allTableBody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#777">ยังไม่มีข้อมูลในระบบ</td></tr>`;
+    } else {
+      allDataDB.forEach(item => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td><b>${item.code}</b></td><td>${item.price}</td><td>${item.stock}</td><td>${item.size}</td><td>${item.status === 'sold' ? '<span class="badge-sold">ขายออก</span>' : '<span class="badge-stock">พร้อมขาย</span>'}</td>`;
+        allTableBody.appendChild(tr);
+      });
+    }
+  }
+
+  localStorage.setItem("codeOnlyDB", JSON.stringify(codeOnlyDB));
+  localStorage.setItem("allDataDB", JSON.stringify(allDataDB));
+}
+
+// ฟังก์ชันรวมบันทึกข้อมูลอัตโนมัติเมื่อกดดาวน์โหลด
+function autoSaveCurrentData() {
+  const code = document.getElementById("codeInput")?.value.trim() || "";
+  const price = document.getElementById("priceInput")?.value || "";
+  const stock = document.getElementById("stockInput")?.value || "";
+  const sizeSelect = document.getElementById("sizeSelect")?.value || "M";
+  const sizeCustom = document.getElementById("sizeCustom")?.value || "";
+  const size = sizeSelect === 'custom' ? sizeCustom : sizeSelect;
+
+  if(!code) return;
+
+  // บันทึกลงคลังรหัสเสื้อ (ถ้ายังไม่มี)
+  if(!codeOnlyDB.some(i => i.code === code)) {
+    codeOnlyDB.push({ code: code, status: 'active' });
+  }
+
+  // บันทึกลงคลังข้อมูลทั้งหมด (เพิ่มใหม่หรืออัปเดตตัวเดิม)
+  const existingIndex = allDataDB.findIndex(i => i.code === code);
+  const newData = { code, price, stock, size, status: 'active' };
+
+  if(existingIndex >= 0) {
+    // ถ้ารหัสเดิมมีอยู่แล้ว ให้อัปเดตข้อมูลล่าสุด
+    allDataDB[existingIndex] = { ...allDataDB[existingIndex], ...newData };
+  } else {
+    allDataDB.push(newData);
+  }
+
+  renderDatabases();
+}
+
+const scanInput = document.getElementById("scanInput");
+if(scanInput) {
+  scanInput.onchange = async (e) => {
+    const file = e.target.files[0];
+    if(!file) return;
+
+    const statusEl = document.getElementById("scanStatus");
+    if(statusEl) statusEl.textContent = "🤖 AI กำลังสแกนหาเลขรหัสจากรูปภาพ...";
+
+    try {
+      if (typeof Tesseract !== 'undefined') {
+        const worker = await Tesseract.createWorker('eng');
+        const ret = await worker.recognize(file);
+        await worker.terminate();
+
+        const text = ret.data.text.trim();
+        if(statusEl) statusEl.textContent = `🔍 AI อ่านค่าได้: "${text}" กำลังตรวจสอบในระบบ...`;
+
+        let found = false;
+        codeOnlyDB.forEach(item => {
+          if(text.toUpperCase().includes(item.code.toUpperCase())) {
+            item.status = 'sold';
+            found = true;
+          }
+        });
+
+        allDataDB.forEach(item => {
+          if(text.toUpperCase().includes(item.code.toUpperCase())) {
+            item.status = 'sold';
+            found = true;
+          }
+        });
+
+        if(found) {
+          renderDatabases();
+          if(statusEl) statusEl.textContent = "✅ สแกนสำเร็จ: ตรวจพบรหัสและเปลี่ยนสถานะเป็น 'ขายออกแล้ว' เรียบร้อย!";
+          alert("🎉 ตรวจพบรหัสสินค้า! ระบบบันทึกสถานะเป็น 'ขายออกแล้ว' สำเร็จ");
+        } else {
+          if(statusEl) statusEl.textContent = `❌ ไม่พบรหัสที่ตรงกันในระบบ (อ่านได้: ${text})`;
+        }
+      } else {
+        if(statusEl) statusEl.textContent = "❌ Tesseract โหลดไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ต";
+      }
+    } catch(err) {
+      console.error(err);
+      if(statusEl) statusEl.textContent = "❌ เกิดข้อผิดพลาดในการสแกนด้วย AI";
+    }
+  };
+}
+
+renderDatabases();
 
 // ================= POSTER STUDIO SCRIPTS =================
 let zoomScale = 1, shirtX = 0, shirtY = 0, shirtRot = 0, shirtB = 0;
@@ -854,111 +597,182 @@ const bgZoom = document.getElementById("bgZoom");
 const poster = document.getElementById("poster");
 
 function updateShirt() {
-  shirt.style.transform = `translate(calc(-50% + ${shirtX}px), calc(-50% + ${shirtY}px)) scale(${zoomScale}) rotate(${shirtRot}deg)`;
-  shirt.style.filter = `blur(${shirtB}px)`;
+  if(shirt) {
+    shirt.style.transform = `translate(calc(-50% + ${shirtX}px), calc(-50% + ${shirtY}px)) scale(${zoomScale}) rotate(${shirtRot}deg)`;
+    shirt.style.filter = `blur(${shirtB}px)`;
+  }
 }
 
 function updateBg() {
-  bgImg.style.transform = `translate(calc(-50% + ${bgX}px), calc(-50% + ${bgY}px)) scale(${bgZoomScale}) rotate(${bgRot}deg)`;
-  bgImg.style.filter = `blur(${bgB}px)`;
+  if(bgImg) {
+    bgImg.style.transform = `translate(calc(-50% + ${bgX}px), calc(-50% + ${bgY}px)) scale(${bgZoomScale}) rotate(${bgRot}deg)`;
+    bgImg.style.filter = `blur(${bgB}px)`;
+  }
 }
 
-document.getElementById("bgUpload").onchange = e => {
-  const f = e.target.files[0]; if (!f) return;
-  const r = new FileReader();
-  r.onload = x => { bgImg.src = x.target.result; bgImg.style.display = "block"; updateBg(); };
-  r.readAsDataURL(f);
-};
+const bgUpload = document.getElementById("bgUpload");
+if(bgUpload) {
+  bgUpload.onchange = e => {
+    const f = e.target.files[0]; if (!f) return;
+    const r = new FileReader();
+    r.onload = x => { if(bgImg) { bgImg.src = x.target.result; bgImg.style.display = "block"; updateBg(); } };
+    r.readAsDataURL(f);
+  };
+}
 
-document.getElementById("removeBgBtn").onclick = () => {
-  bgImg.src = ""; bgImg.style.display = "none"; document.getElementById("bgUpload").value = "";
-};
+const removeBgBtn = document.getElementById("removeBgBtn");
+if(removeBgBtn) {
+  removeBgBtn.onclick = () => { 
+    if(bgImg) { bgImg.src = ""; bgImg.style.display = "none"; }
+    if(bgUpload) bgUpload.value = ""; 
+  };
+}
 
-bgZoom.oninput = () => { bgZoomScale = parseFloat(bgZoom.value) / 100; updateBg(); };
-document.getElementById("bgRotate").oninput = (e) => { bgRot = e.target.value; updateBg(); };
-document.getElementById("bgBlur").oninput = (e) => { bgB = e.target.value; updateBg(); };
+if(bgZoom) bgZoom.oninput = () => { bgZoomScale = parseFloat(bgZoom.value) / 100; updateBg(); };
+const bgRotate = document.getElementById("bgRotate");
+if(bgRotate) bgRotate.oninput = (e) => { bgRot = e.target.value; updateBg(); };
+const bgBlur = document.getElementById("bgBlur");
+if(bgBlur) bgBlur.oninput = (e) => { bgB = e.target.value; updateBg(); };
 
-zoom.oninput = () => { zoomScale = parseFloat(zoom.value) / 100; updateShirt(); };
-document.getElementById("shirtRotate").oninput = (e) => { shirtRot = e.target.value; updateShirt(); };
-document.getElementById("shirtBlur").oninput = (e) => { shirtB = e.target.value; updateShirt(); };
+if(zoom) zoom.oninput = () => { zoomScale = parseFloat(zoom.value) / 100; updateShirt(); };
+const shirtRotate = document.getElementById("shirtRotate");
+if(shirtRotate) shirtRotate.oninput = (e) => { shirtRot = e.target.value; updateShirt(); };
+const shirtBlur = document.getElementById("shirtBlur");
+if(shirtBlur) shirtBlur.oninput = (e) => { shirtB = e.target.value; updateShirt(); };
 
 let draggingShirt = false, sx = 0, sy = 0;
-shirt.addEventListener("pointerdown", (e) => { draggingShirt = true; sx = e.clientX; sy = e.clientY; shirt.setPointerCapture(e.pointerId); });
-shirt.addEventListener("pointermove", (e) => {
-  if (!draggingShirt) return;
-  shirtX += e.clientX - sx; shirtY += e.clientY - sy;
-  sx = e.clientX; sy = e.clientY; updateShirt();
-});
-shirt.addEventListener("pointerup", () => draggingShirt = false);
+if(shirt) {
+  shirt.addEventListener("pointerdown", (e) => { draggingShirt = true; sx = e.clientX; sy = e.clientY; shirt.setPointerCapture(e.pointerId); });
+  shirt.addEventListener("pointermove", (e) => {
+    if (!draggingShirt) return;
+    shirtX += e.clientX - sx; shirtY += e.clientY - sy;
+    sx = e.clientX; sy = e.clientY; updateShirt();
+  });
+  shirt.addEventListener("pointerup", () => draggingShirt = false);
+}
 
 let draggingBg = false, bsx = 0, bsy = 0;
-bgImg.addEventListener("pointerdown", (e) => { draggingBg = true; bsx = e.clientX; bsy = e.clientY; bgImg.setPointerCapture(e.pointerId); });
-bgImg.addEventListener("pointermove", (e) => {
-  if (!draggingBg) return;
-  bgX += e.clientX - bsx; bgY += e.clientY - bsy;
-  bsx = e.clientX; bsy = e.clientY; updateBg();
-});
-bgImg.addEventListener("pointerup", () => draggingBg = false);
+if(bgImg) {
+  bgImg.addEventListener("pointerdown", (e) => { draggingBg = true; bsx = e.clientX; bsy = e.clientY; bgImg.setPointerCapture(e.pointerId); });
+  bgImg.addEventListener("pointermove", (e) => {
+    if (!draggingBg) return;
+    bgX += e.clientX - bsx; bgY += e.clientY - bsy;
+    bsx = e.clientX; bsy = e.clientY; updateBg();
+  });
+  bgImg.addEventListener("pointerup", () => draggingBg = false);
+}
 
-document.getElementById("logoUpload").onchange = e => {
-  const f = e.target.files[0]; if (!f) return;
-  const r = new FileReader();
-  r.onload = x => {
-    document.getElementById("logoPreview").src = x.target.result;
-    document.getElementById("logoPoster").style.display = document.getElementById("showLogo").checked ? "block" : "none";
+const logoUpload = document.getElementById("logoUpload");
+if(logoUpload) {
+  logoUpload.onchange = e => {
+    const f = e.target.files[0]; if (!f) return;
+    const r = new FileReader();
+    r.onload = x => {
+      const logoPreview = document.getElementById("logoPreview");
+      const logoPoster = document.getElementById("logoPoster");
+      const showLogo = document.getElementById("showLogo");
+      if(logoPreview) logoPreview.src = x.target.result;
+      if(logoPoster) logoPoster.style.display = (showLogo && showLogo.checked) ? "block" : "none";
+    };
+    r.readAsDataURL(f);
   };
-  r.readAsDataURL(f);
-};
-document.getElementById("showLogo").onchange = () => {
-  document.getElementById("logoPoster").style.display = (document.getElementById("showLogo").checked && document.getElementById("logoPreview").src) ? "block" : "none";
-};
+}
 
-document.getElementById("shirtUpload").onchange = e => {
-  const f = e.target.files[0]; if (!f) return;
-  const r = new FileReader();
-  r.onload = x => { shirt.src = x.target.result; originalShirtSrc = x.target.result; updateShirt(); };
-  r.readAsDataURL(f);
-};
+const showLogo = document.getElementById("showLogo");
+if(showLogo) {
+  showLogo.onchange = () => {
+    const logoPoster = document.getElementById("logoPoster");
+    const logoPreview = document.getElementById("logoPreview");
+    if(logoPoster) logoPoster.style.display = (showLogo.checked && logoPreview && logoPreview.src) ? "block" : "none";
+  };
+}
 
-document.getElementById("codeInput").oninput = (e) => document.getElementById("codeLabel").textContent = e.target.value || "AP001";
-document.getElementById("priceInput").oninput = (e) => {
-  const n = Number(e.target.value.replace(/,/g, ""));
-  if (e.target.value) document.getElementById("priceLabel").textContent = n.toLocaleString() + " ₭";
-};
-document.getElementById("stockInput").oninput = (e) => document.getElementById("stockLabel").textContent = "📦 ມີ " + e.target.value + " ໂຕ";
-document.getElementById("sizeSelect").onchange = (e) => {
-  if (e.target.value === "custom") {
-    document.getElementById("sizeCustom").style.display = "block";
-  } else {
-    document.getElementById("sizeCustom").style.display = "none";
-    document.getElementById("sizeLabel").textContent = e.target.value;
-  }
-};
-document.getElementById("sizeCustom").oninput = (e) => document.getElementById("sizeLabel").textContent = e.target.value;
+const shirtUpload = document.getElementById("shirtUpload");
+if(shirtUpload) {
+  shirtUpload.onchange = e => {
+    const f = e.target.files[0]; if (!f) return;
+    const r = new FileReader();
+    r.onload = x => { if(shirt) { shirt.src = x.target.result; originalShirtSrc = x.target.result; updateShirt(); } };
+    r.readAsDataURL(f);
+  };
+}
 
-poster.addEventListener("wheel", (e) => {
-  e.preventDefault();
-  const delta = e.deltaY < 0 ? 0.05 : -0.05;
-  zoomScale = Math.max(0.3, Math.min(3, zoomScale + delta));
-  zoom.value = Math.round(zoomScale * 100);
-  updateShirt();
-}, { passive: false });
+const codeInput = document.getElementById("codeInput");
+if(codeInput) {
+  codeInput.oninput = (e) => {
+    const codeLabel = document.getElementById("codeLabel");
+    if(codeLabel) codeLabel.textContent = e.target.value || "AP001";
+  };
+}
+
+const priceInput = document.getElementById("priceInput");
+if(priceInput) {
+  priceInput.oninput = (e) => {
+    const n = Number(e.target.value.replace(/,/g, ""));
+    const priceLabel = document.getElementById("priceLabel");
+    if(e.target.value && priceLabel) priceLabel.textContent = n.toLocaleString() + " ₭";
+  };
+}
+
+const stockInput = document.getElementById("stockInput");
+if(stockInput) {
+  stockInput.oninput = (e) => {
+    const stockLabel = document.getElementById("stockLabel");
+    if(stockLabel) stockLabel.textContent = "📦 ມີ " + e.target.value + " ໂຕ";
+  };
+}
+
+const sizeSelect = document.getElementById("sizeSelect");
+if(sizeSelect) {
+  sizeSelect.onchange = (e) => {
+    const sizeCustom = document.getElementById("sizeCustom");
+    const sizeLabel = document.getElementById("sizeLabel");
+    if (e.target.value === "custom") {
+      if(sizeCustom) sizeCustom.style.display = "block";
+    } else {
+      if(sizeCustom) sizeCustom.style.display = "none";
+      if(sizeLabel) sizeLabel.textContent = e.target.value;
+    }
+  };
+}
+
+const sizeCustom = document.getElementById("sizeCustom");
+if(sizeCustom) {
+  sizeCustom.oninput = (e) => {
+    const sizeLabel = document.getElementById("sizeLabel");
+    if(sizeLabel) sizeLabel.textContent = e.target.value;
+  };
+}
+
+if(poster) {
+  poster.addEventListener("wheel", (e) => {
+    e.preventDefault();
+    const delta = e.deltaY < 0 ? 0.05 : -0.05;
+    zoomScale = Math.max(0.3, Math.min(3, zoomScale + delta));
+    if(zoom) zoom.value = Math.round(zoomScale * 100);
+    updateShirt();
+  }, { passive: false });
+}
 
 const info = { "4/5": "1080×1350 Facebook", "9/16": "1080×1920 TikTok", "16/9": "1280×720 YouTube", "1/1": "1080×1080 Instagram" };
-document.querySelectorAll(".platform").forEach(btn => btn.onclick = () => {
-  document.querySelectorAll(".platform").forEach(b => b.classList.remove("active"));
-  btn.classList.add("active");
-  poster.style.aspectRatio = btn.dataset.ratio;
-  document.getElementById("platformInfo").textContent = info[btn.dataset.ratio];
-  updateShirt();
+document.querySelectorAll(".platform").forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll(".platform").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    if(poster) poster.style.aspectRatio = btn.dataset.ratio;
+    const platformInfo = document.getElementById("platformInfo");
+    if(platformInfo) platformInfo.textContent = info[btn.dataset.ratio];
+    updateShirt();
+  };
 });
 
 function drag(el) {
+  if(!el) return;
   let active = false, startX, startY, startLeft, startTop;
   el.addEventListener("pointerdown", (e) => {
     active = true;
     const r = el.getBoundingClientRect();
-    const p = poster.getBoundingClientRect();
+    const p = poster ? poster.getBoundingClientRect() : {left:0, top:0};
     startLeft = r.left - p.left; startTop = r.top - p.top;
     startX = e.clientX; startY = e.clientY;
     el.style.left = startLeft + "px"; el.style.top = startTop + "px";
@@ -966,7 +780,7 @@ function drag(el) {
     el.setPointerCapture(e.pointerId);
   });
   el.addEventListener("pointermove", (e) => {
-    if (!active) return;
+    if (!active || !poster) return;
     const x = startLeft + (e.clientX - startX);
     const y = startTop + (e.clientY - startY);
     el.style.left = Math.max(0, Math.min(x, poster.clientWidth - el.offsetWidth)) + "px";
@@ -976,61 +790,94 @@ function drag(el) {
 }
 ["priceLabel", "codeLabel", "stockLabel", "sizeLabel"].forEach(id => drag(document.getElementById(id)));
 
-document.getElementById("priceSize").oninput = (e) => document.getElementById("priceLabel").style.fontSize = e.target.value + "px";
-document.getElementById("priceColor").oninput = (e) => document.getElementById("priceLabel").style.color = e.target.value;
-document.getElementById("codeColor").oninput = (e) => document.getElementById("codeLabel").style.color = e.target.value;
-document.getElementById("stockColor").oninput = (e) => document.getElementById("stockLabel").style.color = e.target.value;
-document.getElementById("sizeColor").oninput = (e) => document.getElementById("sizeLabel").style.color = e.target.value;
+const priceSize = document.getElementById("priceSize");
+if(priceSize) priceSize.oninput = (e) => { const l = document.getElementById("priceLabel"); if(l) l.style.fontSize = e.target.value + "px"; };
 
-document.getElementById("codeSize").oninput = (e) => document.getElementById("codeLabel").style.fontSize = e.target.value + "px";
-document.getElementById("stockSize").oninput = (e) => document.getElementById("stockLabel").style.fontSize = e.target.value + "px";
-document.getElementById("sizeSize").oninput = (e) => document.getElementById("sizeLabel").style.fontSize = e.target.value + "px";
+const priceColor = document.getElementById("priceColor");
+if(priceColor) priceColor.oninput = (e) => { const l = document.getElementById("priceLabel"); if(l) l.style.color = e.target.value; };
 
-document.getElementById("togglePrice").onchange = (e) => document.getElementById("priceLabel").style.display = e.target.checked ? "block" : "none";
-document.getElementById("toggleCode").onchange = (e) => document.getElementById("codeLabel").style.display = e.target.checked ? "block" : "none";
-document.getElementById("toggleStock").onchange = (e) => document.getElementById("stockLabel").style.display = e.target.checked ? "block" : "none";
-document.getElementById("toggleSize").onchange = (e) => document.getElementById("sizeLabel").style.display = e.target.checked ? "block" : "none";
+const codeColor = document.getElementById("codeColor");
+if(codeColor) codeColor.oninput = (e) => { const l = document.getElementById("codeLabel"); if(l) l.style.color = e.target.value; };
 
-// เพิ่มการเรียกใช้งาน autoSaveCurrentShirtToDb() ทันทีที่กดดาวน์โหลดรูป
-document.getElementById("downloadBtn").onclick = () => {
-  // บันทึกรหัสและข้อมูลเสื้อตัวปัจจุบันลงฐานข้อมูลอัตโนมัติ
-  autoSaveCurrentShirtToDb();
+const stockColor = document.getElementById("stockColor");
+if(stockColor) stockColor.oninput = (e) => { const l = document.getElementById("stockLabel"); if(l) l.style.color = e.target.value; };
 
-  html2canvas(poster, { scale: 2, backgroundColor: null }).then(c => {
-    const a = document.createElement("a");
-    a.download = "poster.png";
-    a.href = c.toDataURL("image/png");
-    a.click();
-  });
-};
+const sizeColor = document.getElementById("sizeColor");
+if(sizeColor) sizeColor.oninput = (e) => { const l = document.getElementById("sizeLabel"); if(l) l.style.color = e.target.value; };
 
-document.getElementById("cutoutBtn").onclick = async () => {
-  if (!shirt.src) { alert("ເລືອກຮູບເສື້ອກ່ອນ"); return; }
-  const aiLoading = document.getElementById("aiLoading");
-  const loadingBar = document.getElementById("loadingBar");
-  
-  aiLoading.style.display = "block";
-  loadingBar.style.width = "0%";
-  
-  for (let i = 1; i <= 15; i++) {
-    await new Promise(r => setTimeout(r, 100));
-    loadingBar.style.width = (i / 15 * 100) + "%";
-  }
-  
-  try {
-    const m = await import("https://cdn.jsdelivr.net/npm/@imgly/background-removal/+esm");
-    const blob = await m.removeBackground(shirt.src);
-    shirt.src = URL.createObjectURL(blob);
-    updateShirt();
-  } catch (e) {
-    alert("AI ບໍ່ສາມາດໄດຄັດໄດ້ ກວດເຊັກອິນເຕີເນັດ");
-    console.error(e);
-  }
-  aiLoading.style.display = "none";
-};
+const codeSize = document.getElementById("codeSize");
+if(codeSize) codeSize.oninput = (e) => { const l = document.getElementById("codeLabel"); if(l) l.style.fontSize = e.target.value + "px"; };
 
-document.getElementById("restoreBtn").onclick = () => {
-  if (originalShirtSrc) { shirt.src = originalShirtSrc; updateShirt(); }
+const stockSize = document.getElementById("stockSize");
+if(stockSize) stockSize.oninput = (e) => { const l = document.getElementById("stockLabel"); if(l) l.style.fontSize = e.target.value + "px"; };
+
+const sizeSize = document.getElementById("sizeSize");
+if(sizeSize) sizeSize.oninput = (e) => { const l = document.getElementById("sizeLabel"); if(l) l.style.fontSize = e.target.value + "px"; };
+
+const togglePrice = document.getElementById("togglePrice");
+if(togglePrice) togglePrice.onchange = (e) => { const l = document.getElementById("priceLabel"); if(l) l.style.display = e.target.checked ? "block" : "none"; };
+
+const toggleCode = document.getElementById("toggleCode");
+if(toggleCode) toggleCode.onchange = (e) => { const l = document.getElementById("codeLabel"); if(l) l.style.display = e.target.checked ? "block" : "none"; };
+
+const toggleStock = document.getElementById("toggleStock");
+if(toggleStock) toggleStock.onchange = (e) => { const l = document.getElementById("stockLabel"); if(l) l.style.display = e.target.checked ? "block" : "none"; };
+
+const toggleSize = document.getElementById("toggleSize");
+if(toggleSize) toggleSize.onchange = (e) => { const l = document.getElementById("sizeLabel"); if(l) l.style.display = e.target.checked ? "block" : "none"; };
+
+// ปุ่มดาวน์โหลดรูปภาพ + บันทึกข้อมูลลงฐานข้อมูลให้อัตโนมัติในปุ่มเดียว
+const downloadBtn = document.getElementById("downloadBtn");
+if(downloadBtn) {
+  downloadBtn.onclick = () => {
+    // บันทึกข้อมูลลงฐานข้อมูลระบบอัตโนมัติ
+    autoSaveCurrentData();
+
+    // ดำเนินการดาวน์โหลดรูปภาพ PNG ต่อทันที
+    if(poster && typeof html2canvas !== 'undefined') {
+      html2canvas(poster, { scale: 2, backgroundColor: null }).then(c => {
+        const a = document.createElement("a");
+        a.download = "poster.png";
+        a.href = c.toDataURL("image/png");
+        a.click();
+      });
+    }
+  };
+}
+
+const cutoutBtn = document.getElementById("cutoutBtn");
+if(cutoutBtn) {
+  cutoutBtn.onclick = async () => {
+    if (!shirt || !shirt.src) { alert("ເລືອກຮູບເສື້ອກ່ອນ"); return; }
+    const aiLoading = document.getElementById("aiLoading");
+    const loadingBar = document.getElementById("loadingBar");
+    
+    if(aiLoading) aiLoading.style.display = "block";
+    if(loadingBar) loadingBar.style.width = "0%";
+    
+    for (let i = 1; i <= 15; i++) {
+      await new Promise(r => setTimeout(r, 100));
+      if(loadingBar) loadingBar.style.width = (i / 15 * 100) + "%";
+    }
+    
+    try {
+      const m = await import("https://cdn.jsdelivr.net/npm/@imgly/background-removal/+esm");
+      const blob = await m.removeBackground(shirt.src);
+      shirt.src = URL.createObjectURL(blob);
+      updateShirt();
+    } catch (e) {
+      alert("AI ບໍ່ສາມາດໄດຄັດໄດ້ ກວດເຊັກອິນເຕີເນັດ");
+      console.error(e);
+    }
+    if(aiLoading) aiLoading.style.display = "none";
+  };
+}
+
+const restoreBtn = document.getElementById("restoreBtn");
+if(restoreBtn) {
+  restoreBtn.onclick = () => {
+    if (originalShirtSrc && shirt) { shirt.src = originalShirtSrc; updateShirt(); }
+  };
 };
 </script>
 </body>
