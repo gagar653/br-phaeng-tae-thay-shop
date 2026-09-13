@@ -412,19 +412,29 @@ const removeBg = document.getElementById("removeBg");
 let bgImage = "";
 
 // อัปโหลดพื้นหลัง
-bgUpload.addEventListener("change",(e)=>{
+// ===== แก้บั๊กอัปโหลดพื้นหลัง V4.9.2 =====
+
+let bgImage = "";
+
+bgUpload.addEventListener("change", function (e) {
     const file = e.target.files[0];
-    if(!file) return;
+    if (!file) return;
 
     const reader = new FileReader();
 
-    reader.onload = (event)=>{
+    reader.onload = function (event) {
         bgImage = event.target.result;
+
+        // แสดงรูปพื้นหลังทันที
         poster.style.backgroundImage = `url(${bgImage})`;
-        poster.style.backgroundColor = "transparent";
+        poster.style.backgroundColor = "#ffffff";
+        poster.style.backgroundRepeat = "no-repeat";
+        poster.style.backgroundSize = "contain";
+        poster.style.backgroundPosition = "center";
     };
 
     reader.readAsDataURL(file);
+});
 });
 
 // ปรับความเบลอ
