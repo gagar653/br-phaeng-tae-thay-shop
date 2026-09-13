@@ -3,143 +3,438 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin ຮ້ານບໍ່ແພງແຕ່ເທ້ V4.9</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js">
-let originalShirtSrc="";
-shirtUpload.addEventListener("change",()=>{originalShirtSrc=shirt.src;});
-cutoutBtn.onclick=async()=>{if(!shirt.src){alert("ເລືອກຮູບເສື້ອກ່ອນ");return;}aiLoading.style.display="block";loadingBar.style.width="0%";loadingText.textContent="0%";for(let i=1;i<=15;i++){await new Promise(r=>setTimeout(r,1000));const p=i/15*100;loadingBar.style.width=p+"%";loadingText.textContent=Math.round(p)+"%";}try{const m=await import("https://cdn.jsdelivr.net/npm/@imgly/background-removal/+esm");const blob=await m.removeBackground(shirt.src);shirt.src=URL.createObjectURL(blob);}catch(e){alert("AI ບໍ່ສາມາດໄດຄັດໄດ້ ກວດເຊັກອິນເຕີເນັດ");console.error(e);}aiLoading.style.display="none";};
-restoreBtn.onclick=()=>{if(originalShirtSrc)shirt.src=originalShirtSrc;};
-</script>
+<title>Admin ຮ້ານບໍ່ແພງແຕ່ເທ້ V4.9 - Cyber Login Edition</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
-body{margin:0;background:#070707;color:#fff;font-family:Arial}
-.wrap{display:grid;grid-template-columns:300px 1fr;gap:20px;padding:20px;max-width:1300px;margin:auto}
-.panel{background:#111;border:1px solid #550000;border-radius:20px;padding:15px}
-input,select{width:100%;padding:10px;border-radius:10px;background:#181818;border:1px solid #550000;color:#fff;margin-top:8px}
-button{padding:10px;border-radius:10px;border:none;cursor:pointer}
-.platform.active{background:#d10000;color:#fff}.platform{background:#222;color:#fff}
-#poster{width:340px;aspect-ratio:4/5;background:#fff;position:relative;overflow:hidden}
-#shirt{
- position:absolute;
- left:50%;top:50%;
- width:auto;height:auto;
- max-width:100%;max-height:100%;
- transform:translate(-50%,-50%) scale(1);
- transform-origin:center center;
- object-fit:contain;
- cursor:grab;
+/* ==================== CYBER & DARK HIGH-TECH THEME ==================== */
+:root {
+  --bg-main: #06060c;
+  --accent-red: #ff2a2a;
+  --accent-glow: rgba(255, 42, 42, 0.4);
+  --panel-bg: rgba(18, 18, 26, 0.75);
+  --panel-border: rgba(255, 42, 42, 0.25);
+  --input-bg: rgba(10, 10, 16, 0.8);
 }
-#shirt:active{cursor:grabbing}
-#logoPoster{position:absolute;top:12px;left:12px;width:55px;height:55px;border-radius:50%;overflow:hidden;display:none;border:2px solid #f33}
-#logoPoster img{width:100%;height:100%;object-fit:cover}
-.draggable{position:absolute;cursor:grab;user-select:none}
-.dragging{cursor:grabbing}
-#priceLabel{
- left:18px;
- bottom:85px;
- font-size:46px;
- font-weight:900;
- color:#ff3131;
- padding:6px 12px;
- border-radius:14px;
- background:rgba(255,255,255,.08);
- border:2px solid rgba(0,0,0,.85);
- -webkit-text-stroke:1px #000;
- text-shadow:
-   2px 2px 0 #000,
-   -2px 2px 0 #000,
-   2px -2px 0 #000,
-   -2px -2px 0 #000,
-   0 4px 8px rgba(0,0,0,.45);
+
+body {
+  margin: 0;
+  background-color: var(--bg-main);
+  background-image: 
+    radial-gradient(circle at 15% 20%, rgba(255, 0, 60, 0.15) 0%, transparent 45%),
+    radial-gradient(circle at 85% 80%, rgba(120, 0, 255, 0.1) 0%, transparent 45%),
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 30px 30px, 30px 30px;
+  background-attachment: fixed;
+  color: #fff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  min-height: 100vh;
 }
-#codeLabel{top:16px;right:16px;background:#000c;color:#fff;padding:5px 8px;border-radius:8px;font-size:12px}
-#stockLabel{left:18px;bottom:22px;background:#000c;color:#fff;padding:7px 10px;border-radius:10px}
-#sizeLabel{right:18px;bottom:22px;background:#d10000;color:#fff;padding:7px 10px;border-radius:10px}
-.btn{width:100%;background:#d10000;color:#fff;font-weight:bold}
-@media(max-width:900px){.wrap{grid-template-columns:1fr}#poster{width:100%}}
+
+/* Header แถบด้านบนเรืองแสง + User Profile Status */
+.header-bar {
+  background: linear-gradient(90deg, rgba(15,0,0,0.9) 0%, rgba(40,5,5,0.9) 50%, rgba(15,0,0,0.9) 100%);
+  padding: 15px 25px;
+  border-bottom: 2px solid var(--accent-red);
+  box-shadow: 0 4px 25px rgba(255, 42, 42, 0.3);
+  backdrop-filter: blur(10px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.header-bar h2 {
+  color: #fff;
+  margin: 0;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-shadow: 0 0 12px var(--accent-red);
+  font-size: 20px;
+}
+.user-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.status-badge {
+  background: rgba(255, 42, 42, 0.15);
+  border: 1px solid var(--accent-red);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  color: #ff8888;
+}
+
+/* Login Modal & Overlay */
+.login-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(15px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  transition: opacity 0.3s ease;
+}
+.login-box {
+  background: rgba(20, 20, 30, 0.95);
+  border: 2px solid var(--accent-red);
+  border-radius: 20px;
+  padding: 35px;
+  width: 90%;
+  max-width: 380px;
+  box-shadow: 0 0 40px rgba(255, 42, 42, 0.4);
+  text-align: center;
+}
+.login-box h2 {
+  color: #fff;
+  margin-top: 0;
+  text-shadow: 0 0 10px var(--accent-red);
+}
+.login-box input {
+  margin-bottom: 15px;
+}
+
+.wrap {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 24px;
+  padding: 25px;
+  max-width: 1400px;
+  margin: auto;
+}
+
+.panel {
+  background: var(--panel-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--panel-border);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.panel:hover {
+  border-color: rgba(255, 42, 42, 0.6);
+  box-shadow: 0 8px 32px 0 rgba(255, 42, 42, 0.2);
+}
+.panel h3 {
+  margin-top: 0;
+  margin-bottom: 14px;
+  font-size: 16px;
+  letter-spacing: 0.5px;
+  color: #ff5555;
+  text-shadow: 0 0 8px rgba(255, 42, 42, 0.4);
+}
+
+input, select {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: var(--input-bg);
+  border: 1px solid rgba(255, 42, 42, 0.3);
+  color: #fff;
+  margin-top: 8px;
+  outline: none;
+  transition: all 0.25s ease;
+}
+input:focus, select:focus {
+  border-color: var(--accent-red);
+  box-shadow: 0 0 10px var(--accent-glow);
+}
+
+button {
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.25s ease;
+}
+
+.platform {
+  background: rgba(255,255,255,0.05);
+  color: #ccc;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.platform:hover {
+  background: rgba(255,42,42,0.2);
+  color: #fff;
+}
+.platform.active {
+  background: var(--accent-red);
+  color: #fff;
+  box-shadow: 0 0 15px var(--accent-glow);
+}
+
+#poster {
+  width: 340px;
+  aspect-ratio: 4/5;
+  background: #fff;
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 0 35px rgba(0, 0, 0, 0.9), 0 0 15px rgba(255, 42, 42, 0.3);
+}
+
+#shirt {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: auto; height: auto;
+  max-width: 100%; max-height: 100%;
+  transform: translate(-50%,-50%) scale(1);
+  transform-origin: center center;
+  object-fit: contain;
+  cursor: grab;
+}
+#shirt:active { cursor: grabbing; }
+
+#logoPoster {
+  position: absolute; top: 12px; left: 12px;
+  width: 55px; height: 55px;
+  border-radius: 50%; overflow: hidden; display: none;
+  border: 2px solid #ff3131;
+  box-shadow: 0 0 10px rgba(255, 49, 49, 0.6);
+}
+#logoPoster img { width: 100%; height: 100%; object-fit: cover; }
+
+.draggable { position: absolute; cursor: grab; user-select: none; }
+.dragging { cursor: grabbing; }
+
+#priceLabel {
+  left: 18px; bottom: 85px;
+  font-size: 46px; font-weight: 900;
+  color: #ff3131;
+  padding: 6px 12px; border-radius: 14px;
+  background: rgba(255,255,255,.08);
+  border: 2px solid rgba(0,0,0,.85);
+  -webkit-text-stroke: 1px #000;
+  text-shadow:
+    2px 2px 0 #000, -2px 2px 0 #000,
+    2px -2px 0 #000, -2px -2px 0 #000,
+    0 4px 8px rgba(0,0,0,.45);
+}
+#codeLabel { top: 16px; right: 16px; background: #000c; color: #fff; padding: 5px 8px; border-radius: 8px; font-size: 12px; }
+#stockLabel { left: 18px; bottom: 22px; background: #000c; color: #fff; padding: 7px 10px; border-radius: 10px; }
+#sizeLabel { right: 18px; bottom: 22px; background: #d10000; color: #fff; padding: 7px 10px; border-radius: 10px; }
+
+.btn {
+  width: 100%;
+  background: linear-gradient(135deg, #ff2a2a 0%, #a90000 100%);
+  color: #fff;
+  font-weight: bold;
+  font-size: 15px;
+  box-shadow: 0 4px 15px var(--accent-glow);
+}
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 42, 42, 0.6);
+}
+
+@media(max-width: 900px) {
+  .wrap { grid-template-columns: 1fr; }
+  #poster { width: 100%; }
+}
 </style>
 </head>
 <body>
-<div style="background:#090909;padding:15px;border-bottom:2px solid #700"><h2 style="color:#ff2d2d;margin:0">ບໍ່ແພງແຕ່ເທ້ Admin Studio V4.9</h2></div>
+
+<!-- Popup หน้าต่างล็อกอิน -->
+<div id="loginOverlay" class="login-overlay">
+  <div class="login-box">
+    <h2>🔐 ເຂົ້າສູ່ລະບົບ Admin</h2>
+    <p style="color:#aaa;font-size:13px;margin-bottom:20px">ກະລຸນາປ້ອນຂໍ້ມູນເພື່ອໃຊ້ງານລະບົບ Studio</p>
+    <form id="loginForm" onsubmit="handleLogin(event)">
+      <input type="text" id="usernameInput" placeholder="ຊື່ผู้ໃຊ້ (Username)" required>
+      <input type="password" id="passwordInput" placeholder="ລະຫັດຜ່ານ (Password)" required>
+      <button type="submit" class="btn" style="margin-top:10px">🔑 ເຂົ້າສູ່ລະບົບ</button>
+    </form>
+    <div id="loginError" style="color:#ff4444;font-size:13px;margin-top:12px;display:none">⚠️ ชື່ผู้ใช้ หรือ รหัสผ่านไม่ถูกต้อง!</div>
+  </div>
+</div>
+
+<div class="header-bar">
+  <h2>⚡ ບໍ່ແພງແຕ່ເທ້ Admin Studio V4.9</h2>
+  <div class="user-status">
+    <div id="userBadge" class="status-badge">🔴 ยังไม่ได้เข้าสู่ระบบ</div>
+    <button id="authBtn" onclick="toggleAuthModal()" style="background:#333;color:#fff;padding:8px 14px;font-size:13px">🔑 เข้าสู่ระบบ</button>
+  </div>
+</div>
+
 <div class="wrap">
-<div>
-<div class="panel"><h3>🏪 ໂລໂກ້ຮ້ານ</h3><input type=file id=logoUpload accept="image/*"><label><input type=checkbox id=showLogo checked style="width:auto"> ສະແດງໂລໂກ້</label></div>
-<div class="panel"><h3>👕 ເລືອກຮູບສິນຄ້າ</h3><input type=file id=shirtUpload accept="image/*"><button class=btn id=cutoutBtn type=button style="margin-top:10px">✂️ AI ໄດຄັດພື້ນຫຼັງ</button><button id=restoreBtn type=button style="width:100%;margin-top:8px;background:#333;color:#fff">↩️ ກັບໄປຮູບເດີມ</button><div id=aiLoading style="display:none;margin-top:10px"><div style="color:#ff3131;font-weight:bold">🤖 AI ກຳລັງໄດຄັດພື້ນຫຼັງ...</div><div style="width:100%;height:10px;background:#222;border-radius:8px;margin-top:8px"><div id=loadingBar style="width:0%;height:10px;background:#ff3131;border-radius:8px"></div></div><div id=loadingText style="font-size:13px;margin-top:5px">0%</div></div></div>
-<div class="panel"><h3>📝 ລາຍລະອຽດສິນຄ້າ</h3>
-<input id=codeInput placeholder="AP001">
-<input id=priceInput placeholder="299000">
-<input id=stockInput placeholder="18">
-<select id=sizeSelect><option>S</option><option selected>M</option><option>L</option><option>XL</option><option value=custom>ພິມເອງ</option></select>
-<input id=sizeCustom style="display:none" placeholder="3XL / Free Size">
-</div>
-<div class="panel"><h3>📱 ຊ່ອງທາງ</h3>
-<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">
-<button class="platform active" data-ratio="4/5">Facebook</button>
-<button class=platform data-ratio="9/16">TikTok</button>
-<button class=platform data-ratio="16/9">YouTube</button>
-<button class=platform data-ratio="1/1">Instagram</button>
-</div>
-<p id=platformInfo>1080×1350 Facebook</p>
-</div>
-<div class="panel"><h3>🖱️ລະບົບໃຫມ່ໄວໆນີ້</h3>
-<p style="font-size:13px;color:#ccc">✔ ເກັບຂໍ້ມູນໄດ້ 
-<p style="font-size:13px;color:#ccc">✔ ສະຫມັກສະມາສິກVIPໃຊ້AIແຕ່ງຮູບ
-<p style="font-size:13px;color:#ccc">
-</div>
-</div>
+  <!-- ฝั่งซ้าย: เครื่องมือตั้งค่า -->
+  <div>
+    <div class="panel">
+      <h3>🏪 ໂລໂກ້ຮ້ານ</h3>
+      <input type="file" id="logoUpload" accept="image/*">
+      <label style="display:block;margin-top:10px;"><input type="checkbox" id="showLogo" checked style="width:auto"> ສະແດງໂລໂກ້</label>
+    </div>
 
-<div>
-<div class="panel">
-<h3>🎨 ຕົວຢ່າງຮູບ</h3>
-<div style="display:flex;justify-content:center">
-<div id=poster>
-<img id=shirt>
-<div id=logoPoster><img id=logoPreview></div>
-<div id=codeLabel class=draggable>AP001</div>
-<div id=priceLabel class=draggable>299,000 ₭</div>
-<div id=stockLabel class=draggable>📦 ມີ 0 ໂຕ</div>
-<div id=sizeLabel class=draggable>M</div>
-</div>
-</div>
-</div>
-<div class="panel">
-<h3>⚙️ ປັບຂະໜາດ</h3>
-<label>ຊູມ</label><input type=range id=zoom min=50 max=250 value=100>
-<label>ຂະໜາດລາຄາ</label><input type=range id=priceSize min=18 max=70 value=46>
-</div>
+    <div class="panel">
+      <h3>👕 ເລືອກຮູບສິນຄ້າ</h3>
+      <input type="file" id="shirtUpload" accept="image/*">
+      <button class="btn" id="cutoutBtn" type="button" style="margin-top:12px">✂️ AI ໄດຄັດພື້ນຫຼັງ (VIP Only)</button>
+      <button id="restoreBtn" type="button" style="width:100%;margin-top:8px;background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.2)">↩️ ກັບໄປຮູບເດີມ</button>
+      
+      <div id="aiLoading" style="display:none;margin-top:12px">
+        <div style="color:#ff3131;font-weight:bold">🤖 AI ກຳລັງໄດຄັດພື້ນຫຼັງ...</div>
+        <div style="width:100%;height:10px;background:#1a1a24;border-radius:8px;margin-top:8px;overflow:hidden">
+          <div id="loadingBar" style="width:0%;height:100%;background:var(--accent-red);border-radius:8px;transition:width 0.3s"></div>
+        </div>
+        <div id="loadingText" style="font-size:13px;margin-top:5px;text-align:right">0%</div>
+      </div>
+    </div>
 
-<div class="panel">
-<h3>🎨ສີຂໍຄວາມ</h3>
-<label>ສີລາຄາ</label><input type="color" id="priceColor" value="#ff3131">
-<label>ສີລະຫັດ</label><input type="color" id="codeColor" value="#ffffff">
-<label>ສີຈຳນວນສິນຄ້າ</label><input type="color" id="stockColor" value="#ffffff">
-<label>ສີເບີເສື້ອ</label><input type="color" id="sizeColor" value="#ffffff">
+    <div class="panel">
+      <h3>📝 ລາຍລະອຽດສິນຄ້າ</h3>
+      <input id="codeInput" placeholder="AP001">
+      <input id="priceInput" placeholder="299000">
+      <input id="stockInput" placeholder="18">
+      <select id="sizeSelect">
+        <option>S</option>
+        <option selected>M</option>
+        <option>L</option>
+        <option>XL</option>
+        <option value="custom">ພິມເອງ</option>
+      </select>
+      <input id="sizeCustom" style="display:none" placeholder="3XL / Free Size">
+    </div>
 
-<hr style="border-color:#550000;margin:15px 0">
+    <div class="panel">
+      <h3>📱 ຊ່ອງທາງ</h3>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">
+        <button class="platform active" data-ratio="4/5">Facebook</button>
+        <button class="platform" data-ratio="9/16">TikTok</button>
+        <button class="platform" data-ratio="16/9">YouTube</button>
+        <button class="platform" data-ratio="1/1">Instagram</button>
+      </div>
+      <p id="platformInfo" style="color:#aaa;font-size:13px;margin-bottom:0">1080×1350 Facebook</p>
+    </div>
 
-<h3>📏ຂະໜາດຂໍ້ຄວາມ (กลับมาแล้ว)</h3>
-<label>ຂະໜາດລະຫັດສິນຄ້າ</label><input type="range" id="codeSize" min="8" max="30" value="12">
-<label>ຂະໜາດຂໍ້ຄວາມສິນຄ້າ</label><input type="range" id="stockSize" min="10" max="28" value="14">
-<label>ຂະໜາດເບີເສື້ອ</label><input type="range" id="sizeSize" min="10" max="28" value="14">
-</div>
+    <div class="panel">
+      <h3>🖱️ ລະບົບໃຫມ່ໄວໆນີ້</h3>
+      <p style="font-size:13px;color:#aaa;margin:4px 0">✔ ເກັບຂໍ້ມູນໄດ້</p>
+      <p style="font-size:13px;color:#aaa;margin:4px 0">✔ ສະຫມັກສະມາສິກVIPໃຊ້AIແຕ່ງຮູບ</p>
+    </div>
+  </div>
 
+  <!-- ฝั่งขวา: แสดงผล และปรับขนาด/สี -->
+  <div>
+    <div class="panel">
+      <h3>🎨 ຕົວຢ່າງຮູບ</h3>
+      <div style="display:flex;justify-content:center;padding:10px 0">
+        <div id="poster">
+          <img id="shirt">
+          <div id="logoPoster"><img id="logoPreview"></div>
+          <div id="codeLabel" class="draggable">AP001</div>
+          <div id="priceLabel" class="draggable">299,000 ₭</div>
+          <div id="stockLabel" class="draggable">📦 ມີ 0 ໂຕ</div>
+          <div id="sizeLabel" class="draggable">M</div>
+        </div>
+      </div>
+    </div>
 
-<div class="panel">
-<h3>👁️ ສະແດງ / ປິດ /ຂໍ້ມູນ</h3>
-<label><input type="checkbox" id="togglePrice" checked style="width:auto"> ສະແດງລາຄາ</label><br><br>
-<label><input type="checkbox" id="toggleCode" checked style="width:auto"> ສະແດງລະຫັດສິນຄ້າ</label><br><br>
-<label><input type="checkbox" id="toggleStock" checked style="width:auto"> ສະແດງຈຳນວນສິນຄ້າ</label><br><br>
-<label><input type="checkbox" id="toggleSize" checked style="width:auto"> ສະແດງເບີເສື້ອ</label>
-</div>
+    <div class="panel">
+      <h3>⚙️ ປັບຂະໜາດ</h3>
+      <label>ຊູມ</label><input type="range" id="zoom" min="50" max="250" value="100">
+      <label style="margin-top:10px;display:block">ຂະໜາດລາຄາ</label><input type="range" id="priceSize" min="18" max="70" value="46">
+    </div>
 
-<button class=btn id=downloadBtn>📥 ໂຫລດຮູບ PNG</button>
-</div>
+    <div class="panel">
+      <h3>🎨 ສີຂໍຄວາມ</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div><label>ສີລາຄາ</label><input type="color" id="priceColor" value="#ff3131"></div>
+        <div><label>ສີລະຫັດ</label><input type="color" id="codeColor" value="#ffffff"></div>
+        <div><label>ສີຈຳນວນສິນຄ້າ</label><input type="color" id="stockColor" value="#ffffff"></div>
+        <div><label>ສີເບີເສື້ອ</label><input type="color" id="sizeColor" value="#ffffff"></div>
+      </div>
+
+      <hr style="border-color:rgba(255,42,42,0.2);margin:20px 0">
+
+      <h3>📏 ຂະໜາດຂໍ້ຄວາມ</h3>
+      <label>ຂະໜາດລະຫັດສິນຄ້າ</label><input type="range" id="codeSize" min="8" max="30" value="12">
+      <label style="margin-top:10px;display:block">ຂະໜາດຂໍ້ຄວາມສິນຄ້າ</label><input type="range" id="stockSize" min="10" max="28" value="14">
+      <label style="margin-top:10px;display:block">ຂະໜາດເບີເສື້ອ</label><input type="range" id="sizeSize" min="10" max="28" value="14">
+    </div>
+
+    <div class="panel">
+      <h3>👁️ ສະແດງ / ປິດ / ຂໍ້ມູນ</h3>
+      <label style="margin-right:15px"><input type="checkbox" id="togglePrice" checked style="width:auto"> ສະແດງລາຄາ</label>
+      <label style="margin-right:15px"><input type="checkbox" id="toggleCode" checked style="width:auto"> ສະແດງລະຫັດສິນຄ້າ</label><br><br>
+      <label style="margin-right:15px"><input type="checkbox" id="toggleStock" checked style="width:auto"> ສະແດງຈຳນວນສິນຄ້າ</label>
+      <label><input type="checkbox" id="toggleSize" checked style="width:auto"> ສະແດງເບີເສື້ອ</label>
+    </div>
+
+    <button class="btn" id="downloadBtn" style="padding:15px;font-size:18px">📥 ໂຫລດຮູບ PNG</button>
+  </div>
 </div>
 
 <script>
+// ==================== AUTH / LOGIN SYSTEM ====================
+let isLoggedIn = false;
+let currentUser = "";
+
+function handleLogin(e) {
+  e.preventDefault();
+  const user = document.getElementById("usernameInput").value;
+  const pass = document.getElementById("passwordInput").value;
+
+  // จำลองการตรวจสอบรหัสผ่าน (สามารถเปลี่ยนรหัสตรงนี้ได้)
+  if (user !== "" && pass !== "") {
+    isLoggedIn = true;
+    currentUser = user;
+    document.getElementById("loginOverlay").style.display = "none";
+    updateUserUI();
+  } else {
+    document.getElementById("loginError").style.display = "block";
+  }
+}
+
+function updateUserUI() {
+  const badge = document.getElementById("userBadge");
+  const authBtn = document.getElementById("authBtn");
+  
+  if (isLoggedIn) {
+    badge.textContent = `🟢 VIP Admin: ${currentUser}`;
+    badge.style.borderColor = "#00ff88";
+    badge.style.color = "#00ff88";
+    badge.style.background = "rgba(0, 255, 136, 0.1)";
+    
+    authBtn.textContent = "🚪 ออกจากระบบ";
+    authBtn.style.background = "#550000";
+  } else {
+    badge.textContent = "🔴 ยังไม่ได้เข้าสู่ระบบ";
+    badge.style.borderColor = "var(--accent-red)";
+    badge.style.color = "#ff8888";
+    badge.style.background = "rgba(255, 42, 42, 0.15)";
+    
+    authBtn.textContent = "🔑 เข้าสู่ระบบ";
+    authBtn.style.background = "#333";
+  }
+}
+
+function toggleAuthModal() {
+  if (isLoggedIn) {
+    if (confirm("ต้องการออกจากระบบหรือไม่?")) {
+      isLoggedIn = false;
+      currentUser = "";
+      updateUserUI();
+    }
+  } else {
+    document.getElementById("loginOverlay").style.display = "flex";
+  }
+}
+
+// ==================== MAIN EDITOR SYSTEM ====================
 let zoomScale=1,shirtX=0,shirtY=0;
+let originalShirtSrc="";
+
 function updateShirt(){
  shirt.style.transform=`translate(calc(-50% + ${shirtX}px), calc(-50% + ${shirtY}px)) scale(${zoomScale})`;
 }
+
 logoUpload.onchange=e=>{
  const f=e.target.files[0];if(!f)return;
  const r=new FileReader();
@@ -147,12 +442,17 @@ logoUpload.onchange=e=>{
  r.readAsDataURL(f);
 };
 showLogo.onchange=()=>logoPoster.style.display=(showLogo.checked&&logoPreview.src)?"block":"none";
+
 shirtUpload.onchange=e=>{
  const f=e.target.files[0];if(!f)return;
  const r=new FileReader();
- r.onload=x=>shirt.src=x.target.result;
+ r.onload=x=>{
+   shirt.src=x.target.result;
+   originalShirtSrc=x.target.result;
+ };
  r.readAsDataURL(f);
 };
+
 codeInput.oninput=()=>codeLabel.textContent=codeInput.value||"AP001";
 priceInput.oninput=()=>{
  const n=Number(priceInput.value.replace(/,/g,""));
@@ -224,7 +524,6 @@ function drag(el){
 
 priceSize.oninput=()=>priceLabel.style.fontSize=priceSize.value+"px";
 
-
 priceColor.oninput=()=>priceLabel.style.color=priceColor.value;
 codeColor.oninput=()=>codeLabel.style.color=codeColor.value;
 stockColor.oninput=()=>stockLabel.style.color=stockColor.value;
@@ -234,13 +533,10 @@ codeSize.oninput=()=>codeLabel.style.fontSize=codeSize.value+"px";
 stockSize.oninput=()=>stockLabel.style.fontSize=stockSize.value+"px";
 sizeSize.oninput=()=>sizeLabel.style.fontSize=sizeSize.value+"px";
 
-
-
 togglePrice.onchange=()=>priceLabel.style.display=togglePrice.checked?"block":"none";
 toggleCode.onchange=()=>codeLabel.style.display=toggleCode.checked?"block":"none";
 toggleStock.onchange=()=>stockLabel.style.display=toggleStock.checked?"block":"none";
 toggleSize.onchange=()=>sizeLabel.style.display=toggleSize.checked?"block":"none";
-
 
 downloadBtn.onclick=()=>{
  html2canvas(poster,{scale:2,backgroundColor:"#fff"}).then(c=>{
@@ -250,10 +546,9 @@ downloadBtn.onclick=()=>{
   a.click();
  });
 };
+
 const isTouchDevice = window.matchMedia("(pointer: coarse)").matches;
-
 if (isTouchDevice) {
-
   function mobileDrag(id) {
     const el = document.getElementById(id);
     const poster = document.getElementById("poster");
@@ -261,12 +556,8 @@ if (isTouchDevice) {
 
     let dragging = false;
     let holdTimer;
-    let startX = 0;
-    let startY = 0;
-    let startLeft = 0;
-    let startTop = 0;
+    let startX = 0, startY = 0, startLeft = 0, startTop = 0;
 
-    // ทำให้จับง่ายขึ้นบนมือถือ
     el.style.touchAction = "none";
     el.style.padding = "10px";
     el.style.margin = "-10px";
@@ -274,13 +565,10 @@ if (isTouchDevice) {
     el.addEventListener("pointerdown", (e) => {
       holdTimer = setTimeout(() => {
         dragging = true;
-
         const parent = poster.getBoundingClientRect();
         const rect = el.getBoundingClientRect();
-
         startLeft = rect.left - parent.left;
         startTop = rect.top - parent.top;
-
         startX = e.clientX;
         startY = e.clientY;
 
@@ -288,19 +576,15 @@ if (isTouchDevice) {
         el.style.top = startTop + "px";
         el.style.right = "auto";
         el.style.bottom = "auto";
-
         document.body.style.overflow = "hidden";
-      }, 180); // แตะค้าง 0.18 วิ
+      }, 180);
     });
 
     el.addEventListener("pointermove", (e) => {
       if (!dragging) return;
-
       e.preventDefault();
-
       const x = startLeft + (e.clientX - startX);
       const y = startTop + (e.clientY - startY);
-
       const maxX = poster.clientWidth - el.offsetWidth;
       const maxY = poster.clientHeight - el.offsetHeight;
 
@@ -313,21 +597,45 @@ if (isTouchDevice) {
       dragging = false;
       document.body.style.overflow = "";
     }
-
     el.addEventListener("pointerup", stopDrag);
     el.addEventListener("pointercancel", stopDrag);
   }
 
-  // ใช้กับข้อความทั้ง 4 ตัว
-  mobileDrag("priceLabel");
-  mobileDrag("codeLabel");
-  mobileDrag("stockLabel");
-  mobileDrag("sizeLabel");
+  ["priceLabel","codeLabel","stockLabel","sizeLabel"].forEach(mobileDrag);
 }
-let originalShirtSrc="";
-shirtUpload.addEventListener("change",()=>{originalShirtSrc=shirt.src;});
-cutoutBtn.onclick=async()=>{if(!shirt.src){alert("ເລືອກຮູບເສື້ອກ່ອນ");return;}aiLoading.style.display="block";loadingBar.style.width="0%";loadingText.textContent="0%";for(let i=1;i<=15;i++){await new Promise(r=>setTimeout(r,1000));const p=i/15*100;loadingBar.style.width=p+"%";loadingText.textContent=Math.round(p)+"%";}try{const m=await import("https://cdn.jsdelivr.net/npm/@imgly/background-removal/+esm");const blob=await m.removeBackground(shirt.src);shirt.src=URL.createObjectURL(blob);}catch(e){alert("AI ບໍ່ສາມາດໄດຄັດໄດ້ ກວດເຊັກອິນເຕີເນັດ");console.error(e);}aiLoading.style.display="none";};
-restoreBtn.onclick=()=>{if(originalShirtSrc)shirt.src=originalShirtSrc;};
+
+cutoutBtn.onclick=async()=>{
+  if(!isLoggedIn){
+    alert("ກະລຸນາເຂົ້າສູ່ລະບົບก่อนใช้งานฟีเจอร์ AI ไดคัต!");
+    toggleAuthModal();
+    return;
+  }
+  if(!shirt.src){alert("ເລືອກຮູບເສື້ອກ່ອນ");return;}
+  aiLoading.style.display="block";
+  loadingBar.style.width="0%";
+  loadingText.textContent="0%";
+  
+  for(let i=1;i<=15;i++){
+    await new Promise(r=>setTimeout(r,100));
+    const p=i/15*100;
+    loadingBar.style.width=p+"%";
+    loadingText.textContent=Math.round(p)+"%";
+  }
+  
+  try{
+    const m=await import("https://cdn.jsdelivr.net/npm/@imgly/background-removal/+esm");
+    const blob=await m.removeBackground(shirt.src);
+    shirt.src=URL.createObjectURL(blob);
+  }catch(e){
+    alert("AI ບໍ່ສາມາດໄດຄັດໄດ້ ກວດເຊັກອິນເຕີເນັດ");
+    console.error(e);
+  }
+  aiLoading.style.display="none";
+};
+
+restoreBtn.onclick=()=>{
+  if(originalShirtSrc) shirt.src=originalShirtSrc;
+};
 </script>
 </body>
 </html>
