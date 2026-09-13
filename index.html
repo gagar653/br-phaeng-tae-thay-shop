@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin ຮ້ານບໍ່ແພງແຕ່ເທ້ V4.9 - Strict Auth Edition</title>
+<title>Admin ຮ້ານບໍ່ແພງແຕ່ເທ້ V4.9 - Strict Auth Fixed Edition</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
 :root {
@@ -250,8 +250,8 @@ button {
     <!-- ฟอร์มเข้าสู่ระบบ -->
     <form id="loginForm" onsubmit="handleLogin(event)">
       <h2>🔐 Login Studio</h2>
-      <input type="text" id="loginUser" placeholder="ຊື່ผู้ໃຊ້ (Username)" required>
-      <input type="password" id="loginPass" placeholder="ລະຫັດຜ່ານ (Password)" required>
+      <input type="text" id="loginUser" placeholder="ຊື່ผู้ใช้ (Username)" required autocomplete="username">
+      <input type="password" id="loginPass" placeholder="ລະຫັດຜ່ານ (Password)" required autocomplete="current-password">
       <button type="submit" class="btn" style="margin-top:10px">🔑 ເຂົ້າສູ່ລະບົບ</button>
       <div id="loginError" style="color:#ff4444;font-size:12px;margin-top:10px;display:none">⚠️ ລະຫັດຜ່ານ ຫຼື ຊື່ผู้ໃຊ້ບໍ່ຖືກຕ້ອງ (จำไม่ได้คือจบ)</div>
     </form>
@@ -260,8 +260,8 @@ button {
     <form id="registerForm" onsubmit="handleRegister(event)" style="display:none">
       <h2>📝 Register Account</h2>
       <p style="color:#ff5555;font-size:12px;margin-bottom:10px">⚠️ คำเตือน: สมัครได้เพียงครั้งเดียวเท่านั้น! โปรดจำรหัสผ่านให้ดี</p>
-      <input type="text" id="regUser" placeholder="ตั้งชื่อผู้ใช้ (Username)" required>
-      <input type="password" id="regPass" placeholder="ตั้งรหัสผ่าน (Password)" required>
+      <input type="text" id="regUser" placeholder="ตั้งชื่อผู้ใช้ (Username)" required autocomplete="username">
+      <input type="password" id="regPass" placeholder="ตั้งรหัสผ่าน (Password)" required autocomplete="new-password">
       <button type="submit" class="btn" style="margin-top:10px">✨ ยืนยันการสมัครถาวร</button>
     </form>
     
@@ -391,18 +391,16 @@ button {
 </div>
 
 <script>
-// ==================== STRICT AUTH SYSTEM (ONE-TIME REGISTER) ====================
+// ==================== FIXED STRICT AUTH SYSTEM ====================
 let isLoggedIn = false;
 let currentUser = "";
 
-// ตรวจสอบสถานะการสมัครเมื่อโหลดหน้าเว็บ
+// ตรวจสอบสถานะเมื่อเปิดหน้าเว็บ
 window.addEventListener("DOMContentLoaded", () => {
   const accountCreated = localStorage.getItem("studio_account_created");
   if (!accountCreated) {
-    // ถ้ายังไม่เคยสมัคร ให้ไปหน้า Register ทันที
     switchAuthTab('register');
   } else {
-    // ถ้าเคยสมัครแล้ว ให้เข้าหน้า Login
     switchAuthTab('login');
   }
 });
@@ -427,7 +425,6 @@ function switchAuthTab(tab) {
     loginForm.style.display = "none";
     
     if (isRegistered) {
-      // ปิดไม่ให้สมัครเพิ่มถาวร
       regForm.style.display = "none";
       alreadyMsg.style.display = "block";
     } else {
@@ -444,7 +441,8 @@ function handleRegister(e) {
     return;
   }
 
-  const u = document.getElementById("regUser").value.trim();
+  // ใช้ .trim().toLowerCase() ป้องกันปัญหาช่องว่างเกินและตัวอักษรพิมพ์เล็ก-ใหญ่
+  const u = document.getElementById("regUser").value.trim().toLowerCase();
   const p = document.getElementById("regPass").value.trim();
 
   if (u && p) {
@@ -452,23 +450,23 @@ function handleRegister(e) {
     localStorage.setItem("studio_pass", p);
     localStorage.setItem("studio_account_created", "true");
     
-    alert("✅ สมัครบัญชีสำเร็จถาวร! กรุณาจดจำรหัสผ่านของคุณ เพราะจะไม่สามารถรีเซ็ตได้อีก");
+    alert(`✅ สมัครบัญชีสำเร็จถาวร!\nUsername ของคุณคือ: ${u}\nกรุณาจดจำรหัสผ่านให้ดี เพราะจะไม่สามารถกู้คืนได้`);
     switchAuthTab('login');
   }
 }
 
 function handleLogin(e) {
   e.preventDefault();
-  const u = document.getElementById("loginUser").value.trim();
+  const u = document.getElementById("loginUser").value.trim().toLowerCase();
   const p = document.getElementById("loginPass").value.trim();
   
   const storedUser = localStorage.getItem("studio_user");
   const storedPass = localStorage.getItem("studio_pass");
 
-  // ตรวจสอบ username/password ที่บันทึกไว้ถาวร
+  // ตรวจสอบค่าความถูกต้อง
   if (storedUser && storedPass && u === storedUser && p === storedPass) {
     isLoggedIn = true;
-    currentUser = u;
+    currentUser = storedUser;
     document.getElementById("loginOverlay").style.display = "none";
     document.getElementById("loginError").style.display = "none";
     updateUserUI();
@@ -691,7 +689,7 @@ if (isTouchDevice) {
 
 cutoutBtn.onclick=async()=>{
   if(!isLoggedIn){
-    alert("ກະລຸນາເຂົ້າສູ່ລະບົບก่อนใช้งานฟีเจอร์ AI ไดคັດ!");
+    alert("ກະລຸນາເຂົ້າສູ່ລະບົບก่อนใช้งานฟีเจอร์ AI ไดຄັດ!");
     toggleAuthModal();
     return;
   }
