@@ -1,206 +1,101 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ร้านค้าเสื้อผ้า - สั่งซื้อสินค้า</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
-    </style>
-</head>
-<body class="min-h-screen text-slate-800">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin ຮ້ານບໍ່ແພງແຕ່ເທ້ V5.2 - Protected</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+:root {
+  --bg-main: #06060c;
+  --accent-red: #ff2a2a;
+  --accent-glow: rgba(255, 42, 42, 0.4);
+  --panel-bg: rgba(18, 18, 26, 0.75);
+  --panel-border: rgba(255, 42, 42, 0.25);
+  --input-bg: rgba(10, 10, 16, 0.8);
+}
 
-    <!-- Header -->
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
-        <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-            <div class="flex items-center space-x-2">
-                <span class="text-xl font-bold bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">Apparel Store</span>
-            </div>
-            <button onclick="toggleCart()" class="relative bg-slate-100 hover:bg-slate-200 p-2.5 rounded-full transition flex items-center justify-center">
-                <svg class="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
-                <span id="cart-badge" class="absolute -top-1 -right-1 bg-indigo-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold hidden">0</span>
-            </button>
-        </div>
-    </header>
+body {
+  margin: 0;
+  background-color: var(--bg-main);
+  background-image: 
+    radial-gradient(circle at 15% 20%, rgba(255, 0, 60, 0.15) 0%, transparent 45%),
+    radial-gradient(circle at 85% 80%, rgba(120, 0, 255, 0.1) 0%, transparent 45%),
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 30px 30px, 30px 30px;
+  background-attachment: fixed;
+  color: #fff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  min-height: 100vh;
+}
 
-    <!-- Main Content -->
-    <main class="max-w-6xl mx-auto px-4 py-8">
-        <div class="mb-8">
-            <h1 class="text-2xl font-bold text-slate-900">สินค้าทั้งหมด</h1>
-            <p class="text-slate-500 text-sm">เลือกดูสินค้าและกดสั่งซื้อได้ง่ายๆ เพียงปลายนิ้ว</p>
-        </div>
+/* ================= LOGIN SCREEN ================= */
+#loginScreen {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: var(--bg-main);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.login-box {
+  background: var(--panel-bg);
+  backdrop-filter: blur(15px);
+  border: 1px solid var(--panel-border);
+  border-radius: 20px;
+  padding: 40px;
+  width: 100%;
+  max-width: 360px;
+  text-align: center;
+  box-shadow: 0 0 30px rgba(255, 42, 42, 0.2);
+}
+.login-box h2 {
+  margin-top: 0;
+  color: #fff;
+  text-shadow: 0 0 10px var(--accent-red);
+}
+.login-box input {
+  text-align: center;
+  font-size: 18px;
+  letter-spacing: 2px;
+  margin-bottom: 15px;
+}
+#loginErr {
+  color: #ff4444;
+  font-size: 14px;
+  margin-top: 10px;
+  display: none;
+}
 
-        <!-- Product Grid -->
-        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            <!-- Products will be injected here -->
-        </div>
-    </main>
+/* ================= MAIN CONTENT ================= */
+#mainApp {
+  display: none; /* ซ่อนไว้ก่อนจนกว่าจะล็อกอินสำเร็จ */
+}
 
-    <!-- Product Detail Modal -->
-    <div id="detail-modal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl relative animate-in fade-in zoom-in duration-200">
-            <button onclick="closeModal()" class="absolute top-4 right-4 bg-slate-100 hover:bg-slate-200 p-2 rounded-full transition z-10">
-                <svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-            </button>
-            <div id="modal-content">
-                <!-- Modal details injected here -->
-            </div>
-        </div>
-    </div>
-
-    <!-- Cart Drawer -->
-    <div id="cart-drawer" class="fixed inset-0 bg-black/50 z-50 flex justify-end hidden">
-        <div class="bg-white w-full max-w-md h-full flex flex-col shadow-2xl">
-            <div class="p-4 border-b border-slate-200 flex items-center justify-between">
-                <h2 class="font-bold text-lg">ตะกร้าสินค้าของฉัน</h2>
-                <button onclick="toggleCart()" class="p-2 hover:bg-slate-100 rounded-full transition">
-                    <svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                </button>
-            </div>
-            <div id="cart-items" class="flex-1 overflow-y-auto p-4 space-y-4">
-                <!-- Cart items injected here -->
-            </div>
-            <div class="p-4 border-t border-slate-200 bg-slate-50">
-                <div class="flex justify-between mb-4 font-bold text-lg">
-                    <span>ยอดรวมทั้งหมด:</span>
-                    <span id="cart-total" class="text-indigo-600">฿0</span>
-                </div>
-                <button onclick="checkout()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-bold transition shadow-lg shadow-indigo-600/30">
-                    ยืนยันการสั่งซื้อ / ชำระเงิน
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        const products = [
-            { id: 1, name: "เสื้อยืด Minimalist Oversized", price: 350, image: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500&auto=format&fit=crop&q=60", desc: "เสื้อยืดผ้าคอตตอนพรีเมียม นุ่ม ใส่สบาย ดีไซน์มินิมอล เหมาะกับทุกโอกาส" },
-            { id: 2, name: "ฮู้ดดี้สตรีทแวร์ Cool Vibes", price: 790, image: "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=500&auto=format&fit=crop&q=60", desc: "ฮู้ดดี้กันหนาวเนื้อผ้าหนานุ่ม ทรงสวยสไตล์สตรีทแฟชั่น" },
-            { id: 3, name: "เสื้อเชิ้ต Casual Linen", price: 490, image: "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=500&auto=format&fit=crop&q=60", desc: "เสื้อเชิ้ตผ้าลินินผสม ระบายอากาศได้ดีเยี่ยม ลุคชิลๆ ใส่เที่ยวทะเลหรือคาเฟ่" }
-        ];
-
-        let cart = [];
-
-        function renderProducts() {
-            const grid = document.getElementById('product-grid');
-            grid.innerHTML = products.map(p => `
-                <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-xl transition flex flex-col group cursor-pointer" onclick="openDetail(${p.id})">
-                    <div class="aspect-square overflow-hidden bg-slate-100">
-                        <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                    </div>
-                    <div class="p-4 flex flex-col flex-1 justify-between">
-                        <div>
-                            <h3 class="font-bold text-slate-800 line-clamp-1">${p.name}</h3>
-                            <p class="text-indigo-600 font-bold mt-1">฿${p.price.toLocaleString()}</p>
-                        </div>
-                        <button class="mt-4 w-full bg-slate-100 hover:bg-indigo-600 hover:text-white text-slate-700 py-2 rounded-xl text-sm font-semibold transition">
-                            ดูรายละเอียด
-                        </button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function openDetail(id) {
-            const p = products.find(item => item.id === id);
-            const modal = document.getElementById('detail-modal');
-            const content = document.getElementById('modal-content');
-            
-            content.innerHTML = `
-                <div class="aspect-video bg-slate-100">
-                    <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover">
-                </div>
-                <div class="p-6">
-                    <h2 class="text-xl font-bold text-slate-900">${p.name}</h2>
-                    <p class="text-2xl font-bold text-indigo-600 mt-2">฿${p.price.toLocaleString()}</p>
-                    <p class="text-slate-600 text-sm mt-3 leading-relaxed">${p.desc}</p>
-                    <div class="mt-6 flex space-x-3">
-                        <button onclick="addToCart(${p.id}); closeModal();" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-bold transition shadow-lg shadow-indigo-600/30">
-                            หยิบใส่ตะกร้า
-                        </button>
-                    </div>
-                </div>
-            `;
-            modal.classList.remove('hidden');
-        }
-
-        function closeModal() {
-            document.getElementById('detail-modal').classList.add('hidden');
-        }
-
-        function toggleCart() {
-            const drawer = document.getElementById('cart-drawer');
-            drawer.classList.toggle('hidden');
-            renderCart();
-        }
-
-        function addToCart(id) {
-            const p = products.find(item => item.id === id);
-            const existing = cart.find(item => item.id === id);
-            if (existing) {
-                existing.qty += 1;
-            } else {
-                cart.push({ ...p, qty: 1 });
-            }
-            updateCartBadge();
-        }
-
-        function updateCartBadge() {
-            const badge = document.getElementById('cart-badge');
-            const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
-            if (totalQty > 0) {
-                badge.textContent = totalQty;
-                badge.classList.remove('hidden');
-            } else {
-                badge.classList.add('hidden');
-            }
-        }
-
-        function renderCart() {
-            const container = document.getElementById('cart-items');
-            const totalEl = document.getElementById('cart-total');
-            
-            if (cart.length === 0) {
-                container.innerHTML = `<div class="text-center py-12 text-slate-400">ตะกร้าสินค้าว่างเปล่า</div>`;
-                totalEl.textContent = '฿0';
-                return;
-            }
-
-            container.innerHTML = cart.map(item => `
-                <div class="flex items-center space-x-4 bg-slate-50 p-3 rounded-xl">
-                    <img src="${item.image}" class="w-16 h-16 object-cover rounded-lg">
-                    <div class="flex-1">
-                        <h4 class="font-bold text-sm text-slate-800">${item.name}</h4>
-                        <p class="text-indigo-600 font-semibold text-sm">฿${item.price.toLocaleString()} x ${item.qty}</p>
-                    </div>
-                    <button onclick="removeFromCart(${item.id})" class="text-slate-400 hover:text-red-500 p-1">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                    </button>
-                </div>
-            `).join('');
-
-            const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-            totalEl.textContent = `฿${total.toLocaleString()}`;
-        }
-
-        function removeFromCart(id) {
-            cart = cart.filter(item => item.id !== id);
-            renderCart();
-            updateCartBadge();
-        }
-
-        function checkout() {
-            if (cart.length === 0) return alert('กรุณาเลือกสินค้าอย่างน้อย 1 ชิ้นครับ');
-            alert('ระบบจำลองการสั่งซื้อสำเร็จ! ขอบคุณที่อุดหนุนครับ');
-            cart = [];
-            renderCart();
-            updateCartBadge();
-            toggleCart();
-        }
-
-        renderProducts();
-    </script>
-</body>
-</html>
+.header-bar {
+  background: linear-gradient(90deg, rgba(15,0,0,0.9) 0%, rgba(40,5,5,0.9) 50%, rgba(15,0,0,0.9) 100%);
+  padding: 15px 25px;
+  border-bottom: 2px solid var(--accent-red);
+  box-shadow: 0 4px 25px rgba(255, 42, 42, 0.3);
+  backdrop-filter: blur(10px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.header-bar h2 {
+  color: #fff;
+  margin: 0;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-shadow: 0 0 12px var(--accent-red);
+  font-size: 20px;
+}
+.user-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+... (561 บรรทัด)
