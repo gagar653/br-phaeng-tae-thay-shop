@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin ຮ້ານບໍ່ແພງແຕ່ເທ້ V6.0 - Multi-Function Pro</title>
+<title>Admin ຮ້ານບໍ່ແພງແຕ່ເທ້ V6.2 - Integrated Shop Hub</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
 :root {
@@ -100,6 +100,7 @@ body {
 .nav-tabs {
   display: flex;
   gap: 10px;
+  flex-wrap: wrap;
 }
 .nav-tab-btn {
   background: rgba(255, 255, 255, 0.05);
@@ -212,7 +213,6 @@ button {
   touch-action: none;
 }
 
-/* Layer 1: รูปพื้นหลัง */
 #bgImg {
   position: absolute;
   left: 50%; top: 50%;
@@ -223,7 +223,6 @@ button {
   user-select: none;
 }
 
-/* Layer 2: รูปเสื้อ */
 #shirt {
   position: absolute;
   left: 50%; top: 50%;
@@ -235,7 +234,6 @@ button {
   user-select: none;
 }
 
-/* Layer 3: โลโก้และข้อความ */
 #logoPoster {
   position: absolute; top: 12px; left: 12px;
   width: 55px; height: 55px;
@@ -299,10 +297,6 @@ button {
   cursor: pointer;
   transition: 0.3s;
 }
-.preview-dropzone:hover {
-  border-color: var(--accent-red);
-  background: rgba(255, 42, 42, 0.05);
-}
 .image-preview-list {
   display: flex;
   gap: 10px;
@@ -330,7 +324,6 @@ button {
   padding: 15px;
   box-shadow: 0 5px 20px rgba(0,0,0,0.5);
 }
-/* ปรับแต่งส่วนแสดงผลรูปภาพพรีวิวให้ปรับตามสัดส่วนภาพจริง ไม่ถูกบีบและไม่มีขอบดำ */
 .product-card-preview .image-wrapper {
   width: 100%;
   background: #000;
@@ -366,12 +359,12 @@ button {
 <!-- หน้าโปรแกรมหลัก -->
 <div id="mainApp">
   <div class="header-bar">
-    <h2>⚡ ບໍ່ແພງແຕ່ເທ້ Admin Studio V6.0</h2>
+    <h2>⚡ ບໍ່ແພງແຕ່ເທ້ Admin Studio V6.2</h2>
     
-    <!-- ปุ่มสลับฟังก์ชัน -->
     <div class="nav-tabs">
       <button class="nav-tab-btn active" data-target="tabPoster">🎨 ระบบทำป้ายสินค้า</button>
       <button class="nav-tab-btn" data-target="tabUpload">🛍️ อัปรูปลงขายสินค้า</button>
+      <button class="nav-tab-btn" data-target="tabManage">📋 จัดการสินค้า & วิเคราะห์ยอดขาย</button>
     </div>
 
     <div class="user-status">
@@ -380,10 +373,9 @@ button {
     </div>
   </div>
 
-  <!-- TAB 1: ระบบทำป้ายสินค้า (Poster Studio) เดิม -->
+  <!-- TAB 1: ระบบทำป้ายสินค้า (Poster Studio) -->
   <div id="tabPoster" class="tab-content active">
     <div class="wrap">
-      <!-- ฝั่งซ้าย: เครื่องมือตั้งค่า -->
       <div>
         <div class="panel">
           <h3>🖼️ ຮູບພື້ນຫຼັງ (Background)</h3>
@@ -413,7 +405,7 @@ button {
         </div>
 
         <div class="panel">
-          <h3>📝 ລາຍລະອຽດສິນຄ້າ</h3>
+          <h3>📝 ລายລະອຽດສິນຄ້າ</h3>
           <input id="codeInput" placeholder="AP001">
           <input id="priceInput" placeholder="299000">
           <input id="stockInput" placeholder="18">
@@ -439,7 +431,6 @@ button {
         </div>
       </div>
 
-      <!-- ฝั่งขวา: แสดงผล และปรับขนาด/เอฟเฟกต์ -->
       <div>
         <div class="panel">
           <h3>🎨 ຕົວຢ່າງຮູບ</h3>
@@ -496,12 +487,15 @@ button {
           <label><input type="checkbox" id="toggleSize" checked style="width:auto"> ສະແດງເບີເສື້ອ</label>
         </div>
 
-        <button class="btn" id="downloadBtn" style="padding:15px;font-size:18px">📥 ໂຫລດຮູບ PNG</button>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <button class="btn" id="downloadBtn" style="padding:15px; font-size:16px; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2);">📥 ໂຫລດຮູບ PNG</button>
+          <button class="btn" id="sendPosterToShopBtn" style="padding:15px; font-size:16px;">🚀 ส่งป้ายนี้เข้าหน้าร้าน</button>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- TAB 2: ระบบอัปรูปลงขายสินค้า (Product Upload Manager - Free Style) -->
+  <!-- TAB 2: ระบบอัปรูปลงขายสินค้า (Product Upload Manager) -->
   <div id="tabUpload" class="tab-content">
     <div class="upload-container">
       <div class="panel" style="margin-bottom: 25px;">
@@ -538,8 +532,25 @@ button {
               </select>
             </div>
             <div>
-              <label>จำนวนสต็อกทั้งหมด</label>
+              <label>จำนวนสต็อกตั้งต้น</label>
               <input type="number" id="upStock" value="50">
+            </div>
+          </div>
+
+          <!-- ฟิลด์เพิ่มเติมสำหรับระบบติดตามการขาย (เปอร์เซ็นต์และสถานะ) -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
+            <div>
+              <label>จำนวนที่ขายไปแล้ว (ชิ้น)</label>
+              <input type="number" id="upSold" value="0" min="0">
+            </div>
+            <div>
+              <label>สถานะการขาย</label>
+              <select id="upSalesStatus">
+                <option value="hot">🔥 ขายดีมาก (Hot)</option>
+                <option value="normal" selected>⚡ ปกติ</option>
+                <option value="slow">🧊 ขายออกช้า</option>
+                <option value="soldout">❌ ขายหมดแล้ว (Sold Out)</option>
+              </select>
             </div>
           </div>
 
@@ -549,11 +560,9 @@ button {
           <label style="margin-top: 15px; display: block;">📤 อัปโหลดรูปภาพสินค้า (เลือกได้หลายรูป)</label>
           <input type="file" id="productImagesInput" accept="image/*" multiple style="margin-top: 5px;">
           
-          <div class="image-preview-list" id="imagePreviewList">
-            <!-- แสดงรูปพรีวิวเล็กๆ ตรงนี้ -->
-          </div>
+          <div class="image-preview-list" id="imagePreviewList"></div>
 
-          <button class="btn" id="saveProductBtn" style="margin-top: 20px; padding: 15px; font-size: 16px;">✨ บันทึกและเผยแพร่สินค้าลงระบบ</button>
+          <button class="btn" id="saveProductBtn" style="margin-top: 20px; padding: 15px; font-size: 16px;">✨ บันทึกและส่งสินค้าเข้าหน้าร้านทันที</button>
         </div>
 
         <!-- ตัวอย่างพรีวิวการ์ดสินค้าที่จะแสดงผลจริง -->
@@ -565,16 +574,56 @@ button {
                 <img id="previewMainImg" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='220'><rect width='100%25' height='100%25' fill='%23111'/><text x='50%25' y='50%25' fill='%23555' dominant-baseline='middle' text-anchor='middle'>ยังไม่มีรูปสินค้า</text></svg>">
               </div>
               <div style="margin-top: 15px;">
-                <span id="pBadge" style="background: var(--accent-red); color: #fff; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: bold;">NEW</span>
+                <div style="display: flex; gap: 5px; flex-wrap: wrap;">
+                  <span id="pBadge" style="background: var(--accent-red); color: #fff; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: bold;">NEW</span>
+                  <span id="pSalesBadge" style="background: rgba(0,255,138,0.2); color: #00ff88; border: 1px solid #00ff88; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: bold;">⚡ สถานะ: ปกติ</span>
+                </div>
                 <h4 id="pTitleShow" style="margin: 8px 0 5px 0; font-size: 18px; color: #fff;">ชื่อสินค้าตัวอย่าง</h4>
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
                   <span id="pPriceShow" style="color: #ff3131; font-weight: bold; font-size: 20px;">299,000 ₭</span>
                   <span id="pStockShow" style="color: #00ff88; font-size: 13px;">📦 สต็อก: 50 ชิ้น</span>
                 </div>
+                <div id="pPercentShow" style="margin-top: 8px; font-size: 13px; color: #ffaa00;">📊 อัตราการขาย: 0% (ขายไป 0/50)</div>
                 <p id="pDescShow" style="color: #aaa; font-size: 13px; margin-top: 8px; line-height: 1.4;">คำอธิบายรายละเอียดสินค้าจะแสดงที่นี่...</p>
               </div>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 3: ระบบจัดการรายการสินค้า & วิเคราะห์ยอดขาย (Product Management Hub) -->
+  <div id="tabManage" class="tab-content">
+    <div class="upload-container">
+      <div class="panel" style="margin-bottom: 25px;">
+        <h3 style="font-size: 20px; color: #ff3131;">📊 ระบบจัดการสินค้า & วิเคราะห์เปอร์เซ็นต์การขาย (Sales Analytics Hub)</h3>
+        <p style="color: #aaa; font-size: 14px;">ติดตามยอดขาย เปอร์เซ็นต์ความสำเร็จ สถานะสินค้า (ขายดี / ขายออกแล้ว / ค้างสต็อก) พร้อมแก้ไขหรืออัปเดตข้อมูลได้ทันที</p>
+      </div>
+
+      <!-- สรุปภาพรวมสถิติร้านค้า -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 25px;">
+        <div class="panel" style="margin-bottom: 0; text-align: center;">
+          <h4 style="margin: 0; color: #aaa; font-size: 13px;">📦 สินค้าทั้งหมดในระบบ</h4>
+          <div id="statTotalItems" style="font-size: 26px; font-weight: bold; color: #fff; margin-top: 8px;">0 ชิ้น</div>
+        </div>
+        <div class="panel" style="margin-bottom: 0; text-align: center;">
+          <h4 style="margin: 0; color: #aaa; font-size: 13px;">🔥 สินค้าขายดี (Hot / ขายออกสูง)</h4>
+          <div id="statHotItems" style="font-size: 26px; font-weight: bold; color: #ff3131; margin-top: 8px;">0 ชิ้น</div>
+        </div>
+        <div class="panel" style="margin-bottom: 0; text-align: center;">
+          <h4 style="margin: 0; color: #aaa; font-size: 13px;">✅ ขายออกไปแล้วรวม</h4>
+          <div id="statTotalSold" style="font-size: 26px; font-weight: bold; color: #00ff88; margin-top: 8px;">0 ชิ้น</div>
+        </div>
+        <div class="panel" style="margin-bottom: 0; text-align: center;">
+          <h4 style="margin: 0; color: #aaa; font-size: 13px;">📈 อัตราการขายเฉลี่ย (Sales Rate)</h4>
+          <div id="statAvgRate" style="font-size: 26px; font-weight: bold; color: #ffaa00; margin-top: 8px;">0%</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div id="adminProductList" style="display: flex; flex-direction: column; gap: 15px;">
+          <!-- รายการสินค้าจะถูกโหลดมาแสดงอัตโนมัติพร้อมข้อมูลเปอร์เซ็นต์การขายและปุ่มอัปเดตยอดขาย -->
         </div>
       </div>
     </div>
@@ -629,6 +678,11 @@ tabButtons.forEach(btn => {
     
     const targetTab = document.getElementById(btn.dataset.target);
     if(targetTab) targetTab.classList.add("active");
+
+    // ถ้ากดเข้าแท็บจัดการสินค้า ให้โหลดข้อมูลรายการสินค้าและคำนวณสถิติยอดขายขึ้นมาแสดง
+    if(btn.dataset.target === "tabManage") {
+      renderAdminTable();
+    }
   };
 });
 
@@ -790,6 +844,35 @@ document.getElementById("downloadBtn").onclick = () => {
   });
 };
 
+// ฟังก์ชันกดส่งป้ายสินค้าจาก Tab 1 ตรงเข้าไปยังหน้าร้านค้าออนไลน์ผ่าน localStorage พร้อมระบบเริ่มต้นข้อมูลยอดขาย
+document.getElementById("sendPosterToShopBtn").onclick = () => {
+  html2canvas(poster, { scale: 2, backgroundColor: null }).then(canvas => {
+    const posterDataUrl = canvas.toDataURL("image/png");
+    const code = document.getElementById("codeInput").value || "AP001";
+    const rawPrice = document.getElementById("priceInput").value || "299000";
+    const stockVal = parseInt(document.getElementById("stockInput").value) || 10;
+
+    const productItem = {
+      id: "POSTER-" + Date.now(),
+      title: "เสื้อรหัส " + code,
+      sku: code,
+      price: rawPrice,
+      stock: stockVal,
+      sold: 0,
+      salesStatus: "normal", // hot, normal, slow, soldout
+      category: "สินค้าจากป้ายแต่งอัตโนมัติ",
+      desc: "สินค้าจัดทำพิเศษจากระบบป้ายแต่งร้าน V6.2",
+      images: [posterDataUrl]
+    };
+
+    let shopProducts = JSON.parse(localStorage.getItem("shop_products") || "[]");
+    shopProducts.unshift(productItem);
+    localStorage.setItem("shop_products", JSON.stringify(shopProducts));
+
+    alert("🚀 ส่งป้ายสินค้า '" + code + "' เข้าสู่หน้าร้านค้าออนไลน์เรียบร้อยแล้ว!");
+  });
+};
+
 document.getElementById("cutoutBtn").onclick = async () => {
   if (!shirt.src) { alert("ເລືອກຮູບເສື້ອກ່ອນ"); return; }
   const aiLoading = document.getElementById("aiLoading");
@@ -827,40 +910,83 @@ document.getElementById("restoreBtn").onclick = () => {
 const upTitle = document.getElementById("upTitle");
 const upPrice = document.getElementById("upPrice");
 const upStock = document.getElementById("upStock");
+const upSold = document.getElementById("upSold");
+const upSalesStatus = document.getElementById("upSalesStatus");
+const upSKU = document.getElementById("upSKU");
+const upCategory = document.getElementById("upCategory");
 const upDesc = document.getElementById("upDesc");
 const productImagesInput = document.getElementById("productImagesInput");
 const imagePreviewList = document.getElementById("imagePreviewList");
+
+let uploadedImageUrls = [];
 
 const previewMainImg = document.getElementById("previewMainImg");
 const pTitleShow = document.getElementById("pTitleShow");
 const pPriceShow = document.getElementById("pPriceShow");
 const pStockShow = document.getElementById("pStockShow");
 const pDescShow = document.getElementById("pDescShow");
+const pSalesBadge = document.getElementById("pSalesBadge");
+const pPercentShow = document.getElementById("pPercentShow");
+
+function updatePreviewStats() {
+  const stockVal = parseInt(upStock.value) || 0;
+  const soldVal = parseInt(upSold.value) || 0;
+  const totalBase = stockVal + soldVal;
+  const percent = totalBase > 0 ? Math.round((soldVal / totalBase) * 100) : 0;
+
+  pStockShow.textContent = "📦 สต็อกเหลือ: " + stockVal + " ชิ้น";
+  pPercentShow.textContent = `📊 อัตราการขาย: ${percent}% (ขายไป ${soldVal}/${totalBase})`;
+
+  const statusVal = upSalesStatus.value;
+  if(statusVal === 'hot') {
+    pSalesBadge.style.background = 'rgba(255,42,42,0.2)';
+    pSalesBadge.style.color = '#ff3131';
+    pSalesBadge.style.borderColor = '#ff3131';
+    pSalesBadge.textContent = '🔥 ขายดีมาก (Hot)';
+  } else if(statusVal === 'slow') {
+    pSalesBadge.style.background = 'rgba(0,170,255,0.2)';
+    pSalesBadge.style.color = '#00aaff';
+    pSalesBadge.style.borderColor = '#00aaff';
+    pSalesBadge.textContent = '🧊 ขายออกช้า';
+  } else if(statusVal === 'soldout') {
+    pSalesBadge.style.background = 'rgba(255,170,0,0.2)';
+    pSalesBadge.style.color = '#ffaa00';
+    pSalesBadge.style.borderColor = '#ffaa00';
+    pSalesBadge.textContent = '❌ ขายหมดแล้ว';
+  } else {
+    pSalesBadge.style.background = 'rgba(0,255,138,0.2)';
+    pSalesBadge.style.color = '#00ff88';
+    pSalesBadge.style.borderColor = '#00ff88';
+    pSalesBadge.textContent = '⚡ สถานะ: ปกติ';
+  }
+}
 
 upTitle.oninput = (e) => pTitleShow.textContent = e.target.value || "ชื่อสินค้าตัวอย่าง";
 upPrice.oninput = (e) => pPriceShow.textContent = (e.target.value || "0") + " ₭";
-upStock.oninput = (e) => pStockShow.textContent = "📦 สต็อก: " + (e.target.value || "0") + " ชิ้น";
+upStock.oninput = updatePreviewStats;
+upSold.oninput = updatePreviewStats;
+upSalesStatus.onchange = updatePreviewStats;
 upDesc.oninput = (e) => pDescShow.textContent = e.target.value || "คำอธิบายรายละเอียดสินค้าจะแสดงที่นี่...";
 
 productImagesInput.onchange = (e) => {
   const files = e.target.files;
   if(!files.length) return;
   imagePreviewList.innerHTML = "";
+  uploadedImageUrls = [];
   
-  // โหลดรูปแรกขึ้นพรีวิวหลักการ์ด
-  const readerMain = new FileReader();
-  readerMain.onload = (event) => {
-    previewMainImg.src = event.target.result;
-  };
-  readerMain.readAsDataURL(files[0]);
-
-  // สร้าง thumbnail รูปย่อยทั้งหมด
-  Array.from(files).forEach(file => {
+  Array.from(files).forEach((file, index) => {
     const r = new FileReader();
     r.onload = (ev) => {
+      const base64Str = ev.target.result;
+      uploadedImageUrls.push(base64Str);
+      
+      if(index === 0) {
+        previewMainImg.src = base64Str;
+      }
+
       const div = document.createElement("div");
       div.className = "thumb-box";
-      div.innerHTML = `<img src="${ev.target.result}">`;
+      div.innerHTML = `<img src="${base64Str}">`;
       imagePreviewList.appendChild(div);
     };
     r.readAsDataURL(file);
@@ -874,8 +1000,171 @@ document.getElementById("saveProductBtn").onclick = () => {
     upTitle.focus();
     return;
   }
-  alert("🎉 บันทึกและเผยแพร่สินค้า '" + title + "' เข้าสู่ระบบร้านค้าออนไลน์เรียบร้อยแล้ว!");
+
+  const newProduct = {
+    id: "PROD-" + Date.now(),
+    title: title,
+    sku: upSKU.value || "SKU-001",
+    price: upPrice.value || "299,000",
+    stock: parseInt(upStock.value) || 50,
+    sold: parseInt(upSold.value) || 0,
+    salesStatus: upSalesStatus.value || "normal",
+    category: upCategory.value,
+    desc: upDesc.value || "-",
+    images: uploadedImageUrls.length ? uploadedImageUrls : [previewMainImg.src]
+  };
+
+  let shopProducts = JSON.parse(localStorage.getItem("shop_products") || "[]");
+  shopProducts.unshift(newProduct);
+  localStorage.setItem("shop_products", JSON.stringify(shopProducts));
+
+  alert("🎉 บันทึกและส่งสินค้า '" + title + "' เข้าสู่ระบบร้านค้าออนไลน์เรียบร้อยแล้ว!");
 };
+
+// ================= PRODUCT MANAGEMENT & SALES ANALYTICS =================
+function renderAdminTable() {
+  const container = document.getElementById("adminProductList");
+  const products = JSON.parse(localStorage.getItem("shop_products") || "[]");
+
+  // อัปเดตกล่องสถิติภาพรวม
+  let totalItemsCount = products.length;
+  let hotItemsCount = products.filter(p => p.salesStatus === 'hot' || (p.sold && p.stock && (p.sold / (p.sold + p.stock) >= 0.7))).length;
+  let totalSoldSum = products.reduce((acc, p) => acc + (parseInt(p.sold) || 0), 0);
+  let totalStockSum = products.reduce((acc, p) => acc + (parseInt(p.stock) || 0), 0);
+  let overallBase = totalSoldSum + totalStockSum;
+  let avgSalesRate = overallBase > 0 ? Math.round((totalSoldSum / overallBase) * 100) : 0;
+
+  document.getElementById("statTotalItems").textContent = totalItemsCount + " ชิ้น";
+  document.getElementById("statHotItems").textContent = hotItemsCount + " ชิ้น";
+  document.getElementById("statTotalSold").textContent = totalSoldSum + " ชิ้น";
+  document.getElementById("statAvgRate").textContent = avgSalesRate + "%";
+
+  if (products.length === 0) {
+    container.innerHTML = `<p style="color: #777; text-align: center; padding: 30px;">ยังไม่มีสินค้าในระบบ</p>`;
+    return;
+  }
+
+  container.innerHTML = "";
+  products.forEach(item => {
+    const stock = parseInt(item.stock) || 0;
+    const sold = parseInt(item.sold) || 0;
+    const total = stock + sold;
+    const percent = total > 0 ? Math.round((sold / total) * 100) : 0;
+
+    let statusBadgeHtml = '';
+    if(item.salesStatus === 'hot') {
+      statusBadgeHtml = `<span style="background:rgba(255,42,42,0.2); color:#ff3131; border:1px solid #ff3131; padding:2px 8px; border-radius:6px; font-size:11px; font-weight:bold;">🔥 ขายดีมาก</span>`;
+    } else if(item.salesStatus === 'slow') {
+      statusBadgeHtml = `<span style="background:rgba(0,170,255,0.2); color:#00aaff; border:1px solid #00aaff; padding:2px 8px; border-radius:6px; font-size:11px; font-weight:bold;">🧊 ขายออกช้า</span>`;
+    } else if(item.salesStatus === 'soldout') {
+      statusBadgeHtml = `<span style="background:rgba(255,170,0,0.2); color:#ffaa00; border:1px solid #ffaa00; padding:2px 8px; border-radius:6px; font-size:11px; font-weight:bold;">❌ ขายหมดแล้ว</span>`;
+    } else {
+      statusBadgeHtml = `<span style="background:rgba(0,255,138,0.2); color:#00ff88; border:1px solid #00ff88; padding:2px 8px; border-radius:6px; font-size:11px; font-weight:bold;">⚡ ปกติ</span>`;
+    }
+
+    const div = document.createElement("div");
+    div.style.cssText = "display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,42,42,0.2); padding: 15px; border-radius: 10px; gap: 15px; flex-wrap: wrap;";
+    
+    const imgSrc = item.images && item.images[0] ? item.images[0] : "";
+    div.innerHTML = `
+      <div style="display: flex; align-items: center; gap: 15px; flex: 1; min-width: 280px;">
+        <img src="${imgSrc}" style="width: 65px; height: 65px; object-fit: cover; border-radius: 8px; background: #000;">
+        <div>
+          <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 4px;">
+            <h4 style="margin: 0; color: #fff; font-size: 16px;">${item.title}</h4>
+            ${statusBadgeHtml}
+          </div>
+          <p style="margin: 0; color: #aaa; font-size: 13px;">SKU: ${item.sku} | ราคา: <span style="color: #ff3131; font-weight: bold;">${item.price} ₭</span></p>
+          <p style="margin: 4px 0 0 0; color: #ffaa00; font-size: 13px;">📊 เปอร์เซ็นต์การขาย: <b>${percent}%</b> (ขายแล้ว ${sold} / สต็อกเหลือ ${stock} ชิ้น)</p>
+        </div>
+      </div>
+      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <button onclick="quickUpdateSales('${item.id}')" style="background: rgba(0,255,136,0.2); color: #00ff88; border: 1px solid rgba(0,255,136,0.4); padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 13px;">📈 อัปเดตยอดขาย</button>
+        <button onclick="editProduct('${item.id}')" style="background: rgba(255,170,0,0.2); color: #ffaa00; border: 1px solid rgba(255,170,0,0.4); padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 13px;">✏️ แก้ไข</button>
+        <button onclick="deleteProduct('${item.id}')" style="background: rgba(255,42,42,0.2); color: #ff5555; border: 1px solid rgba(255,42,42,0.4); padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 13px;">🗑️ ลบ</button>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function quickUpdateSales(productId) {
+  let products = JSON.parse(localStorage.getItem("shop_products") || "[]");
+  let item = products.find(p => p.id === productId);
+  if (!item) return;
+
+  let currentSold = item.sold || 0;
+  let currentStock = item.stock || 0;
+
+  let inputSold = prompt(`อัปเดตจำนวนที่ขายไปแล้ว (ปัจจุบัน ${currentSold} ชิ้น):`, currentSold);
+  if (inputSold === null) return;
+  let newSold = parseInt(inputSold);
+  if (isNaN(newSold) || newSold < 0) {
+    alert("❌ กรุณากรอกตัวเลขที่ถูกต้อง");
+    return;
+  }
+
+  let inputStock = prompt(`อัปเดตจำนวนสต็อกคงเหลือ (ปัจจุบัน ${currentStock} ชิ้น):`, currentStock);
+  if (inputStock === null) return;
+  let newStock = parseInt(inputStock);
+  if (isNaN(newStock) || newStock < 0) {
+    alert("❌ กรุณากรอกตัวเลขที่ถูกต้อง");
+    return;
+  }
+
+  // คำนวณสถานะอัตโนมัติหรือให้เลือก
+  let total = newSold + newStock;
+  let ratio = total > 0 ? newSold / total : 0;
+  let autoStatus = item.salesStatus;
+  if(ratio >= 0.75) autoStatus = 'hot';
+  else if(newStock === 0) autoStatus = 'soldout';
+  else if(ratio < 0.2 && total > 10) autoStatus = 'slow';
+  else autoStatus = 'normal';
+
+  item.sold = newSold;
+  item.stock = newStock;
+  item.salesStatus = autoStatus;
+
+  localStorage.setItem("shop_products", JSON.stringify(products));
+  renderAdminTable();
+  alert("📈 อัปเดตข้อมูลการขายเรียบร้อยแล้ว!");
+}
+
+function deleteProduct(productId) {
+  if (!confirm("คุณต้องการลบสินค้ารายการนี้ใช่หรือไม่?")) return;
+  let products = JSON.parse(localStorage.getItem("shop_products") || "[]");
+  products = products.filter(p => p.id !== productId);
+  localStorage.setItem("shop_products", JSON.stringify(products));
+  renderAdminTable();
+  alert("🗑️ ลบสินค้าเรียบร้อยแล้ว");
+}
+
+function editProduct(productId) {
+  let products = JSON.parse(localStorage.getItem("shop_products") || "[]");
+  let item = products.find(p => p.id === productId);
+  if (!item) return;
+
+  let newTitle = prompt("แก้ไขชื่อสินค้า:", item.title);
+  if (newTitle === null) return;
+  
+  let newPrice = prompt("แก้ไขราคา (₭):", item.price);
+  if (newPrice === null) return;
+  
+  let newStock = prompt("แก้ไขจำนวนสต็อกคงเหลือ:", item.stock);
+  if (newStock === null) return;
+
+  let newSold = prompt("แก้ไขจำนวนที่ขายไปแล้ว:", item.sold || 0);
+  if (newSold === null) return;
+
+  item.title = newTitle.trim() || item.title;
+  item.price = newPrice.trim() || item.price;
+  item.stock = parseInt(newStock) || item.stock;
+  item.sold = parseInt(newSold) || item.sold;
+
+  localStorage.setItem("shop_products", JSON.stringify(products));
+  renderAdminTable();
+  alert("✏️ แก้ไขข้อมูลสินค้าเรียบร้อยแล้ว");
+}
 </script>
 </body>
 </html>
