@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin ຮ້ານບໍ່ແພງແຕ່ເທ້ V5.1 - FX & Free Transform Edition</title>
+<title>Admin ຮ້ານບໍ່ແພງແຕ່ເທ້ V5.2 - Fixed Zoom Bug</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
 :root {
@@ -131,34 +131,30 @@ button {
   overflow: hidden;
   border-radius: 12px;
   box-shadow: 0 0 35px rgba(0, 0, 0, 0.9), 0 0 15px rgba(255, 42, 42, 0.3);
+  touch-action: none;
 }
 
 /* Layer 1: รูปพื้นหลัง */
 #bgImg {
   position: absolute;
   left: 50%; top: 50%;
-  width: auto; height: auto;
-  min-width: 100%; min-height: 100%;
-  transform: translate(-50%,-50%) scale(1) rotate(0deg);
   transform-origin: center center;
   z-index: 1;
   display: none;
   cursor: grab;
-  filter: blur(0px);
+  user-select: none;
 }
 
 /* Layer 2: รูปเสื้อ */
 #shirt {
   position: absolute;
   left: 50%; top: 50%;
-  width: auto; height: auto;
   max-width: 100%; max-height: 100%;
-  transform: translate(-50%,-50%) scale(1) rotate(0deg);
   transform-origin: center center;
   object-fit: contain;
   cursor: grab;
   z-index: 2;
-  filter: blur(0px);
+  user-select: none;
 }
 
 /* Layer 3: โลโก้และข้อความ */
@@ -208,9 +204,9 @@ button {
 <body>
 
 <div class="header-bar">
-  <h2>⚡ ບໍ່ແພງແຕ່ເທ້ Admin Studio V5.1</h2>
+  <h2>⚡ ບໍ່ແພງແຕ່ເທ້ Admin Studio V5.2</h2>
   <div class="user-status">
-    <div class="status-badge">🟢 Free Transform & FX Mode</div>
+    <div class="status-badge">🟢 Zoom & Transform Fixed</div>
   </div>
 </div>
 
@@ -334,199 +330,229 @@ button {
 
 <script>
 // State variables
-let zoomScale=1, shirtX=0, shirtY=0, shirtRot=0, shirtB=0;
-let bgZoomScale=1, bgX=0, bgY=0, bgRot=0, bgB=0;
-let originalShirtSrc="";
+let zoomScale = 1, shirtX = 0, shirtY = 0, shirtRot = 0, shirtB = 0;
+let bgZoomScale = 1, bgX = 0, bgY = 0, bgRot = 0, bgB = 0;
+let originalShirtSrc = "";
 
-function updateShirt(){
-  shirt.style.transform=`translate(calc(-50% + ${shirtX}px), calc(-50% + ${shirtY}px)) scale(${zoomScale}) rotate(${shirtRot}deg)`;
-  shirt.style.filter=`blur(${shirtB}px)`;
+// Element references
+const shirt = document.getElementById("shirt");
+const bgImg = document.getElementById("bgImg");
+const zoom = document.getElementById("zoom");
+const bgZoom = document.getElementById("bgZoom");
+const poster = document.getElementById("poster");
+
+function updateShirt() {
+  shirt.style.transform = `translate(calc(-50% + ${shirtX}px), calc(-50% + ${shirtY}px)) scale(${zoomScale}) rotate(${shirtRot}deg)`;
+  shirt.style.filter = `blur(${shirtB}px)`;
 }
 
-function updateBg(){
-  bgImg.style.transform=`translate(calc(-50% + ${bgX}px), calc(-50% + ${bgY}px)) scale(${bgZoomScale}) rotate(${bgRot}deg)`;
-  bgImg.style.filter=`blur(${bgB}px)`;
+function updateBg() {
+  bgImg.style.transform = `translate(calc(-50% + ${bgX}px), calc(-50% + ${bgY}px)) scale(${bgZoomScale}) rotate(${bgRot}deg)`;
+  bgImg.style.filter = `blur(${bgB}px)`;
 }
 
 // Upload Background
-bgUpload.onchange=e=>{
-  const f=e.target.files[0]; if(!f) return;
-  const r=new FileReader();
-  r.onload=x=>{
-    bgImg.src=x.target.result;
-    bgImg.style.display="block";
+document.getElementById("bgUpload").onchange = e => {
+  const f = e.target.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = x => {
+    bgImg.src = x.target.result;
+    bgImg.style.display = "block";
+    updateBg();
   };
   r.readAsDataURL(f);
 };
 
-removeBgBtn.onclick=()=>{
-  bgImg.src="";
-  bgImg.style.display="none";
-  bgUpload.value="";
+document.getElementById("removeBgBtn").onclick = () => {
+  bgImg.src = "";
+  bgImg.style.display = "none";
+  document.getElementById("bgUpload").value = "";
 };
 
 // Controls Background
-bgZoom.oninput=()=>{ bgZoomScale=bgZoom.value/100; updateBg(); };
-bgRotate.oninput=()=>{ bgRot=bgRotate.value; updateBg(); };
-bgBlur.oninput=()=>{ bgB=bgBlur.value; updateBg(); };
+bgZoom.oninput = () => { bgZoomScale = parseFloat(bgZoom.value) / 100; updateBg(); };
+document.getElementById("bgRotate").oninput = (e) => { bgRot = e.target.value; updateBg(); };
+document.getElementById("bgBlur").oninput = (e) => { bgB = e.target.value; updateBg(); };
 
 // Controls Shirt
-zoom.oninput=()=>{ zoomScale=zoom.value/100; updateShirt(); };
-shirtRotate.oninput=()=>{ shirtRot=shirtRotate.value; updateShirt(); };
-shirtBlur.oninput=()=>{ shirtB=shirtBlur.value; updateShirt(); };
+zoom.oninput = () => { zoomScale = parseFloat(zoom.value) / 100; updateShirt(); };
+document.getElementById("shirtRotate").oninput = (e) => { shirtRot = e.target.value; updateShirt(); };
+document.getElementById("shirtBlur").oninput = (e) => { shirtB = e.target.value; updateShirt(); };
 
 // Interactive Drag for Shirt
-let draggingShirt=false, sx=0, sy=0;
-shirt.addEventListener("pointerdown",(e)=>{
-  draggingShirt=true;
-  sx=e.clientX; sy=e.clientY;
+let draggingShirt = false, sx = 0, sy = 0;
+shirt.addEventListener("pointerdown", (e) => {
+  draggingShirt = true;
+  sx = e.clientX; sy = e.clientY;
   shirt.setPointerCapture(e.pointerId);
 });
-shirt.addEventListener("pointermove",(e)=>{
-  if(!draggingShirt)return;
-  shirtX += e.clientX-sx;
-  shirtY += e.clientY-sy;
-  sx=e.clientX; sy=e.clientY;
+shirt.addEventListener("pointermove", (e) => {
+  if (!draggingShirt) return;
+  shirtX += e.clientX - sx;
+  shirtY += e.clientY - sy;
+  sx = e.clientX; sy = e.clientY;
   updateShirt();
 });
-shirt.addEventListener("pointerup",()=>draggingShirt=false);
+shirt.addEventListener("pointerup", () => draggingShirt = false);
 
 // Interactive Drag for Background
-let draggingBg=false, bsx=0, bsy=0;
-bgImg.addEventListener("pointerdown",(e)=>{
-  draggingBg=true;
-  bsx=e.clientX; bsy=e.clientY;
+let draggingBg = false, bsx = 0, bsy = 0;
+bgImg.addEventListener("pointerdown", (e) => {
+  draggingBg = true;
+  bsx = e.clientX; bsy = e.clientY;
   bgImg.setPointerCapture(e.pointerId);
 });
-bgImg.addEventListener("pointermove",(e)=>{
-  if(!draggingBg)return;
-  bgX += e.clientX-bsx;
-  bgY += e.clientY-bsy;
-  bsx=e.clientX; bsy=e.clientY;
+bgImg.addEventListener("pointermove", (e) => {
+  if (!draggingBg) return;
+  bgX += e.clientX - bsx;
+  bgY += e.clientY - bsy;
+  bsx = e.clientX; bsy = e.clientY;
   updateBg();
 });
-bgImg.addEventListener("pointerup",()=>draggingBg=false);
+bgImg.addEventListener("pointerup", () => draggingBg = false);
 
-logoUpload.onchange=e=>{
-  const f=e.target.files[0];if(!f)return;
-  const r=new FileReader();
-  r.onload=x=>{logoPreview.src=x.target.result;logoPoster.style.display=showLogo.checked?"block":"none"};
+document.getElementById("logoUpload").onchange = e => {
+  const f = e.target.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = x => {
+    document.getElementById("logoPreview").src = x.target.result;
+    document.getElementById("logoPoster").style.display = document.getElementById("showLogo").checked ? "block" : "none";
+  };
   r.readAsDataURL(f);
 };
-showLogo.onchange=()=>logoPoster.style.display=(showLogo.checked&&logoPreview.src)?"block":"none";
+document.getElementById("showLogo").onchange = () => {
+  document.getElementById("logoPoster").style.display = (document.getElementById("showLogo").checked && document.getElementById("logoPreview").src) ? "block" : "none";
+};
 
-shirtUpload.onchange=e=>{
-  const f=e.target.files[0];if(!f)return;
-  const r=new FileReader();
-  r.onload=x=>{
-    shirt.src=x.target.result;
-    originalShirtSrc=x.target.result;
+document.getElementById("shirtUpload").onchange = e => {
+  const f = e.target.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = x => {
+    shirt.src = x.target.result;
+    originalShirtSrc = x.target.result;
+    updateShirt();
   };
   r.readAsDataURL(f);
 };
 
-codeInput.oninput=()=>codeLabel.textContent=codeInput.value||"AP001";
-priceInput.oninput=()=>{
-  const n=Number(priceInput.value.replace(/,/g,""));
-  if(priceInput.value) priceLabel.textContent=n.toLocaleString()+" ₭";
+document.getElementById("codeInput").oninput = (e) => document.getElementById("codeLabel").textContent = e.target.value || "AP001";
+document.getElementById("priceInput").oninput = (e) => {
+  const n = Number(e.target.value.replace(/,/g, ""));
+  if (e.target.value) document.getElementById("priceLabel").textContent = n.toLocaleString() + " ₭";
 };
-stockInput.oninput=()=>stockLabel.textContent="📦 ມີ "+stockInput.value+" ໂຕ";
-sizeSelect.onchange=()=>{if(sizeSelect.value==="custom"){sizeCustom.style.display="block"}else{sizeCustom.style.display="none";sizeLabel.textContent=sizeSelect.value}};
-sizeCustom.oninput=()=>sizeLabel.textContent=sizeCustom.value;
+document.getElementById("stockInput").oninput = (e) => document.getElementById("stockLabel").textContent = "📦 ມີ " + e.target.value + " ໂຕ";
+document.getElementById("sizeSelect").onchange = (e) => {
+  if (e.target.value === "custom") {
+    document.getElementById("sizeCustom").style.display = "block";
+  } else {
+    document.getElementById("sizeCustom").style.display = "none";
+    document.getElementById("sizeLabel").textContent = e.target.value;
+  }
+};
+document.getElementById("sizeCustom").oninput = (e) => document.getElementById("sizeLabel").textContent = e.target.value;
 
-poster.addEventListener("wheel",(e)=>{
+// Mouse Wheel Zooming for Poster Area
+poster.addEventListener("wheel", (e) => {
   e.preventDefault();
-  zoomScale += e.deltaY<0 ? 0.05 : -0.05;
-  zoomScale=Math.max(0.3,Math.min(3,zoomScale));
-  zoom.value=zoomScale*100;
+  const delta = e.deltaY < 0 ? 0.05 : -0.05;
+  zoomScale = Math.max(0.3, Math.min(3, zoomScale + delta));
+  zoom.value = Math.round(zoomScale * 100);
   updateShirt();
-},{passive:false});
+}, { passive: false });
 
-const info={"4/5":"1080×1350 Facebook","9/16":"1080×1920 TikTok","16/9":"1280×720 YouTube","1/1":"1080×1080 Instagram"};
-document.querySelectorAll(".platform").forEach(btn=>btn.onclick=()=>{
-  document.querySelectorAll(".platform").forEach(b=>b.classList.remove("active"));
+const info = { "4/5": "1080×1350 Facebook", "9/16": "1080×1920 TikTok", "16/9": "1280×720 YouTube", "1/1": "1080×1080 Instagram" };
+document.querySelectorAll(".platform").forEach(btn => btn.onclick = () => {
+  document.querySelectorAll(".platform").forEach(b => b.classList.remove("active"));
   btn.classList.add("active");
-  poster.style.aspectRatio=btn.dataset.ratio;
-  platformInfo.textContent=info[btn.dataset.ratio];
+  poster.style.aspectRatio = btn.dataset.ratio;
+  document.getElementById("platformInfo").textContent = info[btn.dataset.ratio];
   updateShirt();
 });
 
-function drag(el){
-  let active=false,startX,startY,startLeft,startTop;
-  el.addEventListener("pointerdown",(e)=>{
-    active=true;
-    const r=el.getBoundingClientRect();
-    const p=poster.getBoundingClientRect();
-    startLeft=r.left-p.left;
-    startTop=r.top-p.top;
-    startX=e.clientX; startY=e.clientY;
-    el.style.left=startLeft+"px";
-    el.style.top=startTop+"px";
-    el.style.right="auto";
-    el.style.bottom="auto";
+function drag(el) {
+  let active = false, startX, startY, startLeft, startTop;
+  el.addEventListener("pointerdown", (e) => {
+    active = true;
+    const r = el.getBoundingClientRect();
+    const p = poster.getBoundingClientRect();
+    startLeft = r.left - p.left;
+    startTop = r.top - p.top;
+    startX = e.clientX; startY = e.clientY;
+    el.style.left = startLeft + "px";
+    el.style.top = startTop + "px";
+    el.style.right = "auto";
+    el.style.bottom = "auto";
     el.setPointerCapture(e.pointerId);
   });
-  el.addEventListener("pointermove",(e)=>{
-    if(!active)return;
-    const x=startLeft+(e.clientX-startX);
-    const y=startTop+(e.clientY-startY);
-    el.style.left=Math.max(0,Math.min(x,poster.clientWidth-el.offsetWidth))+"px";
-    el.style.top=Math.max(0,Math.min(y,poster.clientHeight-el.offsetHeight))+"px";
+  el.addEventListener("pointermove", (e) => {
+    if (!active) return;
+    const x = startLeft + (e.clientX - startX);
+    const y = startTop + (e.clientY - startY);
+    el.style.left = Math.max(0, Math.min(x, poster.clientWidth - el.offsetWidth)) + "px";
+    el.style.top = Math.max(0, Math.min(y, poster.clientHeight - el.offsetHeight)) + "px";
   });
-  el.addEventListener("pointerup",()=>active=false);
+  el.addEventListener("pointerup", () => active = false);
 }
-["priceLabel","codeLabel","stockLabel","sizeLabel"].forEach(id=>drag(document.getElementById(id)));
+["priceLabel", "codeLabel", "stockLabel", "sizeLabel"].forEach(id => drag(document.getElementById(id)));
 
-priceSize.oninput=()=>priceLabel.style.fontSize=priceSize.value+"px";
-priceColor.oninput=()=>priceLabel.style.color=priceColor.value;
-codeColor.oninput=()=>codeLabel.style.color=codeColor.value;
-stockColor.oninput=()=>stockLabel.style.color=stockColor.value;
-sizeColor.oninput=()=>sizeLabel.style.color=sizeColor.value;
+document.getElementById("priceSize").oninput = (e) => document.getElementById("priceLabel").style.fontSize = e.target.value + "px";
+document.getElementById("priceColor").oninput = (e) => document.getElementById("priceLabel").style.color = e.target.value;
+document.getElementById("codeColor").oninput = (e) => document.getElementById("codeLabel").style.color = e.target.value;
+document.getElementById("stockColor").oninput = (e) => document.getElementById("stockLabel").style.color = e.target.value;
+document.getElementById("sizeColor").oninput = (e) => document.getElementById("sizeLabel").style.color = e.target.value;
 
-codeSize.oninput=()=>codeLabel.style.fontSize=codeSize.value+"px";
-stockSize.oninput=()=>stockLabel.style.fontSize=stockSize.value+"px";
-sizeSize.oninput=()=>sizeLabel.style.fontSize=sizeSize.value+"px";
+document.getElementById("codeSize").oninput = (e) => document.getElementById("codeLabel").style.fontSize = e.target.value + "px";
+document.getElementById("stockSize").oninput = (e) => document.getElementById("stockLabel").style.fontSize = e.target.value + "px";
+document.getElementById("sizeSize").oninput = (e) => document.getElementById("sizeLabel").style.fontSize = e.target.value + "px";
 
-togglePrice.onchange=()=>priceLabel.style.display=togglePrice.checked?"block":"none";
-toggleCode.onchange=()=>codeLabel.style.display=toggleCode.checked?"block":"none";
-toggleStock.onchange=()=>stockLabel.style.display=toggleStock.checked?"block":"none";
-toggleSize.onchange=()=>sizeLabel.style.display=toggleSize.checked?"block":"none";
+document.getElementById("togglePrice").onchange = (e) => document.getElementById("priceLabel").style.display = e.target.checked ? "block" : "none";
+document.getElementById("toggleCode").onchange = (e) => document.getElementById("codeLabel").style.display = e.target.checked ? "block" : "none";
+document.getElementById("toggleStock").onchange = (e) => document.getElementById("stockLabel").style.display = e.target.checked ? "block" : "none";
+document.getElementById("toggleSize").onchange = (e) => document.getElementById("sizeLabel").style.display = e.target.checked ? "block" : "none";
 
-downloadBtn.onclick=()=>{
-  html2canvas(poster,{scale:2,backgroundColor:null}).then(c=>{
-   const a=document.createElement("a");
-   a.download="poster.png";
-   a.href=c.toDataURL("image/png");
-   a.click();
+document.getElementById("downloadBtn").onclick = () => {
+  html2canvas(poster, { scale: 2, backgroundColor: null }).then(c => {
+    const a = document.createElement("a");
+    a.download = "poster.png";
+    a.href = c.toDataURL("image/png");
+    a.click();
   });
 };
 
-cutoutBtn.onclick=async()=>{
-  if(!shirt.src){alert("ເລືອກຮູບເສື້ອກ່ອນ");return;}
-  aiLoading.style.display="block";
-  loadingBar.style.width="0%";
-  loadingText.textContent="0%";
+document.getElementById("cutoutBtn").onclick = async () => {
+  if (!shirt.src) { alert("ເລືອກຮູບເສື້ອກ່ອນ"); return; }
+  const aiLoading = document.getElementById("aiLoading");
+  const loadingBar = document.getElementById("loadingBar");
+  const loadingText = document.getElementById("loadingText");
   
-  for(let i=1;i<=15;i++){
-    await new Promise(r=>setTimeout(r,100));
-    const p=i/15*100;
-    loadingBar.style.width=p+"%";
-    loadingText.textContent=Math.round(p)+"%";
+  aiLoading.style.display = "block";
+  loadingBar.style.width = "0%";
+  loadingText.textContent = "0%";
+  
+  for (let i = 1; i <= 15; i++) {
+    await new Promise(r => setTimeout(r, 100));
+    const p = i / 15 * 100;
+    loadingBar.style.width = p + "%";
+    loadingText.textContent = Math.round(p) + "%";
   }
   
-  try{
-    const m=await import("https://cdn.jsdelivr.net/npm/@imgly/background-removal/+esm");
-    const blob=await m.removeBackground(shirt.src);
-    shirt.src=URL.createObjectURL(blob);
-  }catch(e){
+  try {
+    const m = await import("https://cdn.jsdelivr.net/npm/@imgly/background-removal/+esm");
+    const blob = await m.removeBackground(shirt.src);
+    shirt.src = URL.createObjectURL(blob);
+    updateShirt();
+  } catch (e) {
     alert("AI ບໍ່ສາມາດໄດຄັດໄດ້ ກວດເຊັກອິນເຕີເນັດ");
     console.error(e);
   }
-  aiLoading.style.display="none";
+  aiLoading.style.display = "none";
 };
 
-restoreBtn.onclick=()=>{
-  if(originalShirtSrc) shirt.src=originalShirtSrc;
+document.getElementById("restoreBtn").onclick = () => {
+  if (originalShirtSrc) {
+    shirt.src = originalShirtSrc;
+    updateShirt();
+  }
 };
 </script>
 </body>
