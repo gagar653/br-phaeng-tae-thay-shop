@@ -428,17 +428,18 @@ bgUpload.addEventListener("change",(e)=>{
 });
 
 // ปรับความเบลอ
-bgBlur.addEventListener("input",()=>{
-
+bgBlur.addEventListener("input", () => {
     blurValue.textContent = bgBlur.value + " px";
 
-    if(bgImage==="") return;
+    if (bgImage === "") return;
 
-    poster.style.backgroundImage =
-      `linear-gradient(rgba(255,255,255,0),rgba(255,255,255,0)), url(${bgImage})`;
+    poster.style.backgroundImage = `url(${bgImage})`;
+    poster.style.backgroundSize = "cover";
+    poster.style.backgroundPosition = "center";
 
-    poster.style.filter = `drop-shadow(0 0 0 transparent)`;
-    poster.style.backdropFilter = `blur(${bgBlur.value}px)`;
+    // เบลอรูปพื้นหลังจริง
+    poster.style.filter = `blur(${bgBlur.value}px)`;
+});
 
 });
 
