@@ -31,7 +31,8 @@ body{margin:0;background:#070707;color:#fff;font-family:Arial}
 input,select{width:100%;padding:10px;border-radius:10px;background:#181818;border:1px solid #550000;color:#fff;margin-top:8px}
 button{padding:10px;border-radius:10px;border:none;cursor:pointer}
 .platform.active{background:#d10000;color:#fff}.platform{background:#222;color:#fff}
-#poster{width:340px;aspect-ratio:4/5;background:#fff;position:relative;overflow:hidden}
+#poster{background-size:cover;
+background-position:center;width:340px;aspect-ratio:4/5;background:#fff;position:relative;overflow:hidden}
 #shirt{
  position:absolute;
  left:50%;top:50%;
@@ -108,7 +109,29 @@ button{padding:10px;border-radius:10px;border:none;cursor:pointer}
 
   <label style="margin-top:15px;display:block;">เลือกสีเอง</label>
   <input type="color" id="customBgColor" value="#ffffff">
-</div>
+</div><hr style="border-color:#550000;margin:15px 0;">
+
+<label>📷 อัปโหลดพื้นหลัง</label>
+<input type="file" id="bgUpload" accept="image/*">
+
+<label style="margin-top:15px;">🌫️ ความเบลอพื้นหลัง</label>
+<input type="range" id="bgBlur" min="0" max="30" value="0">
+
+<text id="blurValue" preserveWhitespace>0 px</text>
+
+<button id="removeBg" type="button"
+style="
+width:100%;
+margin-top:12px;
+padding:10px;
+background:#333;
+color:white;
+border:none;
+border-radius:10px;
+font-weight:bold;
+cursor:pointer;">
+🗑️ ลบพื้นหลัง
+</button>
 <div class="panel"><h3>🖱️ລະບົບໃຫມ່ໄວໆນີ້</h3>
 <p style="font-size:13px;color:#ccc">✔ ເກັບຂໍ້ມູນໄດ້ 
 <p style="font-size:13px;color:#ccc">✔ ສະຫມັກສະມາສິກVIPໃຊ້AIແຕ່ງຮູບ
@@ -377,6 +400,61 @@ bgButtons.forEach((btn) => {
 customBgColor.addEventListener("input", () => {
   posterBox.style.backgroundColor = customBgColor.value;
   bgButtons.forEach((b) => b.classList.remove("active"));
+});// =============================
+// V4.9.2 พื้นหลังสินค้า (รูป + เบลอ)
+// =============================
+
+const bgUpload = document.getElementById("bgUpload");
+const bgBlur = document.getElementById("bgBlur");
+const blurValue = document.getElementById("blurValue");
+const removeBg = document.getElementById("removeBg");
+
+let bgImage = "";
+
+// อัปโหลดพื้นหลัง
+bgUpload.addEventListener("change",(e)=>{
+    const file = e.target.files[0];
+    if(!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = (event)=>{
+        bgImage = event.target.result;
+        poster.style.backgroundImage = `url(${bgImage})`;
+        poster.style.backgroundColor = "transparent";
+    };
+
+    reader.readAsDataURL(file);
+});
+
+// ปรับความเบลอ
+bgBlur.addEventListener("input",()=>{
+
+    blurValue.textContent = bgBlur.value + " px";
+
+    if(bgImage==="") return;
+
+    poster.style.backgroundImage =
+      `linear-gradient(rgba(255,255,255,0),rgba(255,255,255,0)), url(${bgImage})`;
+
+    poster.style.filter = `drop-shadow(0 0 0 transparent)`;
+    poster.style.backdropFilter = `blur(${bgBlur.value}px)`;
+
+});
+
+// ลบพื้นหลัง
+removeBg.addEventListener("click",()=>{
+
+    bgImage = "";
+
+    poster.style.backgroundImage = "none";
+    poster.style.backgroundColor = "#ffffff";
+
+    bgBlur.value = 0;
+    blurValue.textContent = "0 px";
+
+    bgUpload.value = "";
+
 });</script>
 </body>
 </html>
