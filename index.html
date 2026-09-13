@@ -5,9 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin ຮ້ານບໍ່ແພງແຕ່ເທ້ V4.9</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js">
-let originalShirt="";
-shirtUpload.addEventListener("change",e=>{const f=e.target.files[0];if(f)originalShirt=URL.createObjectURL(f);});
-cutoutBtn.onclick=async()=>{if(!shirt.src){alert("ເລືອກຮູບເສື້ອກ່ອນ");return;}aiLoading.style.display="block";let p=0;loadingBar.style.width="0%";loadingText.textContent="0%";const t=setInterval(()=>{p=Math.min(p+5,95);loadingBar.style.width=p+"%";loadingText.textContent=p+"%";},750);try{const blob=await window.removeBackgroundAI(shirt.src);clearInterval(t);loadingBar.style.width="100%";loadingText.textContent="100%";shirt.src=URL.createObjectURL(blob);setTimeout(()=>aiLoading.style.display="none",1200);}catch(e){clearInterval(t);aiLoading.style.display="none";alert("AI ໄດຄັດບໍ່ສຳເລັດ");console.error(e);}};restoreBtn.onclick=()=>{if(originalShirt)shirt.src=originalShirt;};
+let originalShirtSrc="";
+shirtUpload.addEventListener("change",()=>{originalShirtSrc=shirt.src;});
+cutoutBtn.onclick=async()=>{if(!shirt.src){alert("ເລືອກຮູບເສື້ອກ່ອນ");return;}aiLoading.style.display="block";loadingBar.style.width="0%";loadingText.textContent="0%";for(let i=1;i<=15;i++){await new Promise(r=>setTimeout(r,1000));const p=i/15*100;loadingBar.style.width=p+"%";loadingText.textContent=Math.round(p)+"%";}try{const m=await import("https://cdn.jsdelivr.net/npm/@imgly/background-removal/+esm");const blob=await m.removeBackground(shirt.src);shirt.src=URL.createObjectURL(blob);}catch(e){alert("AI ບໍ່ສາມາດໄດຄັດໄດ້ ກວດເຊັກອິນເຕີເນັດ");console.error(e);}aiLoading.style.display="none";};
+restoreBtn.onclick=()=>{if(originalShirtSrc)shirt.src=originalShirtSrc;};
 </script>
 <style>
 body{margin:0;background:#070707;color:#fff;font-family:Arial}
@@ -56,18 +57,13 @@ button{padding:10px;border-radius:10px;border:none;cursor:pointer}
 .btn{width:100%;background:#d10000;color:#fff;font-weight:bold}
 @media(max-width:900px){.wrap{grid-template-columns:1fr}#poster{width:100%}}
 </style>
-
-<script type="module">
-import { removeBackground } from "https://cdn.jsdelivr.net/npm/@imgly/background-removal/+esm";
-window.removeBackgroundAI=removeBackground;
-</script>
 </head>
 <body>
 <div style="background:#090909;padding:15px;border-bottom:2px solid #700"><h2 style="color:#ff2d2d;margin:0">ບໍ່ແພງແຕ່ເທ້ Admin Studio V4.9</h2></div>
 <div class="wrap">
 <div>
 <div class="panel"><h3>🏪 ໂລໂກ້ຮ້ານ</h3><input type=file id=logoUpload accept="image/*"><label><input type=checkbox id=showLogo checked style="width:auto"> ສະແດງໂລໂກ້</label></div>
-<div class="panel"><h3>👕 ເລືອກຮູບສິນຄ້າ</h3><input type=file id=shirtUpload accept="image/*"><button id=cutoutBtn class=btn type=button style="margin-top:12px">✂️ AI ໄດຄັດພື້ນຫຼັງ</button><button id=restoreBtn type=button style="width:100%;margin-top:8px;background:#333;color:#fff">↩️ ຮູບເດີມ</button><div id=aiLoading style="display:none;margin-top:12px"><div style="color:#ff3131;font-weight:bold">🤖 AI ກຳລັງໄດຄັດພື້ນຫຼັງ...</div><div style="height:8px;background:#222;border-radius:10px;margin-top:8px"><div id=loadingBar style="height:100%;width:0%;background:#ff3131;border-radius:10px"></div></div><div id=loadingText style="margin-top:6px;color:#ccc">0%</div></div></div>
+<div class="panel"><h3>👕 ເລືອກຮູບສິນຄ້າ</h3><input type=file id=shirtUpload accept="image/*"><button class=btn id=cutoutBtn type=button style="margin-top:10px">✂️ AI ໄດຄັດພື້ນຫຼັງ</button><button id=restoreBtn type=button style="width:100%;margin-top:8px;background:#333;color:#fff">↩️ ກັບໄປຮູບເດີມ</button><div id=aiLoading style="display:none;margin-top:10px"><div style="color:#ff3131;font-weight:bold">🤖 AI ກຳລັງໄດຄັດພື້ນຫຼັງ...</div><div style="width:100%;height:10px;background:#222;border-radius:8px;margin-top:8px"><div id=loadingBar style="width:0%;height:10px;background:#ff3131;border-radius:8px"></div></div><div id=loadingText style="font-size:13px;margin-top:5px">0%</div></div></div>
 <div class="panel"><h3>📝 ລາຍລະອຽດສິນຄ້າ</h3>
 <input id=codeInput placeholder="AP001">
 <input id=priceInput placeholder="299000">
@@ -327,6 +323,11 @@ if (isTouchDevice) {
   mobileDrag("codeLabel");
   mobileDrag("stockLabel");
   mobileDrag("sizeLabel");
-}</script>
+}
+let originalShirtSrc="";
+shirtUpload.addEventListener("change",()=>{originalShirtSrc=shirt.src;});
+cutoutBtn.onclick=async()=>{if(!shirt.src){alert("ເລືອກຮູບເສື້ອກ່ອນ");return;}aiLoading.style.display="block";loadingBar.style.width="0%";loadingText.textContent="0%";for(let i=1;i<=15;i++){await new Promise(r=>setTimeout(r,1000));const p=i/15*100;loadingBar.style.width=p+"%";loadingText.textContent=Math.round(p)+"%";}try{const m=await import("https://cdn.jsdelivr.net/npm/@imgly/background-removal/+esm");const blob=await m.removeBackground(shirt.src);shirt.src=URL.createObjectURL(blob);}catch(e){alert("AI ບໍ່ສາມາດໄດຄັດໄດ້ ກວດເຊັກອິນເຕີເນັດ");console.error(e);}aiLoading.style.display="none";};
+restoreBtn.onclick=()=>{if(originalShirtSrc)shirt.src=originalShirtSrc;};
+</script>
 </body>
 </html>
