@@ -1,12 +1,12 @@
-[cite: 12]<!DOCTYPE html>
-<html lang="th">
+<!DOCTYPE html>
+<html lang="lo">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin ຮ້ານບໍ່ແພງແຕ່ເທ້ V7.3 - Sticky Studio Hub & DB</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-<!-- นำเข้า Google Fonts สำหรับเลือกฟอนต์เพิ่มเติม -->
+<!-- ນຳເຂົ້າ Google Fonts ສຳລັບເລືອກຟອນต์ເພີ່ມເຕີມ -->
 <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;700;900&family=Kanit:wght@400;700;900&family=Sarabun:wght@400;700&family=Inter:wght@400;700;900&family=Chakra+Petch:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -234,7 +234,7 @@ button {
   font-size: 14px;
 }
 
-/* Modal สำหรับหน้าต่างฟังก์ชันแยก */
+/* Modal ສຳລັບໜ້າຕ່າງຟັງຊັນແຍກ */
 .modal-overlay {
   position: fixed;
   top: 0; left: 0; width: 100vw; height: 100vh;
@@ -292,11 +292,11 @@ button {
 
 <div id="loginScreen">
   <div class="login-box">
-    <h2>🔒 Admin Access</h2>
-    <p style="color:#aaa;font-size:13px;margin-bottom:15px;">กรุณากรอกรหัสผ่านเพื่อเข้าใช้งานระบบ</p>
-    <input type="password" id="passInput" placeholder="Passcode" autofocus>
-    <button class="btn" id="loginBtn">เข้าสู่ระบบ</button>
-    <div id="loginErr">❌ รหัสผ่านไม่ถูกต้อง!</div>
+    <h2>🔒 ເຂົ້າສູ່ລະບົບແອັດມິນ</h2>
+    <p style="color:#aaa;font-size:13px;margin-bottom:15px;">ກະລຸນາປ້ອນລະຫັດຜ່ານເພື່ອເຂົ້າໃຊ້ງານລະບົບ</p>
+    <input type="password" id="passInput" placeholder="ລະຫັດຜ່ານ" autofocus>
+    <button class="btn" id="loginBtn">ເຂົ້າສູ່ລະບົບ</button>
+    <div id="loginErr">❌ ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ!</div>
   </div>
 </div>
 
@@ -304,10 +304,10 @@ button {
   <div class="header-bar">
     <h2>⚡ ບໍ່ແພງແຕ່ເທ້ Studio - Sticky Poster Hub & Databases</h2>
     <div class="user-status" style="display:flex; gap:10px; align-items:center;">
-      <button class="btn" id="openFn1Btn" style="font-size:12px; padding:6px 12px; width:auto;">📌 ไปฟังก์ชัน 1 (คลังรหัส & สแกน)</button>
-      <button class="btn" id="openFn2Btn" style="font-size:12px; padding:6px 12px; width:auto; background: linear-gradient(135deg, #2a2aff 0%, #0000a9 100%);">🗂️ ไปฟังก์ชัน 2 (คลังข้อมูล)</button>
-      <div class="status-badge" style="background:rgba(0,255,136,0.1);border:1px solid #00ff88;padding:4px 12px;border-radius:20px;font-size:12px;color:#00ff88;">🟢 Online</div>
-      <button id="logoutBtn" style="background:rgba(255,42,42,0.2);color:#ff5555;border:1px solid rgba(255,42,42,0.4);padding:4px 10px;font-size:11px">ออก</button>
+      <button class="btn" id="openFn1Btn" style="font-size:12px; padding:6px 12px; width:auto;">📌 ไปຟັງຊັນ 1 (ຄลังລະຫັດ & ສະແກນ)</button>
+      <button class="btn" id="openFn2Btn" style="font-size:12px; padding:6px 12px; width:auto; background: linear-gradient(135deg, #2a2aff 0%, #0000a9 100%);">🗂️ ไปຟັງຊັນ 2 (ຄັງຂໍ້ມູນ)</button>
+      <div class="status-badge" style="background:rgba(0,255,136,0.1);border:1px solid #00ff88;padding:4px 12px;border-radius:20px;font-size:12px;color:#00ff88;">🟢 ອອນລາຍ</div>
+      <button id="logoutBtn" style="background:rgba(255,42,42,0.2);color:#ff5555;border:1px solid rgba(255,42,42,0.4);padding:4px 10px;font-size:11px">ອອກຈາກລະບົບ</button>
     </div>
   </div>
 
@@ -315,72 +315,72 @@ button {
     <div class="controls-sidebar">
       
       <div class="panel">
-        <h3>📱 เลือกสัดส่วนแพลตฟอร์ม</h3>
+        <h3>📱 ເລືອກອັດຕາສ່ວນແພລດຟອມ</h3>
         <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px">
           <button class="platform active" data-ratio="4/5">Facebook</button>
           <button class="platform" data-ratio="9/16">TikTok</button>
           <button class="platform" data-ratio="16/9">YouTube</button>
           <button class="platform" data-ratio="1/1">Instagram</button>
-          <button class="platform" data-ratio="custom" style="grid-column: span 2;">⚙️ ปรับแบบอิสระ</button>
+          <button class="platform" data-ratio="custom" style="grid-column: span 2;">⚙️ ປັບແຕ່ງຕາມໃຈມັກ</button>
         </div>
         <div id="customRatioBox" style="display:none; margin-top: 10px; background: rgba(0,0,0,0.2); padding: 8px; border-radius: 8px;">
           <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 6px;">
-            <div><label style="font-size:11px">ความกว้าง (px)</label><input type="number" id="customWidthInput" value="440" style="padding:6px; font-size:12px;"></div>
-            <div><label style="font-size:11px">ความสูง (px)</label><input type="number" id="customHeightInput" value="550" style="padding:6px; font-size:12px;"></div>
+            <div><label style="font-size:11px">ຄວາມກວ້າງ (px)</label><input type="number" id="customWidthInput" value="440" style="padding:6px; font-size:12px;"></div>
+            <div><label style="font-size:11px">ຄວາມສູງ (px)</label><input type="number" id="customHeightInput" value="550" style="padding:6px; font-size:12px;"></div>
           </div>
-          <button class="btn" id="applyCustomRatio" style="margin-top:6px; padding:6px; font-size:12px;">ใช้งานขนาดอิสระ</button>
+          <button class="btn" id="applyCustomRatio" style="margin-top:6px; padding:6px; font-size:12px;">ໃຊ້ງານຂະໜາດຕາມໃຈມັກ</button>
         </div>
         <p id="platformInfo" style="color:#aaa;font-size:12px;margin:8px 0 0 0">1080×1350 Facebook</p>
       </div>
 
       <div class="panel">
-        <h3>👕 จัดการรูปสินค้า & AI</h3>
+        <h3>👕 ຈັດການຮູບສິນຄ້າ & AI</h3>
         <input type="file" id="shirtUpload" accept="image/*">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px">
-          <button class="btn" id="cutoutBtn" type="button" style="font-size:13px">✂️ AI ไดคັດ</button>
-          <button id="restoreBtn" type="button" style="background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.2);font-size:13px">↩️ รูปเดิม</button>
+          <button class="btn" id="cutoutBtn" type="button" style="font-size:13px">✂️ AI ລຶບພື້ນຫຼັງ</button>
+          <button id="restoreBtn" type="button" style="background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.2);font-size:13px">↩️ ຮູບເດີມ</button>
         </div>
         
         <div id="aiLoading" style="display:none;margin-top:10px">
-          <div style="color:#ff3131;font-weight:bold;font-size:12px">🤖 AI กำลังไดคัทพื้นหลัง...</div>
+          <div style="color:#ff3131;font-weight:bold;font-size:12px">🤖 AI กำลังລຶບພື້ນຫຼັງ...</div>
           <div style="width:100%;height:8px;background:#1a1a24;border-radius:6px;margin-top:6px;overflow:hidden">
             <div id="loadingBar" style="width:0%;height:100%;background:var(--accent-red);border-radius:6px;transition:width 0.3s"></div>
           </div>
         </div>
 
-        <label style="font-size:13px;margin-top:10px;display:block">ซูมสินค้า</label><input type="range" id="zoom" min="30" max="300" value="100">
-        <label style="font-size:13px;margin-top:8px;display:block">หมุนสินค้า (องศา)</label><input type="range" id="shirtRotate" min="-180" max="180" value="0">
-        <label style="font-size:13px;margin-top:8px;display:block">ความเบลอสินค้า (Blur)</label><input type="range" id="shirtBlur" min="0" max="20" value="0">
+        <label style="font-size:13px;margin-top:10px;display:block">ຊູມສິນຄ້າ</label><input type="range" id="zoom" min="30" max="300" value="100">
+        <label style="font-size:13px;margin-top:8px;display:block">ໝຸນສິນຄ້າ (ອງສາ)</label><input type="range" id="shirtRotate" min="-180" max="180" value="0">
+        <label style="font-size:13px;margin-top:8px;display:block">ຄວາມມົວສິນຄ້າ (Blur)</label><input type="range" id="shirtBlur" min="0" max="20" value="0">
       </div>
 
       <div class="panel">
-        <h3>🖼️ จัดการรูปพื้นหลัง (Background)</h3>
+        <h3>🖼️ ຈັດການຮູບພື້ນຫຼັງ (Background)</h3>
         <input type="file" id="bgUpload" accept="image/*">
-        <button id="removeBgBtn" type="button" style="width:100%;margin-top:6px;background:rgba(255,42,42,0.2);color:#ff5555;border:1px solid rgba(255,42,42,0.4);font-size:13px">❌ ลบพื้นหลัง</button>
+        <button id="removeBgBtn" type="button" style="width:100%;margin-top:6px;background:rgba(255,42,42,0.2);color:#ff5555;border:1px solid rgba(255,42,42,0.4);font-size:13px">❌ ລຶບພື້ນຫຼັງ</button>
 
-        <label style="font-size:13px;margin-top:10px;display:block">ซูมพื้นหลัง</label><input type="range" id="bgZoom" min="30" max="300" value="100">
-        <label style="font-size:13px;margin-top:8px;display:block">หมุนพื้นหลัง</label><input type="range" id="bgRotate" min="-180" max="180" value="0">
-        <label style="font-size:13px;margin-top:8px;display:block">ความเบลอพื้นหลัง</label><input type="range" id="bgBlur" min="0" max="25" value="0">
+        <label style="font-size:13px;margin-top:10px;display:block">ຊູມພື້ນຫຼັງ</label><input type="range" id="bgZoom" min="30" max="300" value="100">
+        <label style="font-size:13px;margin-top:8px;display:block">ໝຸນພື້ນຫຼັງ</label><input type="range" id="bgRotate" min="-180" max="180" value="0">
+        <label style="font-size:13px;margin-top:8px;display:block">ຄວາມມົວພື້ນຫຼັງ</label><input type="range" id="bgBlur" min="0" max="25" value="0">
       </div>
 
       <div class="panel">
-        <h3>🏪 โลโก้ร้าน</h3>
+        <h3>🏪 โลโก້ຮ້ານ</h3>
         <input type="file" id="logoUpload" accept="image/*">
-        <label style="display:block;margin-top:8px;font-size:13px;"><input type="checkbox" id="showLogo" checked style="width:auto"> แสดงโลโก้</label>
+        <label style="display:block;margin-top:8px;font-size:13px;"><input type="checkbox" id="showLogo" checked style="width:auto"> ສະແດງໂລໂກ້</label>
       </div>
 
       <div class="panel">
-        <h3>📝 รายละเอียดสินค้า</h3>
+        <h3>📝 ລາຍລະອຽດສິນຄ້າ</h3>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
-          <div><label style="font-size:12px">รหัสสินค้า</label><input id="codeInput" value="AP001"></div>
-          <div><label style="font-size:12px">ราคา (₭)</label><input id="priceInput" value="299000"></div>
+          <div><label style="font-size:12px">ລະຫັດສິນຄ້າ</label><input id="codeInput" value="AP001"></div>
+          <div><label style="font-size:12px">ລາຄາ (₭)</label><input id="priceInput" value="299000"></div>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
-          <div><label style="font-size:12px">จำนวน (ตัว)</label><input id="stockInput" value="18"></div>
+          <div><label style="font-size:12px">ຈຳນວນ (ໂຕ)</label><input id="stockInput" value="18"></div>
           <div>
-            <label style="font-size:12px">ไซส์</label>
+            <label style="font-size:12px">ໄຊສ໌</label>
             <select id="sizeSelect">
-              <option>S</option><option selected>M</option><option>L</option><option>XL</option><option value="custom">พิมพ์เอง</option>
+              <option>S</option><option selected>M</option><option>L</option><option>XL</option><option value="custom">ພິມเอง</option>
             </select>
           </div>
         </div>
@@ -388,46 +388,46 @@ button {
       </div>
 
       <div class="panel">
-        <h3>🎨 ฟอนต์, สี & ขนาดตัวอักษรราคา</h3>
-        <label style="font-size:12px;margin-top:4px;display:block">เลือกฟอนต์ราคาสินค้า</label>
+        <h3>🎨 ຟອນต์, ສີ & ຂະໜາດຕົວອັກສອນລາຄາ</h3>
+        <label style="font-size:12px;margin-top:4px;display:block">ເລືອກຟອນต์ລາຄາສິນຄ້າ</label>
         <select id="priceFontSelect">
-          <option value="'Prompt', sans-serif" selected>Prompt (โมเดิร์น/ตัวหนาชัดเจน)</option>
-          <option value="'Kanit', sans-serif">Kanit (สไตล์วัยรุ่น/หนาแน่น)</option>
-          <option value="'Sarabun', sans-serif">Sarabun (ทางการ/อ่านง่าย)</option>
-          <option value="'Chakra Petch', sans-serif">Chakra Petch (แนวล้ำอนาคต/Cyberpunk)</option>
-          <option value="'Inter', sans-serif">Inter (สากล/เรียบหรู)</option>
+          <option value="'Prompt', sans-serif" selected>Prompt (ໂມເດิร์ນ/ໂຕໜາແຈ້ງ)</option>
+          <option value="'Kanit', sans-serif">Kanit (ສະໄຕລ໌ວັຍລຸ້ນ/ໜາແໜ້ນ)</option>
+          <option value="'Sarabun', sans-serif">Sarabun (ທາງການ/ອ່ານງ່າຍ)</option>
+          <option value="'Chakra Petch', sans-serif">Chakra Petch (ແນວລ້ຳອະນາຄົດ/Cyberpunk)</option>
+          <option value="'Inter', sans-serif">Inter (ສາກົນ/ລຽບຫຣູ)</option>
         </select>
 
         <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px">
-          <div><label style="font-size:11px">สีราคา</label><input type="color" id="priceColor" value="#ff3131" style="padding:2px;height:30px"></div>
-          <div><label style="font-size:11px">สีรหัส</label><input type="color" id="codeColor" value="#ffffff" style="padding:2px;height:30px"></div>
-          <div><label style="font-size:11px">สีจำนวน</label><input type="color" id="stockColor" value="#ffffff" style="padding:2px;height:30px"></div>
-          <div><label style="font-size:11px">สีไซส์</label><input type="color" id="sizeColor" value="#ffffff" style="padding:2px;height:30px"></div>
+          <div><label style="font-size:11px">ສີລາຄາ</label><input type="color" id="priceColor" value="#ff3131" style="padding:2px;height:30px"></div>
+          <div><label style="font-size:11px">ສີລະຫັດ</label><input type="color" id="codeColor" value="#ffffff" style="padding:2px;height:30px"></div>
+          <div><label style="font-size:11px">ສີຈຳນວນ</label><input type="color" id="stockColor" value="#ffffff" style="padding:2px;height:30px"></div>
+          <div><label style="font-size:11px">ສີໄຊສ໌</label><input type="color" id="sizeColor" value="#ffffff" style="padding:2px;height:30px"></div>
         </div>
         
-        <label style="font-size:12px;margin-top:8px;display:block">ขนาดยอดราคา</label><input type="range" id="priceSize" min="18" max="70" value="42">
-        <label style="font-size:12px;margin-top:6px;display:block">ขนาดข้อความอื่นๆ</label>
+        <label style="font-size:12px;margin-top:8px;display:block">ຂະໜາດຍອດລາຄາ</label><input type="range" id="priceSize" min="18" max="70" value="42">
+        <label style="font-size:12px;margin-top:6px;display:block">ຂະໜາດຂໍ້ຄວາມອື່ນໆ</label>
         <div style="display:flex;gap:6px">
-          <input type="range" id="codeSize" min="8" max="25" value="11" title="รหัส">
-          <input type="range" id="stockSize" min="10" max="25" value="12" title="จำนวน">
-          <input type="range" id="sizeSize" min="10" max="25" value="12" title="ไซส์">
+          <input type="range" id="codeSize" min="8" max="25" value="11" title="ລະຫັດ">
+          <input type="range" id="stockSize" min="10" max="25" value="12" title="ຈຳນວນ">
+          <input type="range" id="sizeSize" min="10" max="25" value="12" title="ໄຊສ໌">
         </div>
       </div>
 
       <div class="panel">
-        <h3>👁️ เปิด / ปิด การแสดงผล</h3>
+        <h3>👁️ ເປີດ / ປິດ ການສະແດງຜົນ</h3>
         <div style="display:flex;flex-wrap:wrap;gap:10px;font-size:13px">
-          <label><input type="checkbox" id="togglePrice" checked style="width:auto"> ราคา</label>
-          <label><input type="checkbox" id="toggleCode" checked style="width:auto"> รหัส</label>
-          <label><input type="checkbox" id="toggleStock" checked style="width:auto"> จำนวน</label>
-          <label><input type="checkbox" id="toggleSize" checked style="width:auto"> ไซส์</label>
+          <label><input type="checkbox" id="togglePrice" checked style="width:auto"> ລາຄາ</label>
+          <label><input type="checkbox" id="toggleCode" checked style="width:auto"> ລະຫັດ</label>
+          <label><input type="checkbox" id="toggleStock" checked style="width:auto"> ຈຳນວນ</label>
+          <label><input type="checkbox" id="toggleSize" checked style="width:auto"> ໄຊສ໌</label>
         </div>
       </div>
 
     </div>
 
     <div class="preview-sticky-container">
-      <h3 style="margin-top:0;margin-bottom:10px;color:#ff5555;font-size:15px">🎨 ตัวอย่างรูปโปสเตอร์ (Real-time Preview)</h3>
+      <h3 style="margin-top:0;margin-bottom:10px;color:#ff5555;font-size:15px">🎨 ຕົວຢ່າງຮູບໂປສເຕີ (Real-time Preview)</h3>
       <div id="poster">
         <img id="bgImg">
         <img id="shirt">
@@ -438,25 +438,25 @@ button {
         <div id="sizeLabel" class="draggable">M</div>
       </div>
       
-      <button class="btn" id="downloadBtn" style="margin-top:15px;padding:12px;font-size:15px;width:100%;">📥 โหลดรูปป้ายสินค้า PNG (บันทึกอัตโนมัติ)</button>
+      <button class="btn" id="downloadBtn" style="margin-top:15px;padding:12px;font-size:15px;width:100%;">📥 ດາວໂຫລດຮູບປ້າຍສິນຄ້າ PNG (ບັນທຶກອັດຕະໂນມັດ)</button>
     </div>
   </div>
 </div>
 
-<!-- Modal ฟังก์ชัน 1: คลังรหัสเสื้อ & AI กล้องสแกน -->
+<!-- Modal ຟັງຊັນ 1: ຄັງລະຫັດເສື້ອ & AI ກ້ອງສະແກນ -->
 <div id="modalFn1" class="modal-overlay">
   <div class="modal-content">
     <button class="modal-close" id="closeFn1">&times;</button>
-    <h3>📌 ฟังก์ชัน 1: คลังรหัสเสื้อ & AI กล้องสแกนตรวจสอบรหัส</h3>
+    <h3>📌 ຟັງຊັນ 1: ຄັງລະຫັດເສື້ອ & AI ກ້ອງສະແກນກວດສອບລະຫັດ</h3>
     <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; margin-top: 10px;">
-      <label style="font-size:13px; color:#ff8888; font-weight:bold;">📷 ถ่ายภาพหรืออัปโหลดรูปสินค้า/ป้าย เพื่อให้ AI ตรวจสอบตัวเลขรหัส</label>
+      <label style="font-size:13px; color:#ff8888; font-weight:bold;">📷 ຖ່າຍພາບ ຫຼື ອັບໂຫລດຮູບສິນຄ້າ/ປ້າຍ ເພື່ອໃຫ້ AI ກວດສອບຕົວເລກລະຫັດ</label>
       <input type="file" id="scanInput" accept="image/*" capture="environment" style="margin-top:8px;">
-      <div id="scanStatus" style="font-size:12px; color:#00ff88; margin-top:8px;">สถานะ: พร้อมสแกนภาพเพื่อตรวจสอบรหัส...</div>
+      <div id="scanStatus" style="font-size:12px; color:#00ff88; margin-top:8px;">ສະຖານະ: ພ້ອມສະແກນຮູບພາບເພື່ອເບິ່ງລະຫັດ...</div>
     </div>
     <div style="max-height: 250px; overflow-y: auto; margin-top: 12px;">
       <table class="db-table" id="codeOnlyTable">
         <thead>
-          <tr><th>รหัสเสื้อ</th><th>สถานะ</th></tr>
+          <tr><th>ລະຫັດເສື້ອ</th><th>ສະຖານະ</th></tr>
         </thead>
         <tbody></tbody>
       </table>
@@ -464,15 +464,15 @@ button {
   </div>
 </div>
 
-<!-- Modal ฟังก์ชัน 2: คลังข้อมูลรายละเอียดทั้งหมด -->
+<!-- Modal ຟັງຊັນ 2: ຄັງຂໍ້ມູນລາຍລະອຽດທັງໝົດ -->
 <div id="modalFn2" class="modal-overlay">
   <div class="modal-content">
     <button class="modal-close" id="closeFn2">&times;</button>
-    <h3>🗂️ ฟังก์ชัน 2: คลังข้อมูลรายละเอียดทั้งหมด (ไม่เก็บรูป)</h3>
+    <h3>🗂️ ຟັງຊັນ 2: ຄັງຂໍ້ມູນລາຍລະອຽດທັງໝົດ (ບໍ່ເກັບຮູບ)</h3>
     <div style="max-height: 350px; overflow-y: auto; margin-top: 12px;">
       <table class="db-table" id="allDataTable">
         <thead>
-          <tr><th>รหัส</th><th>ราคา</th><th>จำนวน</th><th>ไซส์</th><th>สถานะ</th></tr>
+          <tr><th>ລະຫັດ</th><th>ລາຄາ</th><th>ຈຳນວນ</th><th>ໄຊສ໌</th><th>ສະຖານະ</th></tr>
         </thead>
         <tbody></tbody>
       </table>
@@ -544,11 +544,11 @@ function renderDatabases() {
   if(codeTableBody) {
     codeTableBody.innerHTML = "";
     if(codeOnlyDB.length === 0) {
-      codeTableBody.innerHTML = `<tr><td colspan="2" style="text-align:center;color:#777">ยังไม่มีข้อมูลรหัสเสื้อ</td></tr>`;
+      codeTableBody.innerHTML = `<tr><td colspan="2" style="text-align:center;color:#777">ຍັງບໍ່ມີຂໍ້ມູນລະຫັດເສື້ອ</td></tr>`;
     } else {
       codeOnlyDB.forEach(item => {
         const tr = document.createElement("tr");
-        tr.innerHTML = `<td><b>${item.code}</b></td><td>${item.status === 'sold' ? '<span class="badge-sold">ขายออกทันที</span>' : '<span class="badge-stock">ปกติ</span>'}</td>`;
+        tr.innerHTML = `<td><b>${item.code}</b></td><td>${item.status === 'sold' ? '<span class="badge-sold">ຂາຍອອກແລ້ວ</span>' : '<span class="badge-stock">ປົກກະຕິ</span>'}</td>`;
         codeTableBody.appendChild(tr);
       });
     }
@@ -558,11 +558,11 @@ function renderDatabases() {
   if(allTableBody) {
     allTableBody.innerHTML = "";
     if(allDataDB.length === 0) {
-      allTableBody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#777">ยังไม่มีข้อมูลในระบบ</td></tr>`;
+      allTableBody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#777">ຍັງບໍ່ມີຂໍ້ມູນໃນລະບົບ</td></tr>`;
     } else {
       allDataDB.forEach(item => {
         const tr = document.createElement("tr");
-        tr.innerHTML = `<td><b>${item.code}</b></td><td>${item.price}</td><td>${item.stock}</td><td>${item.size}</td><td>${item.status === 'sold' ? '<span class="badge-sold">ขายออกทันที</span>' : '<span class="badge-stock">พร้อมขาย</span>'}</td>`;
+        tr.innerHTML = `<td><b>${item.code}</b></td><td>${item.price}</td><td>${item.stock}</td><td>${item.size}</td><td>${item.status === 'sold' ? '<span class="badge-sold">ຂາຍອອກແລ້ວ</span>' : '<span class="badge-stock">ພ້ອມຂາຍ</span>'}</td>`;
         allTableBody.appendChild(tr);
       });
     }
@@ -606,7 +606,7 @@ if(scanInput) {
     if(!file) return;
 
     const statusEl = document.getElementById("scanStatus");
-    if(statusEl) statusEl.textContent = "🤖 AI กำลังประมวลผลอ่านตัวเลขจากรูปภาพ...";
+    if(statusEl) statusEl.textContent = "🤖 AI ກຳລັງປະມວນຜົນອ່ານຕົວເລກຈາກຮູບພາບ...";
 
     try {
       if (typeof Tesseract !== 'undefined') {
@@ -618,7 +618,7 @@ if(scanInput) {
         const matches = rawText.match(/[A-Za-z0-9]+/g) || [];
         const detectedText = matches.join("").toUpperCase();
 
-        if(statusEl) statusEl.textContent = `🔍 AI อ่านข้อความ/ตัวเลขในรูปได้: "${detectedText}" กำลังเทียบข้อมูล...`;
+        if(statusEl) statusEl.textContent = `🔍 AI ອ່ານຂໍ້ຄວາມ/ຕົວເລກໃນຮູບໄດ້: "${detectedText}" ກຳລັງປຽບທຽບຂໍ້ມູນ...`;
 
         let found = false;
         codeOnlyDB.forEach(item => {
@@ -637,18 +637,18 @@ if(scanInput) {
 
         if(found) {
           renderDatabases();
-          if(statusEl) statusEl.textContent = "✅ สำเร็จ: รหัสตรงกับข้อมูลในระบบ เปลี่ยนสถานะเป็นขายออกแล้ว!";
-          alert("🎉 ตรวจพบรหัสสินค้าในรูปตรงกับฐานข้อมูล และเปลี่ยนสถานะเป็นขายออกเรียบร้อยแล้ว!");
+          if(statusEl) statusEl.textContent = "✅ ສໍາເລັດ: ລະຫັດກົງກັບຂໍ້ມູນໃນລະບົບ ປ່ຽນສະຖານະເປັນຂາຍອອກແລ້ວ!";
+          alert("🎉 ພົບລະຫັດສິນຄ້າໃນຮູບກົງກັບຖານຂໍ້ມູນ ແລະ ປ່ຽນສະຖານະເປັນຂາຍອອກຮຽບຮ້ອຍແລ້ວ!");
         } else {
-          if(statusEl) statusEl.textContent = `❌ ไม่พบรหัสที่ตรงกับในระบบ (ข้อความที่อ่านได้: ${detectedText})`;
-          alert(`❌ ไม่พบรหัสสินค้าในระบบที่ตรงกับรูปภาพนี้ (อ่านตัวเลขได้: ${detectedText})`);
+          if(statusEl) statusEl.textContent = `❌ ບໍ່ພົບລະຫັດທີ່ກົງກັບໃນລະບົບ (ຂໍ້ຄວາມທີ່ອ່ານໄດ້: ${detectedText})`;
+          alert(`❌ ບໍ່ພົບລະຫັດສິນຄ້າໃນລະບົບທີ່ກົງກັບຮູບພາບນີ້ (ອ່ານຕົວເລກໄດ້: ${detectedText})`);
         }
       } else {
-        if(statusEl) statusEl.textContent = "❌ Tesseract โหลดไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ต";
+        if(statusEl) statusEl.textContent = "❌ Tesseract โหลดບໍ່ສຳເລັດ ກະລຸນາກວດສອບອິນເຕີເນັດ";
       }
     } catch(err) {
       console.error(err);
-      if(statusEl) statusEl.textContent = "❌ เกิดข้อผิดพลาดในการสแกนด้วย AI";
+      if(statusEl) statusEl.textContent = "❌ ເກີດຂໍ້ຜິດພາດໃນການສະແກນດ້ວຍ AI";
     }
   };
 }
@@ -824,7 +824,7 @@ if(poster) {
   }, { passive: false });
 }
 
-const info = { "4/5": "1080×1350 Facebook", "9/16": "1080×1920 TikTok", "16/9": "1280×720 YouTube", "1/1": "1080×1080 Instagram", "custom": "ขนาดปรับเองแบบอิสระ" };
+const info = { "4/5": "1080×1350 Facebook", "9/16": "1080×1920 TikTok", "16/9": "1280×720 YouTube", "1/1": "1080×1080 Instagram", "custom": "ຂະໜາດປັບແຕ່ງຕາມໃຈມັກ" };
 const customRatioBox = document.getElementById("customRatioBox");
 
 document.querySelectorAll(".platform").forEach(btn => {
@@ -857,9 +857,9 @@ if(applyCustomRatio) {
     const h = document.getElementById("customHeightInput").value;
     if(poster && w && h) {
       poster.style.aspectRatio = `${w} / ${h}`;
-      poster.style.width = Math.min(w, 500) + "px"; // จำกัดการแสดงผลไม่ให้เกินจอพรีวิวเกินไป
+      poster.style.width = Math.min(w, 500) + "px"; // ຈຳກັດການສະແດງຜົນບໍ່ໃຫ້ກາຍໜ້າຈໍພຣີວິວຫລາຍເກີນໄປ
       const platformInfo = document.getElementById("platformInfo");
-      if(platformInfo) platformInfo.textContent = `ขนาดอิสระ: ${w}×${h} px`;
+      if(platformInfo) platformInfo.textContent = `ຂະໜາດຕາມໃຈມັກ: ${w}×${h} px`;
       updateShirt();
     }
   };
@@ -892,7 +892,7 @@ function drag(el) {
 const priceSize = document.getElementById("priceSize");
 if(priceSize) priceSize.oninput = (e) => { const l = document.getElementById("priceLabel"); if(l) l.style.fontSize = e.target.value + "px"; };
 
-// ระบบเลือกฟอนต์สำหรับป้ายราคา
+// ລະບົບເລືອກຟອນต์ສຳລັບປ້າຍລາຄາ
 const priceFontSelect = document.getElementById("priceFontSelect");
 if(priceFontSelect) {
   priceFontSelect.onchange = (e) => {
@@ -952,7 +952,7 @@ if(downloadBtn) {
 const cutoutBtn = document.getElementById("cutoutBtn");
 if(cutoutBtn) {
   cutoutBtn.onclick = async () => {
-    if (!shirt || !shirt.src) { alert("ເລືອກຮູບເສື້ອກ່ອນ"); return; }
+    if (!shirt || !shirt.src) { alert("ກະລຸນາເລືອກຮູບເສື້ອກ່ອນ"); return; }
     const aiLoading = document.getElementById("aiLoading");
     const loadingBar = document.getElementById("loadingBar");
     
@@ -970,7 +970,7 @@ if(cutoutBtn) {
       shirt.src = URL.createObjectURL(blob);
       updateShirt();
     } catch (e) {
-      alert("AI ບໍ່ສາມາດໄດຄັດໄດ້ ກວດເຊັກອິນເຕີເນັດ");
+      alert("AI ບໍ່ສາມາດລຶບພື້ນຫຼັງໄດ້ ກະລຸນາກວດສອບອິນເຕີເນັດ");
       console.error(e);
     }
     if(aiLoading) aiLoading.style.display = "none";
