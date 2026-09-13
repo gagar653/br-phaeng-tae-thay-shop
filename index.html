@@ -5,34 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin ຮ້ານບໍ່ແພງແຕ່ເທ້ V4.9</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<style>/* ===== พื้นหลังสินค้า ===== */
-
-.bgGrid{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:10px;
-    margin-top:10px;
-}
-
-.bgBtn{
-    height:45px;
-    border-radius:12px;
-    border:2px solid #444;
-    cursor:pointer;
-}
-
-.bgBtn.active{
-    border:3px solid #ff3131;
-    transform:scale(1.05);
-}
+<style>
 body{margin:0;background:#070707;color:#fff;font-family:Arial}
 .wrap{display:grid;grid-template-columns:300px 1fr;gap:20px;padding:20px;max-width:1300px;margin:auto}
 .panel{background:#111;border:1px solid #550000;border-radius:20px;padding:15px}
 input,select{width:100%;padding:10px;border-radius:10px;background:#181818;border:1px solid #550000;color:#fff;margin-top:8px}
 button{padding:10px;border-radius:10px;border:none;cursor:pointer}
 .platform.active{background:#d10000;color:#fff}.platform{background:#222;color:#fff}
-#poster{background-size:cover;
-background-position:center;width:340px;aspect-ratio:4/5;background:#fff;position:relative;overflow:hidden}
+#poster{width:340px;aspect-ratio:4/5;background:#fff;position:relative;overflow:hidden}
 #shirt{
  position:absolute;
  left:50%;top:50%;
@@ -94,44 +74,7 @@ background-position:center;width:340px;aspect-ratio:4/5;background:#fff;position
 <button class=platform data-ratio="1/1">Instagram</button>
 </div>
 <p id=platformInfo>1080×1350 Facebook</p>
-</div><!-- 🎨 พื้นหลังสินค้า -->
-<div class="panel">
-  <h3>🎨 พื้นหลังสินค้า</h3>
-
-  <div class="bgGrid">
-    <button class="bgBtn active" data-bg="#ffffff" style="background:#ffffff"></button>
-    <button class="bgBtn" data-bg="#000000" style="background:#000000"></button>
-    <button class="bgBtn" data-bg="#ff3131" style="background:#ff3131"></button>
-    <button class="bgBtn" data-bg="#FFD400" style="background:#FFD400"></button>
-    <button class="bgBtn" data-bg="#2F80ED" style="background:#2F80ED"></button>
-    <button class="bgBtn" data-bg="#16C784" style="background:#16C784"></button>
-  </div>
-
-  <label style="margin-top:15px;display:block;">เลือกสีเอง</label>
-  <input type="color" id="customBgColor" value="#ffffff">
-</div><hr style="border-color:#550000;margin:15px 0;">
-
-<label>📷 อัปโหลดพื้นหลัง</label>
-<input type="file" id="bgUpload" accept="image/*">
-
-<label style="margin-top:15px;">🌫️ ความเบลอพื้นหลัง</label>
-<input type="range" id="bgBlur" min="0" max="30" value="0">
-
-<text id="blurValue" preserveWhitespace>0 px</text>
-
-<button id="removeBg" type="button"
-style="
-width:100%;
-margin-top:12px;
-padding:10px;
-background:#333;
-color:white;
-border:none;
-border-radius:10px;
-font-weight:bold;
-cursor:pointer;">
-🗑️ ลบพื้นหลัง
-</button>
+</div>
 <div class="panel"><h3>🖱️ລະບົບໃຫມ່ໄວໆນີ້</h3>
 <p style="font-size:13px;color:#ccc">✔ ເກັບຂໍ້ມູນໄດ້ 
 <p style="font-size:13px;color:#ccc">✔ ສະຫມັກສະມາສິກVIPໃຊ້AIແຕ່ງຮູບ
@@ -375,83 +318,6 @@ if (isTouchDevice) {
   mobileDrag("codeLabel");
   mobileDrag("stockLabel");
   mobileDrag("sizeLabel");
-}// ===== V4.9.2 Background System (FIXED) =====
-
-const bgButtons = document.querySelectorAll(".bgBtn");
-const customBgColor = document.getElementById("customBgColor");
-const bgUpload = document.getElementById("bgUpload");
-const bgBlur = document.getElementById("bgBlur");
-const blurValue = document.getElementById("blurValue");
-const removeBg = document.getElementById("removeBg");
-
-let bgImage = "";
-
-// ปุ่มเลือกสีพื้นหลัง
-bgButtons.forEach(btn=>{
-  btn.onclick=()=>{
-    bgButtons.forEach(b=>b.classList.remove("active"));
-    btn.classList.add("active");
-
-    poster.style.backgroundImage="none";
-    poster.style.backgroundColor=btn.dataset.bg;
-    poster.style.filter="none";
-
-    customBgColor.value=btn.dataset.bg;
-    bgImage="";
-  };
-});
-
-// Color Picker
-customBgColor.oninput=()=>{
-  poster.style.backgroundImage="none";
-  poster.style.backgroundColor=customBgColor.value;
-  poster.style.filter="none";
-  bgButtons.forEach(b=>b.classList.remove("active"));
-  bgImage="";
-};
-
-// อัปโหลดรูปพื้นหลัง
-bgUpload.onchange=(e)=>{
-  const file=e.target.files[0];
-  if(!file) return;
-
-  const reader=new FileReader();
-
-  reader.onload=(ev)=>{
-    bgImage=ev.target.result;
-
-    poster.style.backgroundImage=`url(${bgImage})`;
-    poster.style.backgroundColor="#ffffff";
-    poster.style.backgroundRepeat="no-repeat";
-    poster.style.backgroundSize="contain";
-    poster.style.backgroundPosition="center";
-    poster.style.filter="none";
-  };
-
-  reader.readAsDataURL(file);
-};
-
-// ความเบลอ (เวอร์ชันนี้ใช้งานได้)
-bgBlur.oninput=()=>{
-  blurValue.textContent=bgBlur.value+" px";
-
-  if(bgImage){
-    poster.style.filter=`blur(${bgBlur.value}px)`;
-  }
-};
-
-// ลบพื้นหลัง
-removeBg.onclick=()=>{
-  bgImage="";
-  poster.style.backgroundImage="none";
-  poster.style.backgroundColor="#ffffff";
-  poster.style.filter="none";
-
-  bgBlur.value=0;
-  blurValue.textContent="0 px";
-  bgUpload.value="";
-};
-
-});</script>
+}</script>
 </body>
 </html>
