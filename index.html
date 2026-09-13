@@ -3,10 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin ຮ້ານບໍ່ແພງແຕ່ເທ້ V4.9 - Cyber Login Edition</title>
+<title>Admin ຮ້ານບໍ່ແພງແຕ່ເທ້ V4.9 - Strict Auth Edition</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
-/* ==================== CYBER & DARK HIGH-TECH THEME ==================== */
 :root {
   --bg-main: #06060c;
   --accent-red: #ff2a2a;
@@ -31,7 +30,6 @@ body {
   min-height: 100vh;
 }
 
-/* Header แถบด้านบนเรืองแสง + User Profile Status */
 .header-bar {
   background: linear-gradient(90deg, rgba(15,0,0,0.9) 0%, rgba(40,5,5,0.9) 50%, rgba(15,0,0,0.9) 100%);
   padding: 15px 25px;
@@ -64,17 +62,16 @@ body {
   color: #ff8888;
 }
 
-/* Login Modal & Overlay */
+/* Modal UI */
 .login-overlay {
   position: fixed;
   top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.85);
+  background: rgba(0, 0, 0, 0.88);
   backdrop-filter: blur(15px);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 9999;
-  transition: opacity 0.3s ease;
 }
 .login-box {
   background: rgba(20, 20, 30, 0.95);
@@ -92,7 +89,28 @@ body {
   text-shadow: 0 0 10px var(--accent-red);
 }
 .login-box input {
-  margin-bottom: 15px;
+  margin-bottom: 12px;
+}
+
+.auth-tabs {
+  display: flex;
+  margin-bottom: 20px;
+  gap: 10px;
+  border-bottom: 1px solid rgba(255, 42, 42, 0.3);
+  padding-bottom: 10px;
+}
+.auth-tab-btn {
+  flex: 1;
+  background: transparent;
+  color: #888;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+.auth-tab-btn.active {
+  color: var(--accent-red);
+  border-bottom: 2px solid var(--accent-red);
 }
 
 .wrap {
@@ -107,23 +125,16 @@ body {
 .panel {
   background: var(--panel-bg);
   backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--panel-border);
   border-radius: 16px;
   padding: 20px;
   margin-bottom: 20px;
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-.panel:hover {
-  border-color: rgba(255, 42, 42, 0.6);
-  box-shadow: 0 8px 32px 0 rgba(255, 42, 42, 0.2);
 }
 .panel h3 {
   margin-top: 0;
   margin-bottom: 14px;
   font-size: 16px;
-  letter-spacing: 0.5px;
   color: #ff5555;
   text-shadow: 0 0 8px rgba(255, 42, 42, 0.4);
 }
@@ -138,7 +149,6 @@ input, select {
   color: #fff;
   margin-top: 8px;
   outline: none;
-  transition: all 0.25s ease;
 }
 input:focus, select:focus {
   border-color: var(--accent-red);
@@ -151,17 +161,12 @@ button {
   border: none;
   cursor: pointer;
   font-weight: bold;
-  transition: all 0.25s ease;
 }
 
 .platform {
   background: rgba(255,255,255,0.05);
   color: #ccc;
   border: 1px solid rgba(255,255,255,0.1);
-}
-.platform:hover {
-  background: rgba(255,42,42,0.2);
-  color: #fff;
 }
 .platform.active {
   background: var(--accent-red);
@@ -189,19 +194,16 @@ button {
   object-fit: contain;
   cursor: grab;
 }
-#shirt:active { cursor: grabbing; }
 
 #logoPoster {
   position: absolute; top: 12px; left: 12px;
   width: 55px; height: 55px;
   border-radius: 50%; overflow: hidden; display: none;
   border: 2px solid #ff3131;
-  box-shadow: 0 0 10px rgba(255, 49, 49, 0.6);
 }
 #logoPoster img { width: 100%; height: 100%; object-fit: cover; }
 
 .draggable { position: absolute; cursor: grab; user-select: none; }
-.dragging { cursor: grabbing; }
 
 #priceLabel {
   left: 18px; bottom: 85px;
@@ -228,10 +230,6 @@ button {
   font-size: 15px;
   box-shadow: 0 4px 15px var(--accent-glow);
 }
-.btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(255, 42, 42, 0.6);
-}
 
 @media(max-width: 900px) {
   .wrap { grid-template-columns: 1fr; }
@@ -241,17 +239,38 @@ button {
 </head>
 <body>
 
-<!-- Popup หน้าต่างล็อกอิน -->
+<!-- Modern Auth Modal Overlay -->
 <div id="loginOverlay" class="login-overlay">
   <div class="login-box">
-    <h2>🔐 ເຂົ້າສູ່ລະບົບ Admin</h2>
-    <p style="color:#aaa;font-size:13px;margin-bottom:20px">ກະລຸນາປ້ອນຂໍ້ມູນເພື່ອໃຊ້ງານລະບົບ Studio</p>
+    <div class="auth-tabs">
+      <button id="tabLoginBtn" class="auth-tab-btn active" onclick="switchAuthTab('login')">🔑 ເຂົ້າສູ່ລະບົບ</button>
+      <button id="tabRegisterBtn" class="auth-tab-btn" onclick="switchAuthTab('register')">📝 ສະໝັກສະມາຊິກ</button>
+    </div>
+
+    <!-- ฟอร์มเข้าสู่ระบบ -->
     <form id="loginForm" onsubmit="handleLogin(event)">
-      <input type="text" id="usernameInput" placeholder="ຊື່ผู้ໃຊ້ (Username)" required>
-      <input type="password" id="passwordInput" placeholder="ລະຫັດຜ່ານ (Password)" required>
+      <h2>🔐 Login Studio</h2>
+      <input type="text" id="loginUser" placeholder="ຊື່ผู้ໃຊ້ (Username)" required>
+      <input type="password" id="loginPass" placeholder="ລະຫັດຜ່ານ (Password)" required>
       <button type="submit" class="btn" style="margin-top:10px">🔑 ເຂົ້າສູ່ລະບົບ</button>
+      <div id="loginError" style="color:#ff4444;font-size:12px;margin-top:10px;display:none">⚠️ ລະຫັດຜ່ານ ຫຼື ຊື່ผู้ໃຊ້ບໍ່ຖືກຕ້ອງ (จำไม่ได้คือจบ)</div>
     </form>
-    <div id="loginError" style="color:#ff4444;font-size:13px;margin-top:12px;display:none">⚠️ ชື່ผู้ใช้ หรือ รหัสผ่านไม่ถูกต้อง!</div>
+
+    <!-- ฟอร์มสมัครใหม่ (สร้างได้ครั้งเดียวถาวร) -->
+    <form id="registerForm" onsubmit="handleRegister(event)" style="display:none">
+      <h2>📝 Register Account</h2>
+      <p style="color:#ff5555;font-size:12px;margin-bottom:10px">⚠️ คำเตือน: สมัครได้เพียงครั้งเดียวเท่านั้น! โปรดจำรหัสผ่านให้ดี</p>
+      <input type="text" id="regUser" placeholder="ตั้งชื่อผู้ใช้ (Username)" required>
+      <input type="password" id="regPass" placeholder="ตั้งรหัสผ่าน (Password)" required>
+      <button type="submit" class="btn" style="margin-top:10px">✨ ยืนยันการสมัครถาวร</button>
+    </form>
+    
+    <!-- แจ้งเตือนเมื่อเคยสมัครไปแล้ว -->
+    <div id="alreadyRegisteredMsg" style="display:none;padding:15px 0;">
+      <h3 style="color:#ff4444;margin:0">🚫 ไม่สามารถสมัครเพิ่มได้</h3>
+      <p style="color:#aaa;font-size:13px;margin-top:10px">สิทธิ์การสมัครถูกใช้งานไปแล้ว หากลืมรหัสผ่านจะไม่สามารถกู้คืนได้</p>
+    </div>
+
   </div>
 </div>
 
@@ -372,20 +391,86 @@ button {
 </div>
 
 <script>
-// ==================== AUTH / LOGIN SYSTEM ====================
+// ==================== STRICT AUTH SYSTEM (ONE-TIME REGISTER) ====================
 let isLoggedIn = false;
 let currentUser = "";
 
+// ตรวจสอบสถานะการสมัครเมื่อโหลดหน้าเว็บ
+window.addEventListener("DOMContentLoaded", () => {
+  const accountCreated = localStorage.getItem("studio_account_created");
+  if (!accountCreated) {
+    // ถ้ายังไม่เคยสมัคร ให้ไปหน้า Register ทันที
+    switchAuthTab('register');
+  } else {
+    // ถ้าเคยสมัครแล้ว ให้เข้าหน้า Login
+    switchAuthTab('login');
+  }
+});
+
+function switchAuthTab(tab) {
+  const isRegistered = localStorage.getItem("studio_account_created");
+  const loginForm = document.getElementById("loginForm");
+  const regForm = document.getElementById("registerForm");
+  const alreadyMsg = document.getElementById("alreadyRegisteredMsg");
+  const tabLogin = document.getElementById("tabLoginBtn");
+  const tabReg = document.getElementById("tabRegisterBtn");
+
+  if (tab === 'login') {
+    tabLogin.classList.add("active");
+    tabReg.classList.remove("active");
+    loginForm.style.display = "block";
+    regForm.style.display = "none";
+    alreadyMsg.style.display = "none";
+  } else {
+    tabReg.classList.add("active");
+    tabLogin.classList.remove("active");
+    loginForm.style.display = "none";
+    
+    if (isRegistered) {
+      // ปิดไม่ให้สมัครเพิ่มถาวร
+      regForm.style.display = "none";
+      alreadyMsg.style.display = "block";
+    } else {
+      regForm.style.display = "block";
+      alreadyMsg.style.display = "none";
+    }
+  }
+}
+
+function handleRegister(e) {
+  e.preventDefault();
+  if (localStorage.getItem("studio_account_created")) {
+    alert("🚫 สิทธิ์การสมัครถูกใช้งานไปแล้ว ไม่สามารถสมัครซ้ำได้!");
+    return;
+  }
+
+  const u = document.getElementById("regUser").value.trim();
+  const p = document.getElementById("regPass").value.trim();
+
+  if (u && p) {
+    localStorage.setItem("studio_user", u);
+    localStorage.setItem("studio_pass", p);
+    localStorage.setItem("studio_account_created", "true");
+    
+    alert("✅ สมัครบัญชีสำเร็จถาวร! กรุณาจดจำรหัสผ่านของคุณ เพราะจะไม่สามารถรีเซ็ตได้อีก");
+    switchAuthTab('login');
+  }
+}
+
 function handleLogin(e) {
   e.preventDefault();
-  const user = document.getElementById("usernameInput").value;
-  const pass = document.getElementById("passwordInput").value;
+  const u = document.getElementById("loginUser").value.trim();
+  const p = document.getElementById("loginPass").value.trim();
+  
+  const storedUser = localStorage.getItem("studio_user");
+  const storedPass = localStorage.getItem("studio_pass");
 
-  // จำลองการตรวจสอบรหัสผ่าน (สามารถเปลี่ยนรหัสตรงนี้ได้)
-  if (user !== "" && pass !== "") {
+  // ตรวจสอบ username/password ที่บันทึกไว้ถาวร
+  if (storedUser && storedPass && u === storedUser && p === storedPass) {
     isLoggedIn = true;
-    currentUser = user;
+    currentUser = u;
     document.getElementById("loginOverlay").style.display = "none";
+    document.getElementById("loginError").style.display = "none";
     updateUserUI();
   } else {
     document.getElementById("loginError").style.display = "block";
@@ -606,7 +691,7 @@ if (isTouchDevice) {
 
 cutoutBtn.onclick=async()=>{
   if(!isLoggedIn){
-    alert("ກະລຸນາເຂົ້າສູ່ລະບົບก่อนใช้งานฟีเจอร์ AI ไดคัต!");
+    alert("ກະລຸນາເຂົ້າສູ່ລະບົບก่อนใช้งานฟีเจอร์ AI ไดคັດ!");
     toggleAuthModal();
     return;
   }
