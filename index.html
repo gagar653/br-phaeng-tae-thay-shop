@@ -245,6 +245,79 @@ downloadBtn.onclick=()=>{
   a.click();
  });
 };
-</script>
+const isTouchDevice = window.matchMedia("(pointer: coarse)").matches;
+
+if (isTouchDevice) {
+
+  function mobileDrag(id) {
+    const el = document.getElementById(id);
+    const poster = document.getElementById("poster");
+    if (!el || !poster) return;
+
+    let dragging = false;
+    let holdTimer;
+    let startX = 0;
+    let startY = 0;
+    let startLeft = 0;
+    let startTop = 0;
+
+    // ทำให้จับง่ายขึ้นบนมือถือ
+    el.style.touchAction = "none";
+    el.style.padding = "10px";
+    el.style.margin = "-10px";
+
+    el.addEventListener("pointerdown", (e) => {
+      holdTimer = setTimeout(() => {
+        dragging = true;
+
+        const parent = poster.getBoundingClientRect();
+        const rect = el.getBoundingClientRect();
+
+        startLeft = rect.left - parent.left;
+        startTop = rect.top - parent.top;
+
+        startX = e.clientX;
+        startY = e.clientY;
+
+        el.style.left = startLeft + "px";
+        el.style.top = startTop + "px";
+        el.style.right = "auto";
+        el.style.bottom = "auto";
+
+        document.body.style.overflow = "hidden";
+      }, 180); // แตะค้าง 0.18 วิ
+    });
+
+    el.addEventListener("pointermove", (e) => {
+      if (!dragging) return;
+
+      e.preventDefault();
+
+      const x = startLeft + (e.clientX - startX);
+      const y = startTop + (e.clientY - startY);
+
+      const maxX = poster.clientWidth - el.offsetWidth;
+      const maxY = poster.clientHeight - el.offsetHeight;
+
+      el.style.left = Math.max(0, Math.min(x, maxX)) + "px";
+      el.style.top = Math.max(0, Math.min(y, maxY)) + "px";
+    });
+
+    function stopDrag() {
+      clearTimeout(holdTimer);
+      dragging = false;
+      document.body.style.overflow = "";
+    }
+
+    el.addEventListener("pointerup", stopDrag);
+    el.addEventListener("pointercancel", stopDrag);
+  }
+
+  // ใช้กับข้อความทั้ง 4 ตัว
+  mobileDrag("priceLabel");
+  mobileDrag("codeLabel");
+  mobileDrag("stockLabel");
+  mobileDrag("sizeLabel");
+}</script>
 </body>
 </html>
