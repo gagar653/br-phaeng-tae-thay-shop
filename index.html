@@ -3,81 +3,45 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ບໍ່ແພງແຕ່ເທ້ເວັບສ້າງຮູບ</title>
+<title>ບໍ່ແພງແຕ່ເທ້ - Admin Studio</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
 <style>
-body{font-family:Arial;background:#f4f4f4;padding:20px}
-.box{max-width:700px;margin:auto;background:white;padding:20px;border-radius:20px}
-input{width:100%;padding:10px;margin:8px 0}
-button{width:100%;padding:12px;background:black;color:white;border:none;border-radius:10px;margin-top:10px}
-canvas{width:100%;border-radius:15px;background:#eee;margin-top:20px}
+body{margin:0;font-family:Arial;background:#050505;color:#fff}
+.panel{background:#111;border:1px solid #5b0000;border-radius:20px;padding:15px;margin-bottom:15px}
+.container{display:grid;grid-template-columns:300px 1fr;gap:20px;padding:20px;max-width:1300px;margin:auto}
+input,select{width:100%;padding:10px;margin-top:8px;border-radius:10px;border:1px solid #600;background:#181818;color:white}
+button{cursor:pointer;border:none}
+.btn{background:linear-gradient(90deg,#ff2b2b,#8a0000);color:white;padding:12px;border-radius:12px;font-weight:bold;width:100%}
+.platform{background:#222;padding:10px;border-radius:10px;color:white}
+.platform.active{background:#ff2b2b}
+.poster-wrap{display:flex;justify-content:center}.poster{width:340px;aspect-ratio:4/5;background:black;border:2px solid #a00;border-radius:28px;overflow:hidden;position:relative}.poster img#shirt{width:100%;height:100%;object-fit:cover;position:absolute}.overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.8),transparent 50%)}.logo{width:60px;height:60px;border-radius:50%;overflow:hidden;border:2px solid red;position:absolute;top:15px;left:15px;display:none}.logo img{width:100%;height:100%;object-fit:cover}#codeLabel{position:absolute;top:20px;right:15px;background:#000a;padding:5px 10px;border-radius:8px;font-size:12px;border:1px solid red}#priceLabel{position:absolute;left:20px;bottom:90px;font-size:48px;font-weight:bold;color:#ff2d2d}#stockLabel{position:absolute;left:20px;bottom:30px;background:#0008;padding:8px 12px;border-radius:10px;font-size:14px}#sizeLabel{position:absolute;right:20px;bottom:30px;background:#b30000;padding:8px 12px;border-radius:10px;font-size:14px;font-weight:bold}.colors{display:flex;gap:10px;flex-wrap:wrap}.swatch{width:34px;height:34px;border-radius:50%;border:2px solid white}
+@media(max-width:900px){.container{grid-template-columns:1fr}.poster{width:100%}}
 </style>
 </head>
 <body>
-<div class="box">
-<h2>🧥 ບໍ່ແພງແຕ່ເທ້ວເວັບສ້າງຮູບ</h2>
 
-<input type="file" id="photo" accept="image/*">
-<input id="code" placeholder="ລະຫັດເສື້ອ ">
-<input id="name" placeholder="ຈຳນວນ">
-<input id="price" placeholder="ລາຄາ 49,000ກິບ ">
-<input id="sizes" placeholder="ເບີເສື້ອ S • M • L • XL">
+<div style="background:#090909;border-bottom:2px solid #700;padding:15px 20px;display:flex;justify-content:space-between;align-items:center;">
+<div style="display:flex;gap:15px;align-items:center;">
+<div id="logoCircle" style="width:60px;height:60px;border-radius:50%;background:#000;border:2px solid red;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:bold;">LOGO</div>
+<div><h2 style="color:#ff2d2d;margin:0;">ບໍ່ແພງແຕ່ເທ້</h2><small style="color:#999">แต่งรูปสำหรับแอดมิน</small></div>
+</div><div style="background:#b30000;padding:10px 15px;border-radius:10px;font-weight:bold;">ADMIN</div></div>
 
-<button onclick="makeImage()">✨ ກົດເພື່ອສ້າງ</button>
-
-<canvas id="canvas" width="1080" height="1350"></canvas>
-
-<button onclick="downloadImage()">⬇ ດາວໂຫລດຮຸບ</button>
-</div>
+<div class="container">
+<div>
+<div class="panel"><h3>🏪 โลโก้ร้าน</h3><input type="file" id="logoUpload" accept="image/*"><label><input type="checkbox" id="showLogo" checked style="width:auto"> แสดงโลโก้บนรูป</label></div>
+<div class="panel"><h3>👕 รูปสินค้า</h3><input type="file" id="shirtUpload" accept="image/*"></div>
+<div class="panel"><h3>📝 ข้อมูลสินค้า</h3><input id="codeInput" placeholder="รหัสสินค้า AP001"><input id="priceInput" placeholder="ราคา เช่น 299000"><input id="stockInput" placeholder="จำนวนสินค้า 18"><select id="sizeSelect"><option>S</option><option selected>M</option><option>L</option><option>XL</option><option>XXL</option><option value="custom">พิมพ์เอง...</option></select><input id="customSize" placeholder="3XL / Free Size" style="display:none"></div>
+<div class="panel"><h3>📱 เลือกแพลตฟอร์ม</h3><div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px"><button class="platform active" data-ratio="4/5">Facebook</button><button class="platform" data-ratio="9/16">TikTok</button><button class="platform" data-ratio="16/9">YouTube</button><button class="platform" data-ratio="1/1">Instagram</button></div><p id="platformInfo">1080 × 1350 (Facebook)</p></div></div>
+<div>
+<div class="panel"><h3>🎨 ตัวอย่างโพสต์</h3><div class="poster-wrap"><div id="poster" class="poster"><img id="shirt"><div class="overlay"></div><div id="logoPoster" class="logo"><img id="logoPreview"></div><div id="codeLabel">AP001</div><div id="priceLabel">299,000 ₭</div><div id="stockLabel">📦 เหลือ 18 ตัว</div><div id="sizeLabel">M</div></div></div></div>
+<div class="panel"><h3>⚙️ ปรับขนาด</h3><label>ขนาดรูป</label><input type="range" id="zoom" min="60" max="180" value="100"><label>ขนาดราคา</label><input type="range" id="priceSize" min="16" max="70" value="48"><label>ขนาดรหัส</label><input type="range" id="codeSize" min="8" max="30" value="12"><label>ขนาดจำนวน</label><input type="range" id="stockSize" min="10" max="28" value="14"><label>ขนาดไซซ์</label><input type="range" id="sizeSize" min="10" max="28" value="14"></div>
+<div class="panel"><h3>🎨 เปลี่ยนสีข้อความ</h3><p>💰 ราคา</p><div class="colors"><button class="swatch" style="background:#ff2d2d" data-target="priceLabel" data-color="#ff2d2d"></button><button class="swatch" style="background:#FFD700" data-target="priceLabel" data-color="#FFD700"></button><button class="swatch" style="background:#00ff88" data-target="priceLabel" data-color="#00ff88"></button><button class="swatch" style="background:#00d4ff" data-target="priceLabel" data-color="#00d4ff"></button><button class="swatch" style="background:white" data-target="priceLabel" data-color="#ffffff"></button></div><p>🏷️ รหัสสินค้า</p><div class="colors"><button class="swatch" style="background:white" data-target="codeLabel" data-color="#ffffff"></button><button class="swatch" style="background:#FFD700" data-target="codeLabel" data-color="#FFD700"></button><button class="swatch" style="background:#00ff88" data-target="codeLabel" data-color="#00ff88"></button><button class="swatch" style="background:#ff4040" data-target="codeLabel" data-color="#ff4040"></button></div><p>📦 จำนวนสินค้า</p><div class="colors"><button class="swatch" style="background:white" data-target="stockLabel" data-color="#ffffff"></button><button class="swatch" style="background:#FFD700" data-target="stockLabel" data-color="#FFD700"></button><button class="swatch" style="background:#00ff88" data-target="stockLabel" data-color="#00ff88"></button><button class="swatch" style="background:#00d4ff" data-target="stockLabel" data-color="#00d4ff"></button></div><p>👕 เบอร์เสื้อ</p><div class="colors"><button class="swatch" style="background:white" data-target="sizeLabel" data-color="#ffffff"></button><button class="swatch" style="background:#FFD700" data-target="sizeLabel" data-color="#FFD700"></button><button class="swatch" style="background:#00ff88" data-target="sizeLabel" data-color="#00ff88"></button><button class="swatch" style="background:#ff4040" data-target="sizeLabel" data-color="#ff4040"></button></div></div>
+<button class="btn" id="downloadBtn">📥 ดาวน์โหลด PNG</button></div></div>
 
 <script>
-let img = new Image();
-
-photo.onchange=(e)=>{
- const file=e.target.files[0];
- if(!file) return;
- const reader=new FileReader();
- reader.onload=()=>{img.src=reader.result;}
- reader.readAsDataURL(file);
-}
-
-function makeImage(){
- const canvas=document.getElementById("canvas");
- const ctx=canvas.getContext("2d");
-
- ctx.fillStyle="white";
- ctx.fillRect(0,0,1080,1350);
-
- if(img.src){
-   const scale=Math.min(900/img.width,700/img.height);
-   const w=img.width*scale;
-   const h=img.height*scale;
-   ctx.drawImage(img,(1080-w)/2,60,w,h);
- }
-
- ctx.fillStyle="#111";
- ctx.fillRect(40,850,1000,420);
-
- ctx.fillStyle="white";
- ctx.font="bold 50px Arial";
- ctx.fillText(name.value||"SWEATER SHOP",70,930);
-
- ctx.font="34px Arial";
- ctx.fillStyle="#FFD54A";
- ctx.fillText("ລະຫັດ : "+code.value,70,1000);
-
- ctx.fillStyle="white";
- ctx.fillText("ລາຄາ : "+price.value,70,1060);
-
- ctx.fillStyle="#7CFC8A";
- ctx.fillText("SIZE : "+sizes.value,70,1120);
-}
-
-function downloadImage(){
- const a=document.createElement("a");
- a.href=canvas.toDataURL("image/png");
- a.download=(code.value||"sweater")+".png";
- a.click();
-}
+logoUpload.onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=x=>{logoCircle.innerHTML=`<img src="${x.target.result}" style="width:100%;height:100%;object-fit:cover">`;logoPreview.src=x.target.result;if(showLogo.checked)logoPoster.style.display="block"};r.readAsDataURL(f)};showLogo.onchange=()=>logoPoster.style.display=showLogo.checked&&logoPreview.src?"block":"none";shirtUpload.onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=x=>shirt.src=x.target.result;r.readAsDataURL(f)};codeInput.oninput=()=>codeLabel.textContent=codeInput.value||"AP001";priceInput.oninput=()=>{let n=Number(priceInput.value.replace(/,/g,""));if(priceInput.value)priceLabel.textContent=n.toLocaleString()+" ₭"};stockInput.oninput=()=>stockLabel.textContent="📦 เหลือ "+stockInput.value+" ตัว";sizeSelect.onchange=()=>{if(sizeSelect.value==="custom")customSize.style.display="block";else{customSize.style.display="none";sizeLabel.textContent=sizeSelect.value}};customSize.oninput=()=>sizeLabel.textContent=customSize.value;zoom.oninput=()=>shirt.style.transform=`scale(${zoom.value/100})`;priceSize.oninput=()=>priceLabel.style.fontSize=priceSize.value+"px";codeSize.oninput=()=>codeLabel.style.fontSize=codeSize.value+"px";stockSize.oninput=()=>stockLabel.style.fontSize=stockSize.value+"px";sizeSize.oninput=()=>sizeLabel.style.fontSize=sizeSize.value+"px";document.querySelectorAll('.swatch').forEach(b=>b.onclick=()=>document.getElementById(b.dataset.target).style.color=b.dataset.color);const map={"4/5":"1080 × 1350 (Facebook)","9/16":"1080 × 1920 (TikTok)","16/9":"1280 × 720 (YouTube)","1/1":"1080 × 1080 (Instagram)"};document.querySelectorAll('.platform').forEach(btn=>btn.onclick=()=>{document.querySelectorAll('.platform').forEach(b=>b.classList.remove('active'));btn.classList.add('active');poster.style.aspectRatio=btn.dataset.ratio;platformInfo.textContent=map[btn.dataset.ratio]});downloadBtn.onclick=()=>html2canvas(poster,{scale:2}).then(c=>{let a=document.createElement('a');a.download='poster.png';a.href=c.toDataURL();a.click()});
 </script>
 
 </body>
