@@ -5,9 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin ຮ້ານບໍ່ແພງແຕ່ເທ້ V4.9</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<style>/* ===== พื้นหลังสินค้า ===== */
-
-.bgGrid{
+<style>.bgGrid{
     display:grid;
     grid-template-columns:repeat(3,1fr);
     gap:10px;
@@ -91,7 +89,10 @@ button{padding:10px;border-radius:10px;border:none;cursor:pointer}
 <button class=platform data-ratio="9/16">TikTok</button>
 <button class=platform data-ratio="16/9">YouTube</button>
 <button class=platform data-ratio="1/1">Instagram</button>
-</div><div class="panel">
+</div>
+<p id=platformInfo>1080×1350 Facebook</p>
+</div><!-- 🎨 พื้นหลังสินค้า -->
+<div class="panel">
   <h3>🎨 พื้นหลังสินค้า</h3>
 
   <div class="bgGrid">
@@ -105,8 +106,6 @@ button{padding:10px;border-radius:10px;border:none;cursor:pointer}
 
   <label style="margin-top:15px;display:block;">เลือกสีเอง</label>
   <input type="color" id="customBgColor" value="#ffffff">
-</div>
-<p id=platformInfo>1080×1350 Facebook</p>
 </div>
 <div class="panel"><h3>🖱️ລະບົບໃຫມ່ໄວໆນີ້</h3>
 <p style="font-size:13px;color:#ccc">✔ ເກັບຂໍ້ມູນໄດ້ 
@@ -351,7 +350,7 @@ if (isTouchDevice) {
   mobileDrag("codeLabel");
   mobileDrag("stockLabel");
   mobileDrag("sizeLabel");
-}// =============================
+// =============================
 // V4.9.2 เปลี่ยนพื้นหลังสินค้า
 // =============================
 
@@ -383,6 +382,6 @@ customBgColor.addEventListener("input",()=>{
 
   bgButtons.forEach(b=>b.classList.remove("active"));
 
-});</script>
+});}</script>
 </body>
 </html>
