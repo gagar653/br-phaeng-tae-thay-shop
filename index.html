@@ -153,7 +153,7 @@ priceInput.oninput=()=>{
  const n=Number(priceInput.value.replace(/,/g,""));
  if(priceInput.value) priceLabel.textContent=n.toLocaleString()+" ₭";
 };
-stockInput.oninput=()=>stockLabel.textContent="📦 เหลือ "+stockInput.value+" ตัว";
+stockInput.oninput=()=>stockLabel.textContent="📦 ມີ "+stockInput.value+" ໂຕ";
 sizeSelect.onchange=()=>{if(sizeSelect.value==="custom"){sizeCustom.style.display="block"}else{sizeCustom.style.display="none";sizeLabel.textContent=sizeSelect.value}};
 sizeCustom.oninput=()=>sizeLabel.textContent=sizeCustom.value;
 
