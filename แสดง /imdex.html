@@ -57,13 +57,13 @@ button{padding:10px;border-radius:10px;border:none;cursor:pointer}
 <div style="background:#090909;padding:15px;border-bottom:2px solid #700"><h2 style="color:#ff2d2d;margin:0">ບໍ່ແພງແຕ່ເທ້ Admin Studio V4.9</h2></div>
 <div class="wrap">
 <div>
-<div class="panel"><h3>🏪 โลโก้ร้าน</h3><input type=file id=logoUpload accept="image/*"><label><input type=checkbox id=showLogo checked style="width:auto"> แสดงโลโก้</label></div>
-<div class="panel"><h3>👕 รูปสินค้า</h3><input type=file id=shirtUpload accept="image/*"></div>
-<div class="panel"><h3>📝 ข้อมูลสินค้า</h3>
+<div class="panel"><h3>🏪 ໂລໂກ້ຮ້ານ</h3><input type=file id=logoUpload accept="image/*"><label><input type=checkbox id=showLogo checked style="width:auto"> ສະແດງໂລໂກ້</label></div>
+<div class="panel"><h3>👕 ເລືອກຮູບສິນຄ້າ</h3><input type=file id=shirtUpload accept="image/*"></div>
+<div class="panel"><h3>📝 ລາຍລະອຽດສິນຄ້າ</h3>
 <input id=codeInput placeholder="AP001">
 <input id=priceInput placeholder="299000">
 <input id=stockInput placeholder="18">
-<select id=sizeSelect><option>S</option><option selected>M</option><option>L</option><option>XL</option><option value=custom>พิมพ์เอง...</option></select>
+<select id=sizeSelect><option>S</option><option selected>M</option><option>L</option><option>XL</option><option value=custom>ພິມເອງ</option></select>
 <input id=sizeCustom style="display:none" placeholder="3XL / Free Size">
 </div>
 <div class="panel"><h3>📱 แพลตฟอร์ม</h3>
@@ -75,58 +75,58 @@ button{padding:10px;border-radius:10px;border:none;cursor:pointer}
 </div>
 <p id=platformInfo>1080×1350 Facebook</p>
 </div>
-<div class="panel"><h3>🖱️ V4.9 ใหม่</h3>
-<p style="font-size:13px;color:#ccc">✔ ลากราคา / รหัส / จำนวน / ไซซ์ ได้</p>
-<p style="font-size:13px;color:#ccc">✔ ลากรูปเสื้อได้</p>
-<p style="font-size:13px;color:#ccc">✔ ใช้ลูกกลิ้งเมาส์ซูมรูปได้</p>
+<div class="panel"><h3>🖱️ລະບົບໃຫມ່ໄວໆນີ້</h3>
+<p style="font-size:13px;color:#ccc">✔ ເກັບຂໍ້ມູນໄດ້ 
+<p style="font-size:13px;color:#ccc">✔ ສະຫມັກສະມາສິກVIPໃຊ້AIແຕ່ງຮູບ
+<p style="font-size:13px;color:#ccc">
 </div>
 </div>
 
 <div>
 <div class="panel">
-<h3>🎨 ตัวอย่างโพสต์สินค้า</h3>
+<h3>🎨 ຕົວຢ່າງຮູບ</h3>
 <div style="display:flex;justify-content:center">
 <div id=poster>
 <img id=shirt>
 <div id=logoPoster><img id=logoPreview></div>
 <div id=codeLabel class=draggable>AP001</div>
 <div id=priceLabel class=draggable>299,000 ₭</div>
-<div id=stockLabel class=draggable>📦 เหลือ 18 ตัว</div>
+<div id=stockLabel class=draggable>📦 ມີ 18 โต</div>
 <div id=sizeLabel class=draggable>M</div>
 </div>
 </div>
 </div>
 <div class="panel">
-<h3>⚙️ ปรับขนาด</h3>
-<label>ซูมรูป</label><input type=range id=zoom min=50 max=250 value=100>
-<label>ขนาดราคา</label><input type=range id=priceSize min=18 max=70 value=46>
+<h3>⚙️ ປັບລະໜາດ</h3>
+<label>ຊູມ</label><input type=range id=zoom min=50 max=250 value=100>
+<label>ຂະໜາດລາຄາ</label><input type=range id=priceSize min=18 max=70 value=46>
 </div>
 
 <div class="panel">
-<h3>🎨 สีข้อความ (กลับมาแล้ว)</h3>
-<label>สีราคา</label><input type="color" id="priceColor" value="#ff3131">
-<label>สีรหัสสินค้า</label><input type="color" id="codeColor" value="#ffffff">
-<label>สีจำนวนสินค้า</label><input type="color" id="stockColor" value="#ffffff">
-<label>สีเบอร์เสื้อ</label><input type="color" id="sizeColor" value="#ffffff">
+<h3>🎨ສີຂໍຄວາມ</h3>
+<label>ສີລາຄາ</label><input type="color" id="priceColor" value="#ff3131">
+<label>ສີລະຫັດ</label><input type="color" id="codeColor" value="#ffffff">
+<label>ສີຈຳນວນສິນຄ້າ</label><input type="color" id="stockColor" value="#ffffff">
+<label>ສີເບີເສື້ອ</label><input type="color" id="sizeColor" value="#ffffff">
 
 <hr style="border-color:#550000;margin:15px 0">
 
-<h3>📏 ขนาดข้อความ (กลับมาแล้ว)</h3>
-<label>ขนาดรหัสสินค้า</label><input type="range" id="codeSize" min="8" max="30" value="12">
-<label>ขนาดจำนวนสินค้า</label><input type="range" id="stockSize" min="10" max="28" value="14">
-<label>ขนาดเบอร์เสื้อ</label><input type="range" id="sizeSize" min="10" max="28" value="14">
+<h3>📏ຂະໜາດຂໍ້ຄວາມ (กลับมาแล้ว)</h3>
+<label>ຂະໜາດລະຫັດສິນຄ້າ</label><input type="range" id="codeSize" min="8" max="30" value="12">
+<label>ຂະໜາດຂໍ້ຄວາມສິນຄ້າ</label><input type="range" id="stockSize" min="10" max="28" value="14">
+<label>ຂະໜາດເບີເສື້ອ</label><input type="range" id="sizeSize" min="10" max="28" value="14">
 </div>
 
 
 <div class="panel">
-<h3>👁️ แสดง / ซ่อน ข้อมูล</h3>
-<label><input type="checkbox" id="togglePrice" checked style="width:auto"> แสดงราคา</label><br><br>
-<label><input type="checkbox" id="toggleCode" checked style="width:auto"> แสดงรหัสสินค้า</label><br><br>
-<label><input type="checkbox" id="toggleStock" checked style="width:auto"> แสดงจำนวนสินค้า</label><br><br>
-<label><input type="checkbox" id="toggleSize" checked style="width:auto"> แสดงเบอร์เสื้อ</label>
+<h3>👁️ ສະແດງ / ປິດ /ຂໍ້ມູນ</h3>
+<label><input type="checkbox" id="togglePrice" checked style="width:auto"> ສະແດງລາຄາ</label><br><br>
+<label><input type="checkbox" id="toggleCode" checked style="width:auto"> ສະແດງລະຫັດສິນຄ້າ</label><br><br>
+<label><input type="checkbox" id="toggleStock" checked style="width:auto"> ສະແດງຈຳນວນສິນຄ້າ</label><br><br>
+<label><input type="checkbox" id="toggleSize" checked style="width:auto"> ສະແດງເບີເສື້ອ</label>
 </div>
 
-<button class=btn id=downloadBtn>📥 ดาวน์โหลด PNG</button>
+<button class=btn id=downloadBtn>📥 ໂຫລດຮູບ PNG</button>
 </div>
 </div>
 
