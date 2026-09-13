@@ -55,13 +55,6 @@ button{padding:10px;border-radius:10px;border:none;cursor:pointer}
 </head>
 <body>
 <div style="background:#090909;padding:15px;border-bottom:2px solid #700"><h2 style="color:#ff2d2d;margin:0">ບໍ່ແພງແຕ່ເທ້ Admin Studio V4.9</h2></div>
-
-<button id="openDB" style="position:fixed;top:16px;right:20px;z-index:9999;
-background:#007AFF;color:white;border:none;padding:10px 16px;
-border-radius:12px;font-weight:bold;cursor:pointer;">
-📦 คลังรหัส
-</button>
-
 <div class="wrap">
 <div>
 <div class="panel"><h3>🏪 โลโก้ร้าน</h3><input type=file id=logoUpload accept="image/*"><label><input type=checkbox id=showLogo checked style="width:auto"> แสดงโลโก้</label></div>
@@ -244,135 +237,14 @@ toggleStock.onchange=()=>stockLabel.style.display=toggleStock.checked?"block":"n
 toggleSize.onchange=()=>sizeLabel.style.display=toggleSize.checked?"block":"none";
 
 
-
-// ===== คลังรหัสเสื้อ V4.9.2 (เพิ่มอย่างเดียว) =====
-const DB_KEY = "ANPHA_CODE_DB";
-
-function getCodes(){
-  return JSON.parse(localStorage.getItem(DB_KEY) || "[]");
-}
-
-function saveCodes(list){
-  localStorage.setItem(DB_KEY, JSON.stringify(list));
-}
-
-function saveCurrentCode(){
-  const code = codeInput.value || codeLabel.textContent;
-  if(!code) return;
-
-  const list = getCodes();
-  if(!list.includes(code)){
-    list.unshift(code);
-    saveCodes(list);
-  }
-}
-
-function renderCodes(){
-  const list = getCodes();
-  dbList.innerHTML = "";
-
-  if(list.length===0){
-    dbList.innerHTML = "<p style='color:#aaa;text-align:center'>ยังไม่มีรหัสสินค้า</p>";
-    return;
-  }
-
-  list.forEach((code,index)=>{
-    const row = document.createElement("div");
-    row.style.cssText="display:flex;justify-content:space-between;align-items:center;background:#1d1d1d;border:1px solid #333;border-radius:10px;padding:10px;";
-    row.innerHTML = `
-      <div style="font-size:18px;font-weight:bold;color:#ff5050">${code}</div>
-      <button style="background:#ff3b30;color:white;border:none;padding:6px 10px;border-radius:8px;">ลบ</button>
-    `;
-    row.querySelector("button").onclick=()=>{
-      const data=getCodes();
-      data.splice(index,1);
-      saveCodes(data);
-      renderCodes();
-    };
-    dbList.appendChild(row);
-  });
-}
-
-window.openDatabase=function(){ dbModal.style.display="flex"; renderCodes(); };
-openDB.onclick=openDatabase;
-
-window.closeDatabase=function(){ dbModal.style.display="none"; }
-
-closeDB.addEventListener("click", closeDatabase);
-
-// กดพื้นหลังสีดำเพื่อปิด
-dbModal.addEventListener("click",(e)=>{
-  if(e.target===dbModal){
-    closeDatabase();
-  }
-});
-
-// กด ESC เพื่อปิด
-document.addEventListener("keydown",(e)=>{
-  if(e.key==="Escape" && dbModal.style.display==="block"){
-    closeDatabase();
-  }
-});
-
-
-clearDB.onclick=()=>{
-  if(confirm("ล้างรหัสทั้งหมด?")){
-    localStorage.removeItem(DB_KEY);
-    renderCodes();
-  }
+downloadBtn.onclick=()=>{
+ html2canvas(poster,{scale:2,backgroundColor:"#fff"}).then(c=>{
+  const a=document.createElement("a");
+  a.download="poster.png";
+  a.href=c.toDataURL("image/png");
+  a.click();
+ });
 };
-// ===== จบระบบคลังรหัส =====
-
-
-
-downloadBtn.onclick = async () => {
-  try {
-    if (typeof saveCurrentCode === "function") {
-      saveCurrentCode();
-    }
-
-    const canvas = await html2canvas(document.getElementById("poster"), {
-      backgroundColor: "#ffffff",
-      scale: 3,
-      useCORS: true,
-      allowTaint: true
-    });
-
-    const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
-
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `shirt-${Date.now()}.png`;
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-  } catch (e) {
-    console.error(e);
-    alert("ดาวน์โหลดรูปไม่สำเร็จ");
-  }
-};
-
 </script>
-
-<div id="dbModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:10000;padding:20px;">
-  <div style="max-width:520px;margin:20px auto;background:#111;border:2px solid #ff3333;
-  border-radius:18px;padding:20px;">
-    <div style="display:flex;justify-content:space-between;align-items:center;">
-      <h2 style="margin:0;color:#ff4040;">📦 คลังรหัสเสื้อ</h2>
-      <button id="closeDB" onclick="closeDatabase()" style="background:#333;color:#fff;border:none;padding:8px 12px;border-radius:8px;">✕</button>
-    </div>
-
-    <div id="dbList" style="margin-top:18px;display:flex;flex-direction:column;gap:10px;"></div>
-
-    <button id="clearDB" style="margin-top:18px;width:100%;padding:12px;
-    background:#8b0000;color:white;border:none;border-radius:10px;font-weight:bold;">
-      🗑️ ล้างคลังรหัสทั้งหมด
-    </button>
-  </div>
-</div>
-
 </body>
 </html>
