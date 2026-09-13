@@ -5,7 +5,26 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin ຮ້ານບໍ່ແພງແຕ່ເທ້ V4.9</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<style>
+<style>/* ===== พื้นหลังสินค้า ===== */
+
+.bgGrid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+    margin-top:10px;
+}
+
+.bgBtn{
+    height:45px;
+    border-radius:12px;
+    border:2px solid #444;
+    cursor:pointer;
+}
+
+.bgBtn.active{
+    border:3px solid #ff3131;
+    transform:scale(1.05);
+}
 body{margin:0;background:#070707;color:#fff;font-family:Arial}
 .wrap{display:grid;grid-template-columns:300px 1fr;gap:20px;padding:20px;max-width:1300px;margin:auto}
 .panel{background:#111;border:1px solid #550000;border-radius:20px;padding:15px}
@@ -72,6 +91,20 @@ button{padding:10px;border-radius:10px;border:none;cursor:pointer}
 <button class=platform data-ratio="9/16">TikTok</button>
 <button class=platform data-ratio="16/9">YouTube</button>
 <button class=platform data-ratio="1/1">Instagram</button>
+</div><div class="panel">
+  <h3>🎨 พื้นหลังสินค้า</h3>
+
+  <div class="bgGrid">
+    <button class="bgBtn active" data-bg="#ffffff" style="background:#ffffff"></button>
+    <button class="bgBtn" data-bg="#000000" style="background:#000000"></button>
+    <button class="bgBtn" data-bg="#ff3131" style="background:#ff3131"></button>
+    <button class="bgBtn" data-bg="#FFD400" style="background:#FFD400"></button>
+    <button class="bgBtn" data-bg="#2F80ED" style="background:#2F80ED"></button>
+    <button class="bgBtn" data-bg="#16C784" style="background:#16C784"></button>
+  </div>
+
+  <label style="margin-top:15px;display:block;">เลือกสีเอง</label>
+  <input type="color" id="customBgColor" value="#ffffff">
 </div>
 <p id=platformInfo>1080×1350 Facebook</p>
 </div>
@@ -318,6 +351,38 @@ if (isTouchDevice) {
   mobileDrag("codeLabel");
   mobileDrag("stockLabel");
   mobileDrag("sizeLabel");
-}</script>
+}// =============================
+// V4.9.2 เปลี่ยนพื้นหลังสินค้า
+// =============================
+
+const poster = document.getElementById("poster");
+const bgButtons = document.querySelectorAll(".bgBtn");
+const customBgColor = document.getElementById("customBgColor");
+
+// สีเริ่มต้น
+poster.style.background = "#ffffff";
+
+// เลือกสีสำเร็จรูป
+bgButtons.forEach(btn=>{
+  btn.addEventListener("click",()=>{
+
+    bgButtons.forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+
+    const color = btn.dataset.bg;
+    poster.style.background = color;
+    customBgColor.value = color;
+
+  });
+});
+
+// เลือกสีเอง
+customBgColor.addEventListener("input",()=>{
+
+  poster.style.background = customBgColor.value;
+
+  bgButtons.forEach(b=>b.classList.remove("active"));
+
+});</script>
 </body>
 </html>
