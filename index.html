@@ -324,15 +324,37 @@ clearDB.onclick=()=>{
 // ===== จบระบบคลังรหัส =====
 
 
-downloadBtn.onclick=()=>{
-  saveCurrentCode();
- html2canvas(poster,{scale:2,backgroundColor:"#fff"}).then(c=>{
-  const a=document.createElement("a");
-  a.download="poster.png";
-  a.href=c.toDataURL("image/png");
-  a.click();
- });
+
+downloadBtn.onclick = async () => {
+  try {
+    if (typeof saveCurrentCode === "function") {
+      saveCurrentCode();
+    }
+
+    const canvas = await html2canvas(document.getElementById("poster"), {
+      backgroundColor: "#ffffff",
+      scale: 3,
+      useCORS: true,
+      allowTaint: true
+    });
+
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `shirt-${Date.now()}.png`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  } catch (e) {
+    console.error(e);
+    alert("ดาวน์โหลดรูปไม่สำเร็จ");
+  }
 };
+
 </script>
 
 <div id="dbModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:10000;padding:20px;">
