@@ -375,35 +375,10 @@ if (isTouchDevice) {
   mobileDrag("codeLabel");
   mobileDrag("stockLabel");
   mobileDrag("sizeLabel");
-}// ===== V4.9.2 Background Fix =====
+}// ===== V4.9.2 Background System (FIXED) =====
 
 const bgButtons = document.querySelectorAll(".bgBtn");
 const customBgColor = document.getElementById("customBgColor");
-const posterBox = document.getElementById("poster");
-
-// เริ่มต้นพื้นหลังสีขาว
-posterBox.style.backgroundColor = "#ffffff";
-
-// ปุ่มสี
-bgButtons.forEach((btn) => {
-  btn.addEventListener("click", () => {
-    bgButtons.forEach((b) => b.classList.remove("active"));
-    btn.classList.add("active");
-
-    const color = btn.getAttribute("data-bg");
-    posterBox.style.backgroundColor = color;
-    customBgColor.value = color;
-  });
-});
-
-// เลือกสีเอง
-customBgColor.addEventListener("input", () => {
-  posterBox.style.backgroundColor = customBgColor.value;
-  bgButtons.forEach((b) => b.classList.remove("active"));
-});// =============================
-// V4.9.2 พื้นหลังสินค้า (รูป + เบลอ)
-// =============================
-
 const bgUpload = document.getElementById("bgUpload");
 const bgBlur = document.getElementById("bgBlur");
 const blurValue = document.getElementById("blurValue");
@@ -411,62 +386,71 @@ const removeBg = document.getElementById("removeBg");
 
 let bgImage = "";
 
-// อัปโหลดพื้นหลัง
-// ===== แก้บั๊กอัปโหลดพื้นหลัง V4.9.2 =====
+// ปุ่มเลือกสีพื้นหลัง
+bgButtons.forEach(btn=>{
+  btn.onclick=()=>{
+    bgButtons.forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
 
-let bgImage = "";
+    poster.style.backgroundImage="none";
+    poster.style.backgroundColor=btn.dataset.bg;
+    poster.style.filter="none";
 
-bgUpload.addEventListener("change", function (e) {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-
-    reader.onload = function (event) {
-        bgImage = event.target.result;
-
-        // แสดงรูปพื้นหลังทันที
-        poster.style.backgroundImage = `url(${bgImage})`;
-        poster.style.backgroundColor = "#ffffff";
-        poster.style.backgroundRepeat = "no-repeat";
-        poster.style.backgroundSize = "contain";
-        poster.style.backgroundPosition = "center";
-    };
-
-    reader.readAsDataURL(file);
-});
+    customBgColor.value=btn.dataset.bg;
+    bgImage="";
+  };
 });
 
-// ปรับความเบลอ
-bgBlur.addEventListener("input", () => {
-    blurValue.textContent = bgBlur.value + " px";
+// Color Picker
+customBgColor.oninput=()=>{
+  poster.style.backgroundImage="none";
+  poster.style.backgroundColor=customBgColor.value;
+  poster.style.filter="none";
+  bgButtons.forEach(b=>b.classList.remove("active"));
+  bgImage="";
+};
 
-    if (bgImage === "") return;
+// อัปโหลดรูปพื้นหลัง
+bgUpload.onchange=(e)=>{
+  const file=e.target.files[0];
+  if(!file) return;
 
-    // ใช้ blur กับพื้นหลังที่อัปโหลด
-    poster.style.backgroundImage = `url(${bgImage})`;
-    poster.style.backgroundSize = "cover";
-    poster.style.backgroundPosition = "center";
-    poster.style.filter = `blur(${bgBlur.value}px)`;
-});
-    // เบลอรูปพื้นหลังจริง
-    poster.style.filter = `blur(${bgBlur.value}px)`;
-});
+  const reader=new FileReader();
 
-});
+  reader.onload=(ev)=>{
+    bgImage=ev.target.result;
+
+    poster.style.backgroundImage=`url(${bgImage})`;
+    poster.style.backgroundColor="#ffffff";
+    poster.style.backgroundRepeat="no-repeat";
+    poster.style.backgroundSize="contain";
+    poster.style.backgroundPosition="center";
+    poster.style.filter="none";
+  };
+
+  reader.readAsDataURL(file);
+};
+
+// ความเบลอ (เวอร์ชันนี้ใช้งานได้)
+bgBlur.oninput=()=>{
+  blurValue.textContent=bgBlur.value+" px";
+
+  if(bgImage){
+    poster.style.filter=`blur(${bgBlur.value}px)`;
+  }
+};
 
 // ลบพื้นหลัง
-removeBg.addEventListener("click",()=>{
+removeBg.onclick=()=>{
+  bgImage="";
+  poster.style.backgroundImage="none";
+  poster.style.backgroundColor="#ffffff";
+  poster.style.filter="none";
 
-    bgImage = "";
-
-    poster.style.backgroundImage = "none";
-    poster.style.backgroundColor = "#ffffff";
-
-    bgBlur.value = 0;
-    blurValue.textContent = "0 px";
-
-    bgUpload.value = "";
+  bgBlur.value=0;
+  blurValue.textContent="0 px";
+  bgUpload.value="";
+};
 
 });</script>
 </body>
