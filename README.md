@@ -1,0 +1,578 @@
+[gemini-code-1789365882743.html](https://github.com/user-attachments/files/32182110/gemini-code-1789365882743.html)
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ບໍ່ແພງແຕ່ເທ້ - Modern Streetwear & Apparel Store</title>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600;800;900&family=Chakra+Petch:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-dark: #09090e;
+  --panel-bg: #13131c;
+  --accent-red: #ff2a2a;
+  --accent-red-glow: rgba(255, 42, 42, 0.4);
+  --text-main: #ffffff;
+  --text-muted: #a0a0ab;
+  --border-color: rgba(255, 42, 42, 0.2);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  font-family: 'Prompt', sans-serif;
+  min-height: 100vh;
+  padding-bottom: 60px;
+}
+
+header {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(19, 19, 28, 0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-color);
+  padding: 15px 30px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+
+.brand-logo {
+  font-family: 'Chakra Petch', sans-serif;
+  font-size: 24px; font-weight: 700;
+  color: #fff; text-shadow: 0 0 10px var(--accent-red);
+  display: flex; align-items: center; gap: 10px;
+}
+.brand-logo span { color: var(--accent-red); }
+
+.search-bar-container {
+  flex: 1; max-width: 450px; margin: 0 20px; position: relative;
+}
+.search-bar-container input {
+  width: 100%; padding: 10px 16px; border-radius: 20px;
+  background: rgba(255,255,255,0.05); border: 1px solid var(--border-color);
+  color: #fff; font-size: 14px; outline: none; transition: 0.3s;
+}
+.search-bar-container input:focus {
+  border-color: var(--accent-red); box-shadow: 0 0 10px var(--accent-red-glow);
+}
+
+.cart-icon-btn {
+  position: relative; background: var(--accent-red);
+  border: none; color: #fff; padding: 10px 18px; border-radius: 20px;
+  font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px;
+  box-shadow: 0 0 15px var(--accent-red-glow); transition: 0.2s;
+}
+.cart-icon-btn:hover { transform: scale(1.05); }
+.cart-badge {
+  background: #fff; color: var(--accent-red);
+  border-radius: 50%; padding: 2px 7px; font-size: 12px; font-weight: 900;
+}
+
+.container {
+  max-width: 1400px; margin: 20px auto; padding: 0 20px;
+}
+
+.hero-banner {
+  background: linear-gradient(135deg, rgba(255,42,42,0.2) 0%, rgba(19,19,28,0.9) 100%), #13131c;
+  border: 1px solid var(--border-color); border-radius: 16px;
+  padding: 40px; text-align: center; margin-bottom: 30px;
+}
+.hero-banner h1 { font-size: 32px; font-weight: 800; margin-bottom: 10px; }
+.hero-banner p { color: var(--text-muted); font-size: 16px; }
+
+.filter-bar {
+  display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+  gap: 15px; margin-bottom: 25px; background: var(--panel-bg);
+  padding: 15px 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);
+}
+.categories-btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
+.cat-btn {
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+  color: var(--text-muted); padding: 8px 16px; border-radius: 8px; cursor: pointer;
+  font-size: 13px; font-weight: 600; transition: 0.2s;
+}
+.cat-btn.active, .cat-btn:hover {
+  background: var(--accent-red); color: #fff; border-color: var(--accent-red);
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 25px;
+}
+
+.product-card {
+  background: var(--panel-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 14px; overflow: hidden;
+  display: flex; flex-direction: column;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(255, 42, 42, 0.25);
+}
+
+.img-wrapper {
+  width: 100%;
+  background: #000;
+  display: flex; justify-content: center; align-items: center;
+  padding: 10px;
+  position: relative;
+  min-height: 280px;
+}
+.img-wrapper img {
+  width: 100%;
+  height: auto;
+  max-height: 380px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.product-info { padding: 15px; display: flex; flex-direction: column; flex: 1; }
+.product-code { font-size: 12px; color: var(--accent-red); font-weight: bold; letter-spacing: 1px; }
+.product-title { font-size: 16px; font-weight: 700; margin: 4px 0 8px 0; color: #fff; }
+
+.price-stock-row {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;
+}
+.price-tag { font-size: 20px; font-weight: 900; color: #fff; }
+.stock-tag { font-size: 12px; color: #00ff88; background: rgba(0,255,136,0.1); padding: 2px 8px; border-radius: 4px; }
+.stock-tag.sold { color: #ff4444; background: rgba(255,42,42,0.1); }
+
+.size-selector-box {
+  display: flex; gap: 6px; margin-bottom: 15px;
+}
+.size-chip {
+  padding: 4px 10px; border: 1px solid rgba(255,255,255,0.2); border-radius: 6px;
+  font-size: 12px; cursor: pointer; background: rgba(0,0,0,0.3); color: #aaa;
+}
+.size-chip.selected { border-color: var(--accent-red); color: #fff; background: var(--accent-red); }
+
+.add-cart-btn {
+  margin-top: auto; width: 100%; padding: 10px;
+  background: linear-gradient(135deg, #ff2a2a, #a90000);
+  border: none; border-radius: 8px; color: #fff; font-weight: bold;
+  cursor: pointer; transition: 0.2s;
+}
+.add-cart-btn:disabled { background: #444; cursor: not-allowed; opacity: 0.6; }
+
+.cart-modal {
+  position: fixed; top: 0; right: -450px; width: 420px; height: 100vh;
+  background: var(--panel-bg); border-left: 1px solid var(--border-color);
+  box-shadow: -10px 0 30px rgba(0,0,0,0.8); z-index: 1000;
+  display: flex; flex-direction: column; transition: right 0.3s ease;
+}
+.cart-modal.open { right: 0; }
+.cart-header {
+  padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.cart-items-list { flex: 1; overflow-y: auto; padding: 20px; }
+.cart-item {
+  display: flex; gap: 12px; margin-bottom: 15px; background: rgba(0,0,0,0.2);
+  padding: 10px; border-radius: 8px; align-items: center;
+}
+.cart-item img { width: 60px; height: 60px; object-fit: contain; border-radius: 6px; background: #000; }
+.cart-item-details { flex: 1; }
+.cart-footer { padding: 20px; border-top: 1px solid rgba(255,255,255,0.1); background: #0b0b10; }
+
+.channel-selector {
+  margin-bottom: 12px;
+}
+.channel-selector label {
+  display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 6px;
+}
+.channel-options {
+  display: flex; gap: 10px;
+}
+.channel-btn {
+  flex: 1; padding: 8px; border: 1px solid rgba(255,255,255,0.2); border-radius: 6px;
+  background: rgba(255,255,255,0.05); color: #fff; font-size: 12px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 6px; transition: 0.2s;
+}
+.channel-btn.active[data-channel="wa"] { background: #25D366; border-color: #25D366; }
+.channel-btn.active[data-channel="fb"] { background: #0084FF; border-color: #0084FF; }
+
+.checkout-btn {
+  width: 100%; padding: 14px; background: #25D366; color: #fff;
+  border: none; border-radius: 10px; font-weight: 900; font-size: 16px;
+  cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px;
+  box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3); transition: 0.2s;
+}
+.checkout-btn.fb-style {
+  background: #0084FF;
+  box-shadow: 0 4px 15px rgba(0, 132, 255, 0.3);
+}
+
+/* Modal แจ้งเตือนคัดลอกออเดอร์ให้เห็นเด่นชัด */
+.order-popup-overlay {
+  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+  z-index: 2000; display: none; justify-content: center; align-items: center; padding: 20px;
+}
+.order-popup-box {
+  background: #181824; border: 2px solid #0084FF; border-radius: 16px;
+  max-width: 480px; width: 100%; padding: 25px; text-align: center;
+  box-shadow: 0 0 30px rgba(0, 132, 255, 0.5); animation: popIn 0.3s ease;
+}
+@keyframes popIn {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.order-popup-box h2 { color: #fff; font-size: 20px; margin-bottom: 10px; }
+.order-popup-box p { color: #a0a0ab; font-size: 14px; margin-bottom: 20px; line-height: 1.5; }
+.order-preview-box {
+  background: #0a0a0f; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;
+  padding: 12px; text-align: left; font-size: 13px; color: #ddd; max-height: 150px;
+  overflow-y: auto; margin-bottom: 20px; white-space: pre-line;
+}
+.popup-btn-group { display: flex; gap: 10px; }
+.popup-btn {
+  flex: 1; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; border: none;
+}
+.popup-btn.copy { background: rgba(255,255,255,0.1); color: #fff; }
+.popup-btn.goto { background: #0084FF; color: #fff; box-shadow: 0 0 10px rgba(0, 132, 255, 0.4); }
+
+@media (max-width: 768px) {
+  .cart-modal { width: 100vw; right: -100vw; }
+  .search-bar-container { display: none; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand-logo">🔥 ບໍ່ແພງແຕ່ເທ້ <span>STORE</span></div>
+  <div class="search-bar-container">
+    <input type="text" id="searchInput" placeholder="🔍 ค้นหารหัสเสื้อ, ชื่อสินค้า, หมวดหมู่..." onkeyup="filterProducts()">
+  </div>
+  <button class="cart-icon-btn" onclick="toggleCart()">
+    🛒 ตะกร้าสินค้า <span class="cart-badge" id="cartCount">0</span>
+  </button>
+</header>
+
+<div class="container">
+  <div class="hero-banner">
+    <h1>👕 อาณาจักรเสื้อผ้าสั่งทำสดใหม่จาก Studio</h1>
+    <p>อัปเดตรายการสินค้าและสถานะแบบ Real-time จากระบบ Admin Studio โดยตรง</p>
+  </div>
+
+  <div class="filter-bar">
+    <div class="categories-btn-group">
+      <button class="cat-btn active" onclick="filterCategory('all', this)">ทั้งหมด</button>
+      <button class="cat-btn" onclick="filterCategory('tshirt', this)">เสื้อยืด (T-Shirt)</button>
+      <button class="cat-btn" onclick="filterCategory('hoodie', this)">ฮู้ดดี้/แจ็คเก็ต</button>
+      <button class="cat-btn" onclick="filterCategory('vintage', this)">วินเทจ/แรร์ไอเทม</button>
+      <button class="cat-btn" onclick="filterCategory('pants', this)">กางเกง</button>
+    </div>
+    <div style="font-size:13px; color:var(--text-muted)">
+      แสดงสินค้า: <b id="productCount" style="color:#fff">0</b> รายการ
+    </div>
+  </div>
+
+  <div class="product-grid" id="productGrid"></div>
+</div>
+
+<div class="cart-modal" id="cartModal">
+  <div class="cart-header">
+    <h3>🛒 ตะกร้าสินค้าของคุณ</h3>
+    <button onclick="toggleCart()" style="background:none; border:none; color:#fff; font-size:24px; cursor:pointer">&times;</button>
+  </div>
+  <div class="cart-items-list" id="cartItemsList">
+    <p style="text-align:center; color:#777; margin-top:40px;">ไม่มีสินค้าในตะกร้า</p>
+  </div>
+  <div class="cart-footer">
+    <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+      <span>ราคารวมทั้งหมด:</span>
+      <b style="font-size:20px; color:var(--accent-red)" id="totalPrice">0 ₭</b>
+    </div>
+    
+    <div class="channel-selector">
+      <label>เลือกช่องทางส่งข้อความสั่งซื้อ:</label>
+      <div class="channel-options">
+        <button class="channel-btn active" data-channel="wa" onclick="selectChannel('wa')">🟢 WhatsApp</button>
+        <button class="channel-btn" data-channel="fb" onclick="selectChannel('fb')">🔵 Facebook Page</button>
+      </div>
+    </div>
+
+    <button class="checkout-btn" id="checkoutBtn" onclick="checkout()">💬 ส่งสั่งซื้อผ่าน WhatsApp</button>
+  </div>
+</div>
+
+<!-- ป๊อปอัปช่วยยืนยันและคัดลอกข้อความไป Facebook แบบชัดเจน -->
+<div class="order-popup-overlay" id="orderPopupOverlay">
+  <div class="order-popup-box">
+    <h2>📋 คัดลอกออเดอร์สำเร็จ!</h2>
+    <p>ระบบคัดลอกรายละเอียดสินค้าทั้งหมดลงเครื่องของคุณเรียบร้อยแล้ว<br><b>คลิกปุ่มด้านล่างเพื่อเปิดแชทเพจ แล้วกด "วาง (Paste)" ส่งได้ทันทีครับ</b></p>
+    <div class="order-preview-box" id="popupOrderTextPreview"></div>
+    <div class="popup-btn-group">
+      <button class="popup-btn copy" onclick="copyAgain()">คัดลอกอีกครั้ง</button>
+      <button class="popup-btn goto" onclick="openMessenger()">💬 ไปที่แชทเพจ Facebook</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let allProducts = [];
+let cart = [];
+let currentCategory = 'all';
+let selectedChannel = 'wa';
+let generatedOrderMessage = '';
+
+const CONFIG = {
+  whatsappNumber: "8562099810747",
+  facebookPageUrl: "https://m.me/61578113265882"
+};
+
+const syncChannel = new BroadcastChannel("app_store_sync");
+
+function loadAdminData() {
+  const localData = JSON.parse(localStorage.getItem("allDataDB") || "[]");
+  if (localData.length > 0) {
+    updateProductsData(localData);
+  }
+}
+
+function updateProductsData(allDataDB, activePoster = null) {
+  allDataDB.forEach(adminItem => {
+    const index = allProducts.findIndex(p => p.code === adminItem.code);
+    const itemPrice = Number(String(adminItem.price).replace(/,/g, "")) || 0;
+    const itemImg = adminItem.img || (activePoster && activePoster.code === adminItem.code ? activePoster.img : '') || 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=600';
+    
+    if (index >= 0) {
+      allProducts[index].price = itemPrice;
+      allProducts[index].stock = Number(adminItem.stock);
+      allProducts[index].status = adminItem.status;
+      if (adminItem.size) allProducts[index].sizes = [adminItem.size];
+      if (itemImg && itemImg.length > 20) allProducts[index].img = itemImg;
+    } else {
+      allProducts.unshift({
+        id: adminItem.code,
+        code: adminItem.code,
+        name: `เสื้อรุ่น ${adminItem.code}`,
+        category: 'tshirt',
+        price: itemPrice,
+        stock: Number(adminItem.stock),
+        sizes: [adminItem.size || 'M'],
+        status: adminItem.status || 'active',
+        img: itemImg
+      });
+    }
+  });
+  filterProducts();
+}
+
+syncChannel.onmessage = (event) => {
+  const { type, allDataDB, activePoster } = event.data;
+  if (type === "SYNC_PRODUCTS" && allDataDB) {
+    updateProductsData(allDataDB, activePoster);
+  }
+};
+
+function renderProducts(items) {
+  const grid = document.getElementById('productGrid');
+  document.getElementById('productCount').textContent = items.length;
+  grid.innerHTML = '';
+
+  if(items.length === 0) {
+    grid.innerHTML = '<p style="grid-column: 1/-1; text-align:center; color:#777; padding: 40px 0;">ยังไม่มีสินค้าในร้าน</p>';
+    return;
+  }
+
+  items.forEach(p => {
+    const isSold = p.status === 'sold' || p.stock <= 0;
+    const card = document.createElement('div');
+    card.className = 'product-card';
+    card.innerHTML = `
+      <div class="img-wrapper">
+        <img src="${p.img}" alt="${p.name}" loading="lazy">
+      </div>
+      <div class="product-info">
+        <span class="product-code">${p.code}</span>
+        <div class="product-title">${p.name}</div>
+        <div class="price-stock-row">
+          <span class="price-tag">${p.price.toLocaleString()} ₭</span>
+          <span class="stock-tag ${isSold ? 'sold' : ''}">${isSold ? 'ขายแล้ว' : 'คลัง: ' + p.stock}</span>
+        </div>
+        <div class="size-selector-box" id="sizes-${p.id}">
+          ${p.sizes.map((s, idx) => `<span class="size-chip ${idx === 0 ? 'selected' : ''}" onclick="selectSize('${p.id}', '${s}', this)">${s}</span>`).join('')}
+        </div>
+        <button class="add-cart-btn" ${isSold ? 'disabled' : ''} onclick="addToCart('${p.id}')">
+          ${isSold ? '❌ สินค้าหมด/ขายแล้ว' : '🛒 ใส่ตะกร้า'}
+        </button>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function selectSize(productId, size, el) {
+  const parent = document.getElementById(`sizes-${productId}`);
+  parent.querySelectorAll('.size-chip').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function addToCart(productId) {
+  const product = allProducts.find(p => String(p.id) === String(productId));
+  if (!product || product.status === 'sold') return;
+
+  const sizeChip = document.querySelector(`#sizes-${productId} .size-chip.selected`);
+  const selectedSize = sizeChip ? sizeChip.textContent : product.sizes[0];
+
+  const existing = cart.find(item => String(item.id) === String(productId) && item.size === selectedSize);
+  if (existing) {
+    existing.qty += 1;
+  } else {
+    cart.push({ ...product, size: selectedSize, qty: 1 });
+  }
+
+  updateCartUI();
+  toggleCart(true);
+}
+
+function updateCartUI() {
+  const cartCount = document.getElementById('cartCount');
+  const cartList = document.getElementById('cartItemsList');
+  const totalPrice = document.getElementById('totalPrice');
+
+  const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+  const totalMoney = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+
+  cartCount.textContent = totalItems;
+  totalPrice.textContent = totalMoney.toLocaleString() + ' ₭';
+
+  if (cart.length === 0) {
+    cartList.innerHTML = '<p style="text-align:center; color:#777; margin-top:40px;">ไม่มีสินค้าในตะกร้า</p>';
+    return;
+  }
+
+  cartList.innerHTML = cart.map((item, index) => `
+    <div class="cart-item">
+      <img src="${item.img}" alt="${item.name}">
+      <div class="cart-item-details">
+        <div style="font-weight:bold; font-size:13px">${item.name}</div>
+        <div style="font-size:12px; color:var(--text-muted)">ไซส์: ${item.size} | ${item.price.toLocaleString()} ₭</div>
+        <div style="margin-top:4px;">จำนวน: <b>${item.qty}</b></div>
+      </div>
+      <button onclick="removeFromCart(${index})" style="background:none; border:none; color:#ff4444; cursor:pointer;">🗑️</button>
+    </div>
+  `).join('');
+}
+
+function removeFromCart(index) {
+  cart.splice(index, 1);
+  updateCartUI();
+}
+
+function toggleCart(forceOpen = false) {
+  const modal = document.getElementById('cartModal');
+  if (forceOpen) {
+    modal.classList.add('open');
+  } else {
+    modal.classList.toggle('open');
+  }
+}
+
+function filterCategory(cat, btn) {
+  currentCategory = cat;
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  filterProducts();
+}
+
+function filterProducts() {
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  const filtered = allProducts.filter(p => {
+    const matchesCat = currentCategory === 'all' || p.category === currentCategory;
+    const matchesSearch = p.name.toLowerCase().includes(search) || p.code.toLowerCase().includes(search);
+    return matchesCat && matchesSearch;
+  });
+  renderProducts(filtered);
+}
+
+function selectChannel(channel) {
+  selectedChannel = channel;
+  document.querySelectorAll('.channel-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.channel === channel);
+  });
+
+  const checkoutBtn = document.getElementById('checkoutBtn');
+  if (channel === 'wa') {
+    checkoutBtn.textContent = '💬 ส่งสั่งซื้อผ่าน WhatsApp';
+    checkoutBtn.classList.remove('fb-style');
+  } else {
+    checkoutBtn.textContent = '💬 ส่งสั่งซื้อผ่าน Facebook';
+    checkoutBtn.classList.add('fb-style');
+  }
+}
+
+function checkout() {
+  if (cart.length === 0) {
+    alert('กรุณาเลือกสินค้าลงตะกร้าก่อนสั่งซื้อ');
+    return;
+  }
+
+  let message = "🛍️ *สเปกรายการสั่งซื้อใหม่*\n";
+  message += "-----------------------------------\n\n";
+
+  let totalMoney = 0;
+  cart.forEach((item, index) => {
+    const itemTotal = item.price * item.qty;
+    totalMoney += itemTotal;
+    message += `${index + 1}. *[${item.code}]* ${item.name}\n`;
+    message += `   • ไซส์: ${item.size}\n`;
+    message += `   • จำนวน: ${item.qty} ชิ้น\n`;
+    message += `   • ราคา: ${itemTotal.toLocaleString()} ₭\n\n`;
+  });
+
+  message += "-----------------------------------\n";
+  message += `💰 *ราคารวมทั้งหมด: ${totalMoney.toLocaleString()} ₭*\n\n`;
+  message += "รบกวนแอดมินยืนยันออเดอร์และส่งรายละเอียดการชำระเงินให้ด้วยครับ/ค่ะ! 🙏";
+
+  generatedOrderMessage = message;
+
+  const purchasedCodes = cart.map(item => item.code);
+  syncChannel.postMessage({
+    type: "NEW_ORDER",
+    purchasedCodes: purchasedCodes
+  });
+
+  if (selectedChannel === 'wa') {
+    const whatsappUrl = `https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+    cart = [];
+    updateCartUI();
+    toggleCart();
+  } else if (selectedChannel === 'fb') {
+    // ทำการ Copy และแสดงป๊อปอัปให้เห็นชัดเจนเพื่อแก้ปัญหาลูกค้ามองไม่เห็น
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(message).catch(err => {});
+    }
+    
+    document.getElementById('popupOrderTextPreview').textContent = message;
+    document.getElementById('orderPopupOverlay').style.display = 'flex';
+    
+    cart = [];
+    updateCartUI();
+    toggleCart();
+  }
+}
+
+function copyAgain() {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(generatedOrderMessage).then(() => {
+      alert('คัดลอกข้อความสำเร็จอีกครั้งแล้วครับ!');
+    });
+  }
+}
+
+function openMessenger() {
+  document.getElementById('orderPopupOverlay').style.display = 'none';
+  window.open(CONFIG.facebookPageUrl, '_blank');
+}
+
+loadAdminData();
+</script>
+</body>
+</html>
