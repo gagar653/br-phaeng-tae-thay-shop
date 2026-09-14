@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin ຮ້ານບໍ່ແພງແຕ່ເທ້ V7.9.3 - Work Time & Alarm Hub</title>
+<title>Admin ຮ້ານບໍ່ແພງແຕ່ເທ້ V7.9.5 - Work Time, Alarm Hub & Live Chat</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;700;900&family=Kanit:wght@400;700;900&family=Sarabun:wght@400;700&family=Inter:wght@400;700;900&family=Chakra+Petch:wght@400;700&display=swap" rel="stylesheet">
@@ -455,15 +455,15 @@ button { padding: 10px; border-radius: 8px; border: none; cursor: pointer; font-
   </div>
 </div>
 
-<!-- ================= MODAL: 🟢 รู้ว่าใครกำลังใช้เว็บอยู่ (Active Visitors) ================= -->
+<!-- ================= MODAL: 🟢 ผู้ใช้ออนไลน์ & ระบบแชทสดในเว็บ (Live Chat & Active Visitors) ================= -->
 <div id="modalOnlineUsers" class="modal-overlay">
-  <div class="modal-content" style="border-color: #10b981; box-shadow: 0 0 40px rgba(16,185,129,0.3); max-width: 700px;">
+  <div class="modal-content" style="border-color: #10b981; box-shadow: 0 0 40px rgba(16,185,129,0.3); max-width: 800px;">
     <button class="modal-close" id="closeOnlineUsers">&times;</button>
     <h3 style="color:#10b981; border-bottom:1px solid rgba(16,185,129,0.2); padding-bottom:8px; margin-top:0;">
-      🟢 ผู้ใช้งานเว็บที่กำลังออนไลน์อยู่ขณะนี้ (Active Visitors Real-time)
+      🟢 ผู้ใช้งานเว็บที่กำลังออนไลน์ & ระบบแชทสดในเว็บ (Live Chat)
     </h3>
     <p style="font-size:12px; color:#aaa; margin-bottom:15px;">
-      ระบบตรวจจับอุปกรณ์และการใช้งานแบบเรียลไทม์ (รองรับทั้งมือถือและคอมพิวเตอร์) อัปเดตสถานะอัตโนมัติทุกๆ 5 วินาที
+      ตรวจจับผู้ใช้งานแบบเรียลไทม์ และสามารถคลิกชื่อผู้ใช้ออนไลน์เพื่อส่งข้อความพูดคุยกันในระบบแชทได้ทันที
     </p>
 
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:15px; text-align:center;">
@@ -472,23 +472,36 @@ button { padding: 10px; border-radius: 8px; border: none; cursor: pointer; font-
         <strong id="activeTotalCount" style="font-size:20px; color:#fff;">1</strong>
       </div>
       <div style="background:rgba(56,189,248,0.1); padding:10px; border-radius:8px; border:1px solid rgba(56,189,248,0.2);">
-        <span style="font-size:11px; color:#38bdf8; display:block;">ประเภทอุปกรณ์หลัก</span>
-        <strong id="primaryDeviceType" style="font-size:16px; color:#38bdf8;">Computer / Desktop</strong>
+        <span style="font-size:11px; color:#38bdf8; display:block;">ตัวตนของคุณ (Session ID)</span>
+        <strong id="mySessionIdDisplay" style="font-size:14px; color:#38bdf8;">User_XXXX</strong>
       </div>
     </div>
 
-    <div style="max-height: 320px; overflow-y: auto;">
-      <table class="db-table" id="onlineUsersTable" style="border-color: rgba(16,185,129,0.3);">
-        <thead>
-          <tr style="background: rgba(16,185,129,0.2);">
-            <th style="color:#34d399;">รหัสผู้ใช้ / Session ID</th>
-            <th style="color:#34d399;">แพลตฟอร์ม / อุปกรณ์</th>
-            <th style="color:#34d399;">สถานะล่าสุด</th>
-            <th style="color:#34d399;">เวลาเข้าใช้งาน</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+    <!-- Layout แยก 2 ฝั่ง: รายชื่อออนไลน์ (ซ้าย) & กล่องแชท (ขวา) -->
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; align-items:start;">
+      
+      <!-- ฝั่งซ้าย: รายชื่อผู้ใช้ออนไลน์ -->
+      <div style="background: rgba(0,0,0,0.3); border:1px solid rgba(16,185,129,0.2); border-radius:12px; padding:12px; max-height: 320px; overflow-y: auto;">
+        <h4 style="margin:0 0 8px 0; color:#34d399; font-size:13px;">👥 คลิกที่ชื่อเพื่อเริ่มแชท</h4>
+        <div id="onlineUsersListContainer" style="display:flex; flex-direction:column; gap:8px;"></div>
+      </div>
+
+      <!-- ฝั่งขวา: ห้องแชทสด -->
+      <div style="background: rgba(0,0,0,0.4); border:1px solid rgba(16,185,129,0.3); border-radius:12px; padding:12px; display:flex; flex-direction:column; height:320px;">
+        <div id="chatHeaderTitle" style="font-size:12px; color:#34d399; font-weight:bold; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:6px; margin-bottom:8px;">
+          💬 เลือกผู้ใช้ฝั่งซ้ายเพื่อส่งข้อความ
+        </div>
+        
+        <div id="chatMessagesBox" style="flex:1; overflow-y:auto; background:rgba(0,0,0,0.3); border-radius:8px; padding:8px; display:flex; flex-direction:column; gap:6px; font-size:12px;">
+          <div style="color:#777; text-align:center; margin-top:50px;">ยังไม่มีการสนทนา เลือกผู้ใช้งานเพื่อส่งข้อความหากันได้เลยครับ</div>
+        </div>
+
+        <div style="display:flex; gap:6px; margin-top:8px;">
+          <input type="text" id="chatInputMsg" placeholder="พิมพ์ข้อความส่งในเว็บ..." style="margin:0; font-size:12px; padding:8px;" disabled>
+          <button id="sendChatBtn" style="background:#10b981; color:#fff; padding:8px 14px; font-size:12px; border-radius:8px; cursor:pointer;" disabled>ส่ง</button>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
@@ -689,9 +702,9 @@ document.getElementById("closeFn1").onclick = () => { modalFn1.style.display = "
 document.getElementById("openFn2Btn").onclick = () => { modalFn2.style.display = "flex"; };
 document.getElementById("closeFn2").onclick = () => { modalFn2.style.display = "none"; };
 
-// เปิด-ปิด หน้าต่างผู้ใช้งานออนไลน์
+// เปิด-ปิด หน้าต่างผู้ใช้ออนไลน์ & แชท
 document.getElementById("openOnlineUsersBtn").onclick = () => { 
-  renderOnlineUsersTable();
+  renderOnlineUsersList();
   modalOnlineUsers.style.display = "flex"; 
 };
 document.getElementById("closeOnlineUsers").onclick = () => { modalOnlineUsers.style.display = "none"; };
@@ -716,81 +729,224 @@ window.onclick = (e) => {
   if(e.target === modalOnlineUsers) modalOnlineUsers.style.display = "none";
 };
 
-// ================= ONLINE USERS REAL-TIME TRACKER =================
+// ================= ONLINE USERS & LIVE CHAT SYSTEM =================
 const onlineChannel = new BroadcastChannel("active_visitors_channel");
-const mySessionId = "User_" + Math.random().toString(36).substring(2, 8).toUpperCase();
+
+let mySessionId = sessionStorage.getItem("my_session_id");
+if (!mySessionId) {
+  mySessionId = "User_" + Math.random().toString(36).substring(2, 6).toUpperCase();
+  sessionStorage.setItem("my_session_id", mySessionId);
+}
+
+const mySessionDisplayEl = document.getElementById("mySessionIdDisplay");
+if(mySessionDisplayEl) mySessionDisplayEl.textContent = mySessionId;
+
 const isMobileDevice = /Mobi|Android|iPhone/i.test(navigator.userAgent);
-const myDeviceName = isMobileDevice ? "📱 มือถือ (Mobile)" : "💻 คอมพิวเตอร์ (Desktop)";
+const myDeviceName = isMobileDevice ? "📱 มือถือ" : "💻 คอมพิวเตอร์";
 const loginTimeStr = new Date().toLocaleTimeString();
 
-// บันทึกและส่งสัญญาณการใช้งานตัวเองเข้า BroadcastChannel
+let currentChatTarget = null; // ผู้ใช้ที่กำลังแชทด้วย
+
 function pingPresence() {
-  onlineChannel.postMessage({
-    type: "USER_PING",
+  const presenceData = {
     id: mySessionId,
     device: myDeviceName,
     time: loginTimeStr,
     lastSeen: Date.now()
-  });
+  };
+
+  try {
+    onlineChannel.postMessage({ type: "USER_PING", ...presenceData });
+  } catch(e){}
+
+  try {
+    let allStoredUsers = JSON.parse(localStorage.getItem("active_users_db") || "{}");
+    allStoredUsers[mySessionId] = presenceData;
+    localStorage.setItem("active_users_db", JSON.stringify(allStoredUsers));
+  } catch(e){}
+
+  cleanAndRenderOnlineUsers();
 }
 
-let activeUsersMap = new Map();
-// ใส่ตัวเองเข้าไปก่อน
-activeUsersMap.set(mySessionId, { id: mySessionId, device: myDeviceName, time: loginTimeStr, lastSeen: Date.now() });
-
 onlineChannel.onmessage = (event) => {
-  if (event.data && event.data.type === "USER_PING") {
-    const user = event.data;
-    activeUsersMap.set(user.id, user);
-    updateOnlineCounterUI();
+  if (event.data) {
+    if (event.data.type === "USER_PING") {
+      const user = event.data;
+      try {
+        let allStoredUsers = JSON.parse(localStorage.getItem("active_users_db") || "{}");
+        allStoredUsers[user.id] = user;
+        localStorage.setItem("active_users_db", JSON.stringify(allStoredUsers));
+      } catch(e){}
+      cleanAndRenderOnlineUsers();
+    } else if (event.data.type === "CHAT_MESSAGE") {
+      const msg = event.data;
+      // ถ้าข้อความนี้ส่งมาหาเรา
+      if (msg.to === mySessionId) {
+        saveAndAppendChatMessage(msg);
+        playAlarmSound('chime');
+        // เปิดแจ้งเตือนหรือเปิดกล่องแชทอัตโนมัติหากยังไม่ได้เปิด
+        if (modalOnlineUsers.style.display !== "flex") {
+          alert(`💬 มีข้อความใหม่จาก ${msg.from}: "${msg.text}"`);
+        }
+      }
+    }
   }
 };
 
-// ส่งสัญญาณ Ping ทุกๆ 3 วินาที
-setInterval(pingPresence, 3000);
-pingPresence();
+window.addEventListener("storage", (event) => {
+  if (event.key === "active_users_db") {
+    cleanAndRenderOnlineUsers();
+  } else if (event.key === "chat_messages_db") {
+    if (currentChatTarget) {
+      renderChatMessages(currentChatTarget);
+    }
+  }
+});
 
-// ตรวจสอบและเคลียร์ผู้ใช้ที่ไม่ได้ใช้งานเกิน 10 วินาทีออก
-setInterval(() => {
+function cleanAndRenderOnlineUsers() {
+  let allStoredUsers = {};
+  try {
+    allStoredUsers = JSON.parse(localStorage.getItem("active_users_db") || "{}");
+  } catch(e) {
+    allStoredUsers = {};
+  }
+
   const now = Date.now();
-  let updated = false;
-  activeUsersMap.forEach((val, key) => {
-    if (key !== mySessionId && now - val.lastSeen > 10000) {
-      activeUsersMap.delete(key);
-      updated = true;
+  let activeCount = 0;
+  const container = document.getElementById("onlineUsersListContainer");
+  if (container) container.innerHTML = "";
+
+  Object.keys(allStoredUsers).forEach((key) => {
+    const user = allStoredUsers[key];
+    if (now - user.lastSeen < 10000) {
+      activeCount++;
+      if (container) {
+        const isMe = user.id === mySessionId;
+        const div = document.createElement("div");
+        div.style.cssText = `background: ${currentChatTarget === user.id ? 'rgba(16,185,129,0.2)' : 'rgba(255,255,255,0.03)'}; border:1px solid ${currentChatTarget === user.id ? '#10b981' : 'rgba(255,255,255,0.1)'}; padding:8px 10px; border-radius:8px; cursor:pointer; display:flex; justify-content:space-between; align-items:center;`;
+        div.innerHTML = `
+          <div>
+            <b style="color:${isMe ? '#34d399' : '#fff'}">${user.id}</b> ${isMe ? '(คุณ)' : ''}
+            <div style="font-size:10px; color:#aaa;">${user.device} • เข้าเมื่อ ${user.time}</div>
+          </div>
+          <span style="font-size:11px; color:#10b981; font-weight:bold;">${isMe ? '🟢 ออนไลน์' : '💬 แชท'}</span>
+        `;
+        if (!isMe) {
+          div.onclick = () => selectChatTarget(user.id);
+        }
+        container.appendChild(div);
+      }
+    } else {
+      delete allStoredUsers[key];
     }
   });
-  if (updated) updateOnlineCounterUI();
-}, 5000);
 
-function updateOnlineCounterUI() {
-  const count = activeUsersMap.size;
+  try {
+    localStorage.setItem("active_users_db", JSON.stringify(allStoredUsers));
+  } catch(e){}
+
   const headerCountEl = document.getElementById("headerOnlineCount");
-  if (headerCountEl) headerCountEl.textContent = count;
-  
+  if (headerCountEl) headerCountEl.textContent = Math.max(1, activeCount);
+
   const activeTotalEl = document.getElementById("activeTotalCount");
-  if (activeTotalEl) activeTotalEl.textContent = count;
+  if (activeTotalEl) activeTotalEl.textContent = Math.max(1, activeCount);
 }
 
-function renderOnlineUsersTable() {
-  const tbody = document.querySelector("#onlineUsersTable tbody");
-  if (!tbody) return;
-  tbody.innerHTML = "";
+function renderOnlineUsersList() {
+  cleanAndRenderOnlineUsers();
+}
 
-  activeUsersMap.forEach((user) => {
-    const isMe = user.id === mySessionId;
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td><b>${user.id}</b> ${isMe ? '<span style="color:#34d399; font-size:10px;">(คุณ)</span>' : ''}</td>
-      <td>${user.device}</td>
-      <td><span style="color:#10b981; font-weight:bold;">🟢 กำลังใช้งานอยู่</span></td>
-      <td>${user.time}</td>
-    `;
-    tbody.appendChild(tr);
+function selectChatTarget(targetId) {
+  currentChatTarget = targetId;
+  document.getElementById("chatHeaderTitle").textContent = `💬 กำลังสนทนากับ: ${targetId}`;
+  document.getElementById("chatInputMsg").disabled = false;
+  document.getElementById("sendChatBtn").disabled = false;
+  renderChatMessages(targetId);
+  cleanAndRenderOnlineUsers();
+}
+
+function saveAndAppendChatMessage(msg) {
+  try {
+    let chatHistory = JSON.parse(localStorage.getItem("chat_messages_db") || "[]");
+    chatHistory.push(msg);
+    localStorage.setItem("chat_messages_db", JSON.stringify(chatHistory));
+  } catch(e){}
+
+  if (currentChatTarget === msg.from || currentChatTarget === msg.to) {
+    renderChatMessages(currentChatTarget);
+  }
+}
+
+function renderChatMessages(targetId) {
+  const chatBox = document.getElementById("chatMessagesBox");
+  if (!chatBox) return;
+  chatBox.innerHTML = "";
+
+  let chatHistory = [];
+  try {
+    chatHistory = JSON.parse(localStorage.getItem("chat_messages_db") || "[]");
+  } catch(e){ chatHistory = []; }
+
+  const relevantMsgs = chatHistory.filter(m => 
+    (m.from === mySessionId && m.to === targetId) || 
+    (m.from === targetId && m.to === mySessionId)
+  );
+
+  if (relevantMsgs.length === 0) {
+    chatBox.innerHTML = `<div style="color:#777; text-align:center; margin-top:30px;">ยังไม่มีข้อความกับ ${targetId} เริ่มพิมพ์ทักทายได้เลย!</div>`;
+    return;
+  }
+
+  relevantMsgs.forEach(m => {
+    const isMe = m.from === mySessionId;
+    const bubble = document.createElement("div");
+    bubble.style.cssText = `max-width:80%; padding:6px 10px; border-radius:8px; align-self: ${isMe ? 'flex-end' : 'flex-start'}; background: ${isMe ? '#10b981' : 'rgba(255,255,255,0.1)'}; color:#fff; font-size:12px; word-break:break-word;`;
+    bubble.innerHTML = `<div>${m.text}</div><div style="font-size:9px; color:${isMe ? '#d1fae5' : '#aaa'}; text-align:right; margin-top:2px;">${m.time}</div>`;
+    chatBox.appendChild(bubble);
   });
 
-  updateOnlineCounterUI();
+  chatBox.scrollTop = chatBox.scrollHeight;
 }
+
+const sendChatBtn = document.getElementById("sendChatBtn");
+const chatInputMsg = document.getElementById("chatInputMsg");
+
+function sendChatMessage() {
+  const text = chatInputMsg.value.trim();
+  if (!text || !currentChatTarget) return;
+
+  const msg = {
+    from: mySessionId,
+    to: currentChatTarget,
+    text: text,
+    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  };
+
+  try {
+    onlineChannel.postMessage({ type: "CHAT_MESSAGE", ...msg });
+  } catch(e){}
+
+  saveAndAppendChatMessage(msg);
+  chatInputMsg.value = "";
+}
+
+if(sendChatBtn) sendChatBtn.onclick = sendChatMessage;
+if(chatInputMsg) {
+  chatInputMsg.onkeydown = (e) => {
+    if (e.key === "Enter") { e.preventDefault(); sendChatMessage(); }
+  };
+}
+
+pingPresence();
+setInterval(pingPresence, 3000);
+
+window.addEventListener("beforeunload", () => {
+  try {
+    let allStoredUsers = JSON.parse(localStorage.getItem("active_users_db") || "{}");
+    delete allStoredUsers[mySessionId];
+    localStorage.setItem("active_users_db", JSON.stringify(allStoredUsers));
+  } catch(e){}
+});
 
 // ================= BROADCAST CHANNEL CROSS-APP SYNC =================
 const syncChannel = new BroadcastChannel("app_store_sync");
