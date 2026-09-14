@@ -176,15 +176,9 @@ header {
 .cart-item-details { flex: 1; }
 .cart-footer { padding: 20px; border-top: 1px solid rgba(255,255,255,0.1); background: #0b0b10; }
 
-.channel-selector {
-  margin-bottom: 12px;
-}
-.channel-selector label {
-  display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 6px;
-}
-.channel-options {
-  display: flex; gap: 10px;
-}
+.channel-selector { margin-bottom: 12px; }
+.channel-selector label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
+.channel-options { display: flex; gap: 10px; }
 .channel-btn {
   flex: 1; padding: 8px; border: 1px solid rgba(255,255,255,0.2); border-radius: 6px;
   background: rgba(255,255,255,0.05); color: #fff; font-size: 12px; cursor: pointer;
@@ -204,7 +198,6 @@ header {
   box-shadow: 0 4px 15px rgba(0, 132, 255, 0.3);
 }
 
-/* Modal แจ้งเตือนคัดลอกออเดอร์ให้เห็นเด่นชัด */
 .order-popup-overlay {
   position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
   background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
@@ -244,7 +237,7 @@ header {
 <header>
   <div class="brand-logo">🔥 ບໍ່ແພງແຕ່ເທ້ <span>STORE</span></div>
   <div class="search-bar-container">
-    <input type="text" id="searchInput" placeholder="🔍 ค้นหารหัสเสื้อ, ชื่อสินค้า, หมวดหมู่..." onkeyup="filterProducts()">
+    <input type="text" id="searchInput" placeholder="🔍 ค้นหารหัสเสื้อ, ชื่อสินค้า..." onkeyup="filterProducts()">
   </div>
   <button class="cart-icon-btn" onclick="toggleCart()">
     🛒 ตะกร้าสินค้า <span class="cart-badge" id="cartCount">0</span>
@@ -254,151 +247,151 @@ header {
 <div class="container">
   <div class="hero-banner">
     <h1>👕 อาณาจักรเสื้อผ้าสั่งทำสดใหม่จาก Studio</h1>
-    <p>อัปเดตรายการสินค้าและสถานะแบบ Real-time จากระบบ Admin Studio โดยตรง</p>
+    <p>อัปเดตรายการสินค้าและสถานะแบบ Real-time จากระบบ Admin Studio โดยอัตโนมัติทันที</p>
   </div>
 
   <div class="filter-bar">
     <div class="categories-btn-group">
       <button class="cat-btn active" onclick="filterCategory('all', this)">ทั้งหมด</button>
-      <button class="cat-btn" onclick="filterCategory('tshirt', this)">เสื้อยืด (T-Shirt)</button>
-      <button class="cat-btn" onclick="filterCategory('hoodie', this)">ฮู้ดดี้/แจ็คเก็ต</button>
-      <button class="cat-btn" onclick="filterCategory('vintage', this)">วินเทจ/แรร์ไอเทม</button>
-      <button class="cat-btn" onclick="filterCategory('pants', this)">กางเกง</button>
+      <button class="cat-btn" onclick="filterCategory('active', this)">🟢 พร้อมขาย</button>
+      <button class="cat-btn" onclick="filterCategory('sold', this)">🔴 ขายแล้ว</button>
     </div>
     <div style="font-size:13px; color:var(--text-muted)">
       แสดงสินค้า: <b id="productCount" style="color:#fff">0</b> รายการ
     </div>
   </div>
 
-  <div class="product-grid" id="productGrid"></div>
+  <div class="product-grid" id="productGrid">
+    <!-- รายการสินค้าจะแสดงตรงนี้อัตโนมัติ -->
+  </div>
 </div>
 
+<!-- ตะกร้าสินค้า Slide Modal -->
 <div class="cart-modal" id="cartModal">
   <div class="cart-header">
     <h3>🛒 ตะกร้าสินค้าของคุณ</h3>
-    <button onclick="toggleCart()" style="background:none; border:none; color:#fff; font-size:24px; cursor:pointer">&times;</button>
+    <button onclick="toggleCart()" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer;">✕</button>
   </div>
   <div class="cart-items-list" id="cartItemsList">
-    <p style="text-align:center; color:#777; margin-top:40px;">ไม่มีสินค้าในตะกร้า</p>
+    <p style="color:var(--text-muted);text-align:center;margin-top:40px;">ไม่มีสินค้าในตะกร้า</p>
   </div>
   <div class="cart-footer">
-    <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
-      <span>ราคารวมทั้งหมด:</span>
-      <b style="font-size:20px; color:var(--accent-red)" id="totalPrice">0 ₭</b>
+    <div style="display:flex;justify-content:space-between;margin-bottom:12px;font-size:16px;font-weight:bold;">
+      <span>ยอดรวมทั้งสิ้น:</span>
+      <span id="cartTotalPrice" style="color:var(--accent-red);">0 ₭</span>
     </div>
     
     <div class="channel-selector">
-      <label>เลือกช่องทางส่งข้อความสั่งซื้อ:</label>
+      <label>เลือกช่องทางสั่งซื้อ / แจ้งโอน:</label>
       <div class="channel-options">
-        <button class="channel-btn active" data-channel="wa" onclick="selectChannel('wa')">🟢 WhatsApp</button>
-        <button class="channel-btn" data-channel="fb" onclick="selectChannel('fb')">🔵 Facebook Page</button>
+        <button class="channel-btn active" data-channel="wa" onclick="setCheckoutChannel('wa')">🟢 WhatsApp</button>
+        <button class="channel-btn" data-channel="fb" onclick="setCheckoutChannel('fb')">🔵 Facebook Messenger</button>
       </div>
     </div>
 
-    <button class="checkout-btn" id="checkoutBtn" onclick="checkout()">💬 ส่งสั่งซื้อผ่าน WhatsApp</button>
+    <button class="checkout-btn" id="checkoutBtn" onclick="checkoutOrder()">
+      ✅ ยืนยันการสั่งซื้อผ่าน WhatsApp
+    </button>
   </div>
 </div>
 
-<!-- ป๊อปอัปช่วยยืนยันและคัดลอกข้อความไป Facebook แบบชัดเจน -->
-<div class="order-popup-overlay" id="orderPopupOverlay">
+<!-- Popup ยืนยันคัดลอกออเดอร์ -->
+<div class="order-popup-overlay" id="orderPopup">
   <div class="order-popup-box">
-    <h2>📋 คัดลอกออเดอร์สำเร็จ!</h2>
-    <p>ระบบคัดลอกรายละเอียดสินค้าทั้งหมดลงเครื่องของคุณเรียบร้อยแล้ว<br><b>คลิกปุ่มด้านล่างเพื่อเปิดแชทเพจ แล้วกด "วาง (Paste)" ส่งได้ทันทีครับ</b></p>
-    <div class="order-preview-box" id="popupOrderTextPreview"></div>
+    <h2>📋 คัดลอกรายละเอียดออเดอร์แล้ว!</h2>
+    <p>ระบบได้คัดลอกข้อความสรุปรายการสั่งซื้อลงคลิปบอร์ดของคุณเรียบร้อยแล้ว กรุณากดปุ่มด้านล่างเพื่อเปิดแอปส่งข้อความหาแอดมิน</p>
+    <div class="order-preview-box" id="orderPreviewText"></div>
     <div class="popup-btn-group">
-      <button class="popup-btn copy" onclick="copyAgain()">คัดลอกอีกครั้ง</button>
-      <button class="popup-btn goto" onclick="openMessenger()">💬 ไปที่แชทเพจ Facebook</button>
+      <button class="popup-btn copy" onclick="copyOrderAgain()">📋 คัดลอกอีกครั้ง</button>
+      <button class="popup-btn goto" id="goToChatBtn" onclick="executeOpenChat()">🚀 เปิดแอปส่งข้อความ</button>
     </div>
   </div>
 </div>
 
 <script>
-let allProducts = [];
-let cart = [];
-let currentCategory = 'all';
-let selectedChannel = 'wa';
-let generatedOrderMessage = '';
-
-const CONFIG = {
-  whatsappNumber: "8562099810747",
-  facebookPageUrl: "https://m.me/61578113265882"
-};
-
+// ================= REAL-TIME SYNC (BROADCAST CHANNEL) =================
 const syncChannel = new BroadcastChannel("app_store_sync");
 
-function loadAdminData() {
-  const localData = JSON.parse(localStorage.getItem("allDataDB") || "[]");
-  if (localData.length > 0) {
-    updateProductsData(localData);
+let allProducts = [];
+let currentCategory = 'all';
+let cart = [];
+let checkoutChannel = 'wa';
+let lastOrderText = '';
+let targetChatUrl = '';
+
+// โหลดข้อมูลเริ่มต้นจาก localStorage ถ้ามี
+function loadInitialData() {
+  const savedAllData = localStorage.getItem("allDataDB");
+  if (savedAllData) {
+    try {
+      allProducts = JSON.parse(savedAllData);
+    } catch(e) { allProducts = []; }
   }
+  
+  // ถ้าไม่มีข้อมูลจำลอง ให้ใส่ข้อมูลตัวอย่างเริ่มต้น
+  if (allProducts.length === 0) {
+    allProducts = [
+      { code: "AP001", price: "299,000", stock: "18", size: "M", status: "active", img: "" }
+    ];
+  }
+  renderProducts();
 }
 
-function updateProductsData(allDataDB, activePoster = null) {
-  allDataDB.forEach(adminItem => {
-    const index = allProducts.findIndex(p => p.code === adminItem.code);
-    const itemPrice = Number(String(adminItem.price).replace(/,/g, "")) || 0;
-    const itemImg = adminItem.img || (activePoster && activePoster.code === adminItem.code ? activePoster.img : '') || 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=600';
-    
-    if (index >= 0) {
-      allProducts[index].price = itemPrice;
-      allProducts[index].stock = Number(adminItem.stock);
-      allProducts[index].status = adminItem.status;
-      if (adminItem.size) allProducts[index].sizes = [adminItem.size];
-      if (itemImg && itemImg.length > 20) allProducts[index].img = itemImg;
-    } else {
-      allProducts.unshift({
-        id: adminItem.code,
-        code: adminItem.code,
-        name: `เสื้อรุ่น ${adminItem.code}`,
-        category: 'tshirt',
-        price: itemPrice,
-        stock: Number(adminItem.stock),
-        sizes: [adminItem.size || 'M'],
-        status: adminItem.status || 'active',
-        img: itemImg
-      });
-    }
-  });
-  filterProducts();
-}
-
+// ฟังอีเวนต์ Real-time จาก Admin Studio ทันทีโดยไม่ต้องกด F5
 syncChannel.onmessage = (event) => {
-  const { type, allDataDB, activePoster } = event.data;
-  if (type === "SYNC_PRODUCTS" && allDataDB) {
-    updateProductsData(allDataDB, activePoster);
+  const { type, allDataDB } = event.data;
+  if (type === "SYNC_PRODUCTS" && Array.isArray(allDataDB)) {
+    allProducts = allDataDB;
+    renderProducts();
   }
 };
 
-function renderProducts(items) {
-  const grid = document.getElementById('productGrid');
-  document.getElementById('productCount').textContent = items.length;
-  grid.innerHTML = '';
+function renderProducts() {
+  const grid = document.getElementById("productGrid");
+  const countEl = document.getElementById("productCount");
+  if (!grid) return;
 
-  if(items.length === 0) {
-    grid.innerHTML = '<p style="grid-column: 1/-1; text-align:center; color:#777; padding: 40px 0;">ยังไม่มีสินค้าในร้าน</p>';
+  grid.innerHTML = "";
+  
+  let filtered = allProducts.filter(item => {
+    if (currentCategory === 'active') return item.status !== 'sold';
+    if (currentCategory === 'sold') return item.status === 'sold';
+    return true;
+  });
+
+  const searchVal = document.getElementById("searchInput")?.value.toLowerCase() || "";
+  if (searchVal) {
+    filtered = filtered.filter(i => i.code.toLowerCase().includes(searchVal) || String(i.price).includes(searchVal));
+  }
+
+  if (countEl) countEl.textContent = filtered.length;
+
+  if (filtered.length === 0) {
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:40px;">ไม่พบรายการสินค้าในขณะนี้</div>`;
     return;
   }
 
-  items.forEach(p => {
-    const isSold = p.status === 'sold' || p.stock <= 0;
-    const card = document.createElement('div');
-    card.className = 'product-card';
+  filtered.forEach(item => {
+    const isSold = item.status === 'sold';
+    const card = document.createElement("div");
+    card.className = "product-card";
     card.innerHTML = `
       <div class="img-wrapper">
-        <img src="${p.img}" alt="${p.name}" loading="lazy">
+        ${item.img ? `<img src="${item.img}" alt="${item.code}">` : `<div style="color:#555;font-size:13px;">ไม่มีรูปภาพสินค้า</div>`}
       </div>
       <div class="product-info">
-        <span class="product-code">${p.code}</span>
-        <div class="product-title">${p.name}</div>
+        <div class="product-code">รหัส: ${item.code}</div>
+        <div class="product-title">เสื้อผ้าแฟชั่นสตรีทแวร์ Studio</div>
         <div class="price-stock-row">
-          <span class="price-tag">${p.price.toLocaleString()} ₭</span>
-          <span class="stock-tag ${isSold ? 'sold' : ''}">${isSold ? 'ขายแล้ว' : 'คลัง: ' + p.stock}</span>
+          <div class="price-tag">${Number(String(item.price).replace(/,/g,"")).toLocaleString()} ₭</div>
+          <div class="stock-tag ${isSold ? 'sold' : ''}">${isSold ? '🔴 ขายแล้ว' : '🟢 เหลือ ' + item.stock + ' ตัว'}</div>
         </div>
-        <div class="size-selector-box" id="sizes-${p.id}">
-          ${p.sizes.map((s, idx) => `<span class="size-chip ${idx === 0 ? 'selected' : ''}" onclick="selectSize('${p.id}', '${s}', this)">${s}</span>`).join('')}
+        <div class="size-selector-box">
+          <span style="font-size:12px;color:var(--text-muted);align-self:center;">ไซส์:</span>
+          <div class="size-chip selected">${item.size || 'M'}</div>
         </div>
-        <button class="add-cart-btn" ${isSold ? 'disabled' : ''} onclick="addToCart('${p.id}')">
-          ${isSold ? '❌ สินค้าหมด/ขายแล้ว' : '🛒 ใส่ตะกร้า'}
+        <button class="add-cart-btn" ${isSold ? 'disabled' : ''} onclick="addToCart('${item.code}')">
+          ${isSold ? '❌ สินค้าหมด (ขายแล้ว)' : '🛒 เพิ่มลงตะกร้า'}
         </button>
       </div>
     `;
@@ -406,172 +399,161 @@ function renderProducts(items) {
   });
 }
 
-function selectSize(productId, size, el) {
-  const parent = document.getElementById(`sizes-${productId}`);
-  parent.querySelectorAll('.size-chip').forEach(c => c.classList.remove('selected'));
-  el.classList.add('selected');
+function filterCategory(cat, btn) {
+  currentCategory = cat;
+  document.querySelectorAll(".cat-btn").forEach(b => b.classList.remove("active"));
+  if(btn) btn.classList.add("active");
+  renderProducts();
 }
 
-function addToCart(productId) {
-  const product = allProducts.find(p => String(p.id) === String(productId));
+function filterProducts() {
+  renderProducts();
+}
+
+function toggleCart() {
+  const modal = document.getElementById("cartModal");
+  if(modal) modal.classList.toggle("open");
+}
+
+function addToCart(code) {
+  const product = allProducts.find(i => i.code === code);
   if (!product || product.status === 'sold') return;
 
-  const sizeChip = document.querySelector(`#sizes-${productId} .size-chip.selected`);
-  const selectedSize = sizeChip ? sizeChip.textContent : product.sizes[0];
-
-  const existing = cart.find(item => String(item.id) === String(productId) && item.size === selectedSize);
+  const existing = cart.find(i => i.code === code);
   if (existing) {
     existing.qty += 1;
   } else {
-    cart.push({ ...product, size: selectedSize, qty: 1 });
+    cart.push({ ...product, qty: 1 });
   }
 
-  updateCartUI();
-  toggleCart(true);
+  updateCartBadge();
+  renderCartItems();
+  toggleCart();
 }
 
-function updateCartUI() {
-  const cartCount = document.getElementById('cartCount');
-  const cartList = document.getElementById('cartItemsList');
-  const totalPrice = document.getElementById('totalPrice');
+function updateCartBadge() {
+  const badge = document.getElementById("cartCount");
+  const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+  if(badge) badge.textContent = totalQty;
+}
 
-  const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
-  const totalMoney = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-
-  cartCount.textContent = totalItems;
-  totalPrice.textContent = totalMoney.toLocaleString() + ' ₭';
+function renderCartItems() {
+  const list = document.getElementById("cartItemsList");
+  const totalPriceEl = document.getElementById("cartTotalPrice");
+  if (!list) return;
 
   if (cart.length === 0) {
-    cartList.innerHTML = '<p style="text-align:center; color:#777; margin-top:40px;">ไม่มีสินค้าในตะกร้า</p>';
+    list.innerHTML = `<p style="color:var(--text-muted);text-align:center;margin-top:40px;">ไม่มีสินค้าในตะกร้า</p>';
+    if(totalPriceEl) totalPriceEl.textContent = "0 ₭";
     return;
   }
 
-  cartList.innerHTML = cart.map((item, index) => `
-    <div class="cart-item">
-      <img src="${item.img}" alt="${item.name}">
+  list.innerHTML = "";
+  let totalSum = 0;
+
+  cart.forEach((item, index) => {
+    const priceNum = Number(String(item.price).replace(/,/g,""));
+    totalSum += priceNum * item.qty;
+
+    const div = document.createElement("div");
+    div.className = "cart-item";
+    div.innerHTML = `
+      <img src="${item.img || ''}" alt="">
       <div class="cart-item-details">
-        <div style="font-weight:bold; font-size:13px">${item.name}</div>
-        <div style="font-size:12px; color:var(--text-muted)">ไซส์: ${item.size} | ${item.price.toLocaleString()} ₭</div>
-        <div style="margin-top:4px;">จำนวน: <b>${item.qty}</b></div>
+        <div style="font-weight:bold;font-size:13px;">รหัส: ${item.code}</div>
+        <div style="font-size:12px;color:var(--accent-red);">${priceNum.toLocaleString()} ₭ (ไซส์: ${item.size})</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">จำนวน: ${item.qty} ตัว</div>
       </div>
-      <button onclick="removeFromCart(${index})" style="background:none; border:none; color:#ff4444; cursor:pointer;">🗑️</button>
-    </div>
-  `).join('');
+      <button onclick="removeFromCart(${index})" style="background:none;border:none;color:#ff5555;cursor:pointer;font-size:16px;">🗑️</button>
+    `;
+    list.appendChild(div);
+  });
+
+  if(totalPriceEl) totalPriceEl.textContent = totalSum.toLocaleString() + " ₭";
 }
 
 function removeFromCart(index) {
   cart.splice(index, 1);
-  updateCartUI();
+  updateCartBadge();
+  renderCartItems();
 }
 
-function toggleCart(forceOpen = false) {
-  const modal = document.getElementById('cartModal');
-  if (forceOpen) {
-    modal.classList.add('open');
+function setCheckoutChannel(ch) {
+  checkoutChannel = ch;
+  document.querySelectorAll(".channel-btn").forEach(b => b.classList.remove("active"));
+  const btn = document.querySelector(`.channel-btn[data-channel="${ch}"]`);
+  if(btn) btn.classList.add("active");
+
+  const checkoutBtn = document.getElementById("checkoutBtn");
+  if (ch === 'wa') {
+    checkoutBtn.className = "checkout-btn";
+    checkoutBtn.innerHTML = "✅ ยืนยันการสั่งซื้อผ่าน WhatsApp";
   } else {
-    modal.classList.toggle('open');
+    checkoutBtn.className = "checkout-btn fb-style";
+    checkoutBtn.innerHTML = "🔵 ยืนยันการสั่งซื้อผ่าน Facebook Messenger";
   }
 }
 
-function filterCategory(cat, btn) {
-  currentCategory = cat;
-  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  filterProducts();
-}
-
-function filterProducts() {
-  const search = document.getElementById('searchInput').value.toLowerCase();
-  const filtered = allProducts.filter(p => {
-    const matchesCat = currentCategory === 'all' || p.category === currentCategory;
-    const matchesSearch = p.name.toLowerCase().includes(search) || p.code.toLowerCase().includes(search);
-    return matchesCat && matchesSearch;
-  });
-  renderProducts(filtered);
-}
-
-function selectChannel(channel) {
-  selectedChannel = channel;
-  document.querySelectorAll('.channel-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.channel === channel);
-  });
-
-  const checkoutBtn = document.getElementById('checkoutBtn');
-  if (channel === 'wa') {
-    checkoutBtn.textContent = '💬 ส่งสั่งซื้อผ่าน WhatsApp';
-    checkoutBtn.classList.remove('fb-style');
-  } else {
-    checkoutBtn.textContent = '💬 ส่งสั่งซื้อผ่าน Facebook';
-    checkoutBtn.classList.add('fb-style');
-  }
-}
-
-function checkout() {
+function checkoutOrder() {
   if (cart.length === 0) {
-    alert('กรุณาเลือกสินค้าลงตะกร้าก่อนสั่งซื้อ');
+    alert("กรุณาเลือกสินค้าใส่ตะกร้าก่อนสั่งซื้อ");
     return;
   }
 
-  let message = "🛍️ *สเปกรายการสั่งซื้อใหม่*\n";
-  message += "-----------------------------------\n\n";
+  let text = "🛍️ *แจ้งรายการสั่งซื้อสินค้าจากหน้าร้าน*\n----------------------------------\n";
+  let totalSum = 0;
+  let purchasedCodes = [];
 
-  let totalMoney = 0;
-  cart.forEach((item, index) => {
-    const itemTotal = item.price * item.qty;
-    totalMoney += itemTotal;
-    message += `${index + 1}. *[${item.code}]* ${item.name}\n`;
-    message += `   • ไซส์: ${item.size}\n`;
-    message += `   • จำนวน: ${item.qty} ชิ้น\n`;
-    message += `   • ราคา: ${itemTotal.toLocaleString()} ₭\n\n`;
+  cart.forEach(item => {
+    const pNum = Number(String(item.price).replace(/,/g,""));
+    text += `▪️ รหัส: *${item.code}* | ไซส์: ${item.size} | จำนวน: ${item.qty} ตัว | ราคา: ${(pNum * item.qty).toLocaleString()} ₭\n`;
+    totalSum += pNum * item.qty;
+    purchasedCodes.push(item.code);
   });
 
-  message += "-----------------------------------\n";
-  message += `💰 *ราคารวมทั้งหมด: ${totalMoney.toLocaleString()} ₭*\n\n`;
-  message += "รบกวนแอดมินยืนยันออเดอร์และส่งรายละเอียดการชำระเงินให้ด้วยครับ/ค่ะ! 🙏";
+  text += `----------------------------------\n💰 *ยอดรวมทั้งสิ้น:* *${totalSum.toLocaleString()} ₭*\n📍 กรุณาตรวจสอบสถานะและยืนยันออเดอร์ครับ`;
 
-  generatedOrderMessage = message;
+  lastOrderText = text;
 
-  const purchasedCodes = cart.map(item => item.code);
+  // ส่งสัญญาณแจ้งเตือนไปยังระบบ Admin Studio ทันทีว่ามีออเดอร์ใหม่
   syncChannel.postMessage({
     type: "NEW_ORDER",
     purchasedCodes: purchasedCodes
   });
 
-  if (selectedChannel === 'wa') {
-    const whatsappUrl = `https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
-    cart = [];
-    updateCartUI();
-    toggleCart();
-  } else if (selectedChannel === 'fb') {
-    // ทำการ Copy และแสดงป๊อปอัปให้เห็นชัดเจนเพื่อแก้ปัญหาลูกค้ามองไม่เห็น
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(message).catch(err => {});
-    }
-    
-    document.getElementById('popupOrderTextPreview').textContent = message;
-    document.getElementById('orderPopupOverlay').style.display = 'flex';
-    
-    cart = [];
-    updateCartUI();
-    toggleCart();
+  // สร้างลิงก์ส่งแชท
+  if (checkoutChannel === 'wa') {
+    targetChatUrl = `https://wa.me/?text=` + encodeURIComponent(text);
+  } else {
+    targetChatUrl = `https://m.me/`;
   }
+
+  // คัดลอกข้อความลงคลิปบอร์ดอัตโนมัติ
+  navigator.clipboard.writeText(text).then(() => {
+    document.getElementById("orderPreviewText").textContent = text;
+    document.getElementById("orderPopup").style.display = "flex";
+    toggleCart();
+    cart = [];
+    updateCartBadge();
+    renderCartItems();
+  }).catch(err => {
+    alert("คัดลอกข้อความไม่สำเร็จ กรุณาลองใหม่อีกครั้ง");
+  });
 }
 
-function copyAgain() {
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(generatedOrderMessage).then(() => {
-      alert('คัดลอกข้อความสำเร็จอีกครั้งแล้วครับ!');
-    });
-  }
+function copyOrderAgain() {
+  navigator.clipboard.writeText(lastOrderText).then(() => {
+    alert("📋 คัดลอกข้อความเรียบร้อยแล้ว!");
+  });
 }
 
-function openMessenger() {
-  document.getElementById('orderPopupOverlay').style.display = 'none';
-  window.open(CONFIG.facebookPageUrl, '_blank');
+function executeOpenChat() {
+  window.open(targetChatUrl, '_blank');
+  document.getElementById("orderPopup").style.display = "none";
 }
 
-loadAdminData();
+// โหลดข้อมูลเริ่มต้นเมื่อเปิดหน้าเว็บ
+loadInitialData();
 </script>
 </body>
 </html>
