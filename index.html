@@ -1,1901 +1,233 @@
 <!DOCTYPE html>
 <html lang="lo">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin ຮ้านບໍ່ແພງແຕ່ເທ້ V7.9.5 - Work Time, Alarm Hub & Live Chat</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Phetsarath:wght@400;700&family=Noto+Sans+Lao:wght@400;700&family=Prompt:wght@400;700;900&family=Kanit:wght@400;700;900&display=swap" rel="stylesheet">
-<style>
-:root {
-  --bg-main: #06060c;
-  --accent-red: #ff2a2a;
-  --accent-glow: rgba(255, 42, 42, 0.4);
-  --panel-bg: rgba(18, 18, 26, 0.9);
-  --panel-border: rgba(255, 42, 42, 0.25);
-  --input-bg: rgba(10, 10, 16, 0.9);
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LAK Stream Donation & OBS Alert System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Noto Sans Lao', sans-serif; }
+        body { background: #0f172a; color: #f8fafc; min-height: 100vh; padding: 20px; display: flex; justify-content: center; align-items: center; }
+        
+        /* ดีไซน์หน้าแผงควบคุม (Dashboard) */
+        .main-wrapper { display: flex; gap: 20px; width: 100%; max-width: 1000px; flex-wrap: wrap; }
+        .panel { background: #1e293b; border: 1px solid #334155; border-radius: 16px; flex: 1; min-width: 340px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        h1 { font-size: 1.2rem; color: #38bdf8; margin-bottom: 15px; border-bottom: 1px solid #334155; padding-bottom: 8px; }
+        .section-title { font-size: 0.9rem; color: #facc15; margin: 15px 0 8px; font-weight: 600; }
+        .form-group { margin-bottom: 10px; }
+        .form-group label { display: block; font-size: 0.75rem; color: #cbd5e1; margin-bottom: 3px; }
+        .form-control { width: 100%; padding: 9px; background: #0f172a; border: 1px solid #334155; border-radius: 8px; color: #fff; font-size: 0.85rem; outline: none; }
+        .form-control:focus { border-color: #38bdf8; }
+        .row { display: flex; gap: 8px; }
+        .row .form-group { flex: 1; }
+        .btn { width: 100%; background: linear-gradient(135deg, #0284c7, #2563eb); color: #fff; border: none; padding: 11px; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; margin-top: 8px; transition: 0.2s; }
+        .btn:hover { opacity: 0.9; }
+        .link-box { background: #0f172a; padding: 8px; border-radius: 6px; font-size: 0.7rem; color: #38bdf8; word-break: break-all; margin-top: 5px; border: 1px solid #334155; user-select: all; }
+        .info-box { background: rgba(56, 189, 248, 0.1); border-left: 4px solid #38bdf8; padding: 8px; font-size: 0.75rem; color: #cbd5e1; border-radius: 4px; margin-bottom: 12px; }
 
-body {
-  margin: 0;
-  background-color: var(--bg-main);
-  background-image: 
-    radial-gradient(circle at 15% 20%, rgba(255, 0, 60, 0.15) 0%, transparent 45%),
-    radial-gradient(circle at 85% 80%, rgba(120, 0, 255, 0.1) 0%, transparent 45%),
-    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-  background-size: 100% 100%, 100% 100%, 30px 30px, 30px 30px;
-  background-attachment: fixed;
-  color: #fff;
-  font-family: 'Phetsarath', 'Noto Sans Lao', 'Segoe UI', Tahoma, sans-serif;
-  min-height: 100vh;
-}
-
-#loginScreen {
-  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-  background: var(--bg-main); z-index: 99999;
-  display: flex; justify-content: center; align-items: center;
-}
-.login-box {
-  background: var(--panel-bg); backdrop-filter: blur(15px);
-  border: 1px solid var(--panel-border); border-radius: 20px;
-  padding: 40px; width: 100%; max-width: 360px; text-align: center;
-  box-shadow: 0 0 30px rgba(255, 42, 42, 0.2);
-}
-.login-box h2 { margin-top: 0; color: #fff; text-shadow: 0 0 10px var(--accent-red); }
-.login-box input {
-  text-align: center; font-size: 18px; letter-spacing: 2px; margin-bottom: 15px;
-  width: 100%; padding: 10px 12px; border-radius: 8px; background: var(--input-bg);
-  border: 1px solid rgba(255, 42, 42, 0.3); color: #fff; outline: none;
-}
-#loginErr { color: #ff4444; font-size: 14px; margin-top: 10px; display: none; }
-
-#mainApp { display: none; }
-
-.header-bar {
-  background: linear-gradient(90deg, rgba(15,0,0,0.9) 0%, rgba(40,5,5,0.9) 50%, rgba(15,0,0,0.9) 100%);
-  padding: 12px 25px; border-bottom: 2px solid var(--accent-red);
-  box-shadow: 0 4px 25px rgba(255, 42, 42, 0.3);
-  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;
-  position: relative; z-index: 100;
-}
-.header-bar h2 { color: #fff; margin: 0; font-weight: 800; font-size: 16px; }
-
-.workspace-layout {
-  display: grid; grid-template-columns: 420px 1fr; gap: 20px;
-  padding: 20px; max-width: 1600px; margin: auto; align-items: start;
-}
-
-.controls-sidebar {
-  display: flex; flex-direction: column; gap: 15px;
-  max-height: calc(100vh - 100px); overflow-y: auto; padding-right: 5px;
-  position: relative; z-index: 10;
-}
-.controls-sidebar::-webkit-scrollbar { width: 6px; }
-.controls-sidebar::-webkit-scrollbar-thumb { background: rgba(255, 42, 42, 0.3); border-radius: 4px; }
-
-.preview-sticky-container {
-  position: sticky; top: 20px; display: flex; flex-direction: column; align-items: center;
-  background: var(--panel-bg); border: 1px solid var(--panel-border); border-radius: 16px; padding: 20px;
-  z-index: 10;
-}
-
-.panel {
-  background: var(--panel-bg); border: 1px solid var(--panel-border); border-radius: 14px; padding: 16px;
-}
-.panel h3 {
-  margin-top: 0; margin-bottom: 12px; font-size: 14px; color: #ff5555;
-  border-bottom: 1px solid rgba(255, 42, 42, 0.15); padding-bottom: 6px;
-}
-
-input, select, textarea {
-  box-sizing: border-box; width: 100%; padding: 10px 12px; border-radius: 8px;
-  background: var(--input-bg); border: 1px solid rgba(255, 42, 42, 0.3); color: #fff;
-  margin-top: 6px; outline: none; font-family: inherit; font-size: 14px;
-}
-
-button { padding: 10px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; font-family: inherit; position: relative; z-index: 20; }
-
-.platform { background: rgba(255,255,255,0.05); color: #ccc; border: 1px solid rgba(255,255,255,0.1); font-size: 13px; }
-.platform.active { background: var(--accent-red); color: #fff; }
-
-#poster {
-  width: 440px; aspect-ratio: 4/5; background: #111; position: relative;
-  overflow: hidden; border-radius: 10px; box-shadow: 0 0 25px rgba(0, 0, 0, 0.9);
-}
-
-#bgImg, #shirt { position: absolute; left: 50%; top: 50%; transform-origin: center center; user-select: none; }
-#bgImg { z-index: 1; display: none; cursor: grab; }
-#shirt { max-width: 100%; max-height: 100%; object-fit: contain; z-index: 2; cursor: grab; }
-
-#logoPoster {
-  position: absolute; top: 10px; left: 10px; width: 48px; height: 48px;
-  border-radius: 50%; overflow: hidden; display: none; border: 2px solid #ff3131; z-index: 3; pointer-events: none;
-}
-#logoPoster img { width: 100%; height: 100%; object-fit: cover; }
-
-.draggable { position: absolute; cursor: grab; user-select: none; z-index: 5; touch-action: none; }
-
-#priceLabel {
-  left: 14px; bottom: 75px; font-size: 42px; font-weight: 900; color: #ff3131;
-  padding: 4px 10px; border-radius: 12px; background: rgba(255,255,255,.08);
-  border: 2px solid rgba(0,0,0,.85); font-family: 'Prompt', sans-serif;
-}
-#codeLabel { top: 12px; right: 12px; background: #000c; color: #fff; padding: 4px 7px; border-radius: 6px; font-size: 11px; }
-#stockLabel { left: 14px; bottom: 16px; background: #000c; color: #fff; padding: 5px 8px; border-radius: 8px; font-size: 12px; }
-#sizeLabel { right: 14px; bottom: 16px; background: #d10000; color: #fff; padding: 5px 8px; border-radius: 8px; font-size: 12px; }
-
-.btn { width: 100%; background: linear-gradient(135deg, #ff2a2a 0%, #a90000 100%); color: #fff; font-size: 14px; }
-
-.modal-overlay {
-  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-  background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 99999;
-  display: none; justify-content: center; align-items: center; padding: 15px;
-}
-.modal-content {
-  background: var(--panel-bg); border: 1px solid var(--accent-red); border-radius: 16px;
-  width: 100%; max-width: 650px; max-height: 85vh; overflow-y: auto; padding: 25px;
-  box-shadow: 0 0 40px rgba(255,42,42,0.3); position: relative; z-index: 100000;
-}
-.modal-close {
-  position: absolute; top: 15px; right: 20px; background: none; border: none;
-  color: #ff5555; font-size: 22px; cursor: pointer; z-index: 100001;
-}
-
-#modalVideoEditor .modal-content {
-  max-width: 1150px; width: 96vw; height: 92vh; max-height: 95vh;
-  display: flex; flex-direction: column; padding: 20px; background: #0b0b12;
-  border: 1px solid rgba(0, 255, 136, 0.4); box-shadow: 0 0 60px rgba(0, 255, 136, 0.2);
-}
-
-.capcut-container {
-  display: grid; grid-template-columns: 340px 1fr; gap: 15px; flex: 1; overflow: hidden; margin-top: 10px;
-}
-.capcut-sidebar {
-  background: rgba(15, 15, 22, 0.95); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px;
-  padding: 15px; display: flex; flex-direction: column; gap: 12px; overflow-y: auto;
-}
-.capcut-main-workspace {
-  display: flex; flex-direction: column; gap: 12px; overflow: hidden;
-}
-.capcut-preview-screen {
-  background: #000; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);
-  flex: 1; display: flex; justify-content: center; align-items: center; position: relative; overflow: hidden;
-  min-height: 280px;
-}
-.capcut-timeline {
-  background: rgba(15, 15, 22, 0.95); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px;
-  padding: 12px; height: 110px; display: flex; flex-direction: column; gap: 8px;
-}
-.timeline-tracks {
-  background: #111118; border: 1px dashed rgba(255,255,255,0.15); border-radius: 8px;
-  flex: 1; display: flex; align-items: center; padding: 0 10px; position: relative; overflow-x: auto; gap: 10px;
-}
-.timeline-clip {
-  background: linear-gradient(135deg, #ff2a2a, #880000); padding: 6px 12px; border-radius: 6px;
-  font-size: 11px; font-weight: bold; white-space: nowrap; display: flex; align-items: center; gap: 6px;
-  box-shadow: 0 4px 10px rgba(255,42,42,0.3); border: 1px solid #ff5555;
-}
-
-.db-table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 12px; }
-.db-table th, .db-table td { border: 1px solid rgba(255,42,42,0.2); padding: 8px 10px; text-align: left; }
-.db-table th { background: rgba(255,42,42,0.2); color: #ff8888; }
-.badge-sold { background: rgba(255,42,42,0.2); color: #ff4444; border: 1px solid #ff4444; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; display: inline-block; }
-.badge-stock { background: rgba(0,255,136,0.1); color: #00ff88; border: 1px solid #00ff88; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; display: inline-block; }
-
-/* ================= FULLSCREEN WORK TIME & ALARM STUDIO ================= */
-#workTimeStudioView {
-  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-  background: #06060c; z-index: 999999;
-  display: none; flex-direction: column; overflow: hidden;
-}
-
-.work-time-header {
-  background: linear-gradient(90deg, #051b25 0%, #0369a1 50%, #051b25 100%);
-  padding: 15px 30px; border-bottom: 2px solid #38bdf8;
-  display: flex; justify-content: space-between; align-items: center;
-  box-shadow: 0 4px 30px rgba(56,189,248,0.4);
-}
-
-.work-time-body {
-  display: grid; grid-template-columns: 380px 1fr; gap: 20px;
-  padding: 25px; flex: 1; overflow: hidden; max-width: 1600px; margin: 0 auto; width: 100%; box-sizing: border-box;
-}
-
-.work-time-panel {
-  background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(56,189,248,0.3);
-  border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 15px;
-  overflow-y: auto; box-shadow: 0 0 30px rgba(0,0,0,0.5); backdrop-filter: blur(10px);
-}
-
-.work-time-main-area {
-  background: rgba(10, 15, 30, 0.95); border: 2px dashed rgba(56,189,248,0.4);
-  border-radius: 20px; display: flex; flex-direction: column; justify-content: flex-start; align-items: center;
-  position: relative; overflow-y: auto; box-shadow: inset 0 0 50px rgba(56,189,248,0.1); padding: 25px;
-}
-
-.alarm-card {
-  background: rgba(255,255,255,0.03); border: 1px solid rgba(56,189,248,0.2); border-radius: 12px;
-  padding: 15px; display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 600px;
-  box-sizing: border-box; margin-bottom: 12px; transition: all 0.2s;
-}
-.alarm-card:hover { background: rgba(56,189,248,0.1); border-color: #38bdf8; }
-
-@media(max-width: 1200px) {
-  .work-time-body { grid-template-columns: 1fr; overflow-y: auto; height: auto; }
-  #workTimeStudioView { overflow-y: auto; }
-}
-</style>
+        /* ดีไซน์หน้าจอแจ้งเตือนสำหรับ OBS (โปร่งใส) */
+        #obsAlertScreen {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: transparent !important;
+            overflow: hidden;
+            justify-content: flex-start;
+            align-items: flex-end;
+            padding: 40px;
+        }
+        .alert-card {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95));
+            border: 2px solid #38bdf8;
+            border-radius: 16px;
+            padding: 24px;
+            width: 420px;
+            box-shadow: 0 10px 30px rgba(56, 189, 248, 0.4);
+            transform: translateY(200px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .alert-card.show { transform: translateY(0); opacity: 1; }
+        .alert-title { color: #facc15; font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; }
+        .alert-desc { color: #cbd5e1; font-size: 0.9rem; }
+        .alert-name { color: #38bdf8; font-weight: 700; }
+        .alert-amount { color: #34d399; font-weight: 700; font-size: 1.2rem; margin: 6px 0; }
+        .alert-msg { background: rgba(255,255,255,0.05); padding: 8px 12px; border-radius: 8px; color: #f1f5f9; font-style: italic; font-size: 0.85rem; margin-top: 8px; }
+    </style>
 </head>
 <body>
 
-<div id="loginScreen">
-  <div class="login-box">
-    <h2>🔒 ເຂົ້າສູ່ລະບົບຜູ້ດູແລ</h2>
-    <p style="color:#aaa;font-size:13px;margin-bottom:15px;">ກະລຸນາໃສ່ລະຫັດຜ່ານເພື່ອເຂົ້າใช้งานລະບົບ</p>
-    <input type="password" id="passInput" placeholder="ລະຫັດຜ່ານ" autofocus>
-    <button class="btn" id="loginBtn">ເຂົ້າສູ່ລະບົບ</button>
-    <div id="loginErr">❌ ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ!</div>
-  </div>
-</div>
-
-<div id="mainApp">
-  <div class="header-bar">
-    <h2>⚡ ບໍ່ແພງແຕ່ເທ້ Studio - Sticky Poster Hub & Databases</h2>
-    <div class="user-status" style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-      <button class="btn" id="openOnlineUsersBtn" style="font-size:12px; padding:6px 10px; width:auto; background: linear-gradient(135deg, #10b981 0%, #047857 100%); color:#fff;">🟢 ຜູ້ໃຊ້ງານອອນໄລນ໌ (<span id="headerOnlineCount">1</span>)</button>
-      <button class="btn" id="openFn1Btn" style="font-size:12px; padding:6px 10px; width:auto;">📌 ຄลังລະຫັດ & ສະແກນ</button>
-      <button class="btn" id="openFn2Btn" style="font-size:12px; padding:6px 10px; width:auto; background: linear-gradient(135deg, #2a2aff 0%, #0000a9 100%);">🗂️ ຄลังຂໍ້ມູນ</button>
-      <button class="btn" id="openSalesSyncBtn" style="font-size:12px; padding:6px 10px; width:auto; background: linear-gradient(135deg, #ff9900 0%, #cc5500 100%);">🔄 ເຊ็คສະຖານະການຂາຍ (ຊິ້ງໜ้าร้าน)</button>
-      <button class="btn" id="openVideoEditorBtn" style="font-size:12px; padding:6px 10px; width:auto; background: linear-gradient(135deg, #00ff88 0%, #008844 100%); color:#000;">🎬 ตัดຕໍ່ວິດີໂອ (CapCut Pro)</button>
-      <button class="btn" id="openWorkTimeStudioBtn" style="font-size:12px; padding:6px 10px; width:auto; background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color:#fff;">⏰ ລະບົບເວລາເຮັດວຽກ & ໂມງປຸກ</button>
-      <div class="status-badge" style="background:rgba(0,255,136,0.1);border:1px solid #00ff88;padding:4px 10px;border-radius:20px;font-size:11px;color:#00ff88;">🟢 ອອນໄລນ໌ (ເຊື່ອມຕໍ່ແລ້ວ)</div>
-      <button id="logoutBtn" style="background:rgba(255,42,42,0.2);color:#ff5555;border:1px solid rgba(255,42,42,0.4);padding:4px 8px;font-size:11px; cursor:pointer; z-index:20;">ອອກຈາກລະບົບ</button>
-    </div>
-  </div>
-
-  <div class="workspace-layout">
-    <div class="controls-sidebar">
-      
-      <div class="panel">
-        <h3>📱 ເລືອກສັດສ່ວນແພລດຟອມ</h3>
-        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px">
-          <button class="platform active" data-ratio="4/5">Facebook</button>
-          <button class="platform" data-ratio="9/16">TikTok</button>
-          <button class="platform" data-ratio="16/9">YouTube</button>
-          <button class="platform" data-ratio="1/1">Instagram</button>
-          <button class="platform" data-ratio="custom" style="grid-column: span 2;">⚙️ ປັບຂະໜາດຕາມໃຈມັກ</button>
-        </div>
-        <div id="customRatioBox" style="display:none; margin-top: 10px; background: rgba(0,0,0,0.2); padding: 8px; border-radius: 8px;">
-          <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 6px;">
-            <div><label style="font-size:11px">ຄວາມກວ້າງ (px)</label><input type="number" id="customWidthInput" value="440" style="padding:6px; font-size:12px;"></div>
-            <div><label style="font-size:11px">ຄວາມສູງ (px)</label><input type="number" id="customHeightInput" value="550" style="padding:6px; font-size:12px;"></div>
-          </div>
-          <button class="btn" id="applyCustomRatio" style="margin-top:6px; padding:6px; font-size:12px;">ໃຊ້ຂະໜາດຕາມໃຈມັກ</button>
-        </div>
-        <p id="platformInfo" style="color:#aaa;font-size:12px;margin:8px 0 0 0">1080×1350 Facebook</p>
-      </div>
-
-      <div class="panel">
-        <h3>👕 ຈັດການຮູບສິນຄ້າ & AI ຕັດພື້ນຫຼັງເສື້ອ</h3>
-        <input type="file" id="shirtUpload" accept="image/*">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px">
-          <button class="btn" id="cutoutBtn" type="button" style="font-size:13px">✂️ AI ตัดພື້ນຫຼັງສະເພາະຕົວເສື້ອ</button>
-          <button id="restoreBtn" type="button" style="background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.2);font-size:13px;cursor:pointer;padding:10px;border-radius:8px;font-weight:bold;">↩️ ຮູບເດີມ</button>
-        </div>
-        
-        <div id="aiLoading" style="display:none;margin-top:10px">
-          <div style="color:#ff3131;font-weight:bold;font-size:12px" id="aiStatusText">🤖 AI ກຳລັງແຍກແຍະ ແລະ ตัดພື້ນຫຼັງຮູບເສື້ອ (30s)...</div>
-          <div style="width:100%;height:8px;background:#1a1a24;border-radius:6px;margin-top:6px;overflow:hidden">
-            <div id="loadingBar" style="width:0%;height:100%;background:var(--accent-red);border-radius:6px;transition:width 0.3s"></div>
-          </div>
-        </div>
-
-        <label style="font-size:13px;margin-top:10px;display:block">ຊູມສິນຄ້າ (ຫຼືໃຊ້ລູກກິ້ງເມົ້າຊີ້ທີ່ຮູບເສື້ອ)</label><input type="range" id="zoom" min="30" max="300" value="100">
-        <label style="font-size:13px;margin-top:8px;display:block">ໝຸນສິນຄ້າ (ອງສາ)</label><input type="range" id="shirtRotate" min="-180" max="180" value="0">
-        <label style="font-size:13px;margin-top:8px;display:block">ຄວາມມົວສິນຄ້າ (Blur)</label><input type="range" id="shirtBlur" min="0" max="20" value="0">
-      </div>
-
-      <div class="panel">
-        <h3>🖼️ ຈັດການພື້ນຫຼັງ (Background & Color)</h3>
-        <label style="font-size:12px; display:block; margin-bottom:4px;">ເລືອກສີພື້ນຫຼັງ (Solid Color)</label>
-        <div style="display:flex; gap:8px; align-items:center;">
-          <input type="color" id="bgColorPicker" value="#111111" style="width:50px; height:38px; padding:2px; cursor:pointer;">
-          <button type="button" id="resetBgColorBtn" style="background:rgba(255,255,255,0.1); color:#fff; font-size:12px; padding:8px; flex:1;">ຕั້ງຄ່າສີດຳເລີ່ມຕົ້ນ</button>
-        </div>
-
-        <label style="font-size:13px;margin-top:12px;display:block"> ຫຼືອັບໂຫລດຮູບພື້ນຫຼັງ (Image Background)</label>
-        <input type="file" id="bgUpload" accept="image/*">
-        <button id="removeBgBtn" type="button" style="width:100%;margin-top:6px;background:rgba(255,42,42,0.2);color:#ff5555;border:1px solid rgba(255,42,42,0.4);font-size:13px;cursor:pointer;padding:10px;border-radius:8px;font-weight:bold;">❌ ລຶບຮູບພື້ນຫຼັງ</button>
-
-        <label style="font-size:13px;margin-top:10px;display:block">ຊູມພື້ນຫຼັງ</label><input type="range" id="bgZoom" min="30" max="300" value="100">
-        <label style="font-size:13px;margin-top:8px;display:block">ໝຸນພື້ນຫຼັງ</label><input type="range" id="bgRotate" min="-180" max="180" value="0">
-        <label style="font-size:13px;margin-top:8px;display:block">ຄວາມມົວພື້ນຫຼັງ</label><input type="range" id="bgBlur" min="0" max="25" value="0">
-      </div>
-
-      <div class="panel">
-        <h3>🏪 ໂລໂກ້ຮ້ານ</h3>
-        <input type="file" id="logoUpload" accept="image/*">
-        <label style="display:block;margin-top:8px;font-size:13px;"><input type="checkbox" id="showLogo" checked style="width:auto"> ສະແດງໂລໂກ້</label>
-      </div>
-
-      <div class="panel">
-        <h3>📝 ລາຍລະອຽດສິນຄ້າ</h3>
-        <div style="display:grid;grid-template-columns:2fr 1fr;gap:6px;align-items:end;">
-          <div><label style="font-size:12px">ລະຫັດສິນຄ້າ (ຫ้ามຊ້ຳ)</label><input id="codeInput" value="AP001"></div>
-          <button type="button" id="randomCodeBtn" style="background:#2a2aff; color:#fff; font-size:11px; padding:10px 4px;">🎲 ສຸ່ມລະຫັດ</button>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
-          <div><label style="font-size:12px">ລາຄາ (₭)</label><input id="priceInput" value="299000"></div>
-          <div><label style="font-size:12px">ຈຳນວນ (ໂຕ)</label><input id="stockInput" value="18"></div>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
-          <div>
-            <label style="font-size:12px">ສະຖານະສິນຄ້າ</label>
-            <select id="statusSelect">
-              <option value="active" selected>🟢 ພ້ອມຂາຍ</option>
-              <option value="sold">🔴 ຂາຍແລ້ວ</option>
-            </select>
-          </div>
-          <div>
-            <label style="font-size:12px">ໄຊສ (Size)</label>
-            <select id="sizeSelect">
-              <option>S</option><option selected>M</option><option>L</option><option>XL</option><option value="custom">ພິມเอง</option>
-            </select>
-          </div>
-        </div>
-        <input id="sizeCustom" style="display:none;margin-top:6px" placeholder="3XL / Free Size">
-      </div>
-
-      <div class="panel">
-        <h3>🎨 ຟອນ, ສີ & ຂະໜາດຕົວອັກສອນລາຄາ</h3>
-        <label style="font-size:12px;margin-top:4px;display:block">ເລືອກຟອນລາຄາສິນຄ້າ</label>
-        <select id="priceFontSelect">
-          <option value="'Prompt', sans-serif" selected>Prompt (ໂມເດิร์ນ/ໂຕໜາຊັດເຈນ)</option>
-          <option value="'Kanit', sans-serif">Kanit (ສະໄຕລ໌ວາໄຊວຸ່ນ/ໜາແໜ້ນ)</option>
-          <option value="'Phetsarath', sans-serif">Phetsarath (ລາວມາດຕະຖານ/ອ່ານງ່າຍ)</option>
-          <option value="'Chakra Petch', sans-serif">Chakra Petch (ແນວລ້ຳອະນາຄົດ/Cyberpunk)</option>
-          <option value="'Inter', sans-serif">Inter (ສາກົນ/ຮຽບຫຣູ)</option>
-        </select>
-
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px">
-          <div><label style="font-size:11px">ສີລາຄາ</label><input type="color" id="priceColor" value="#ff3131" style="padding:2px;height:30px"></div>
-          <div><label style="font-size:11px">ສີລະຫັດ</label><input type="color" id="codeColor" value="#ffffff" style="padding:2px;height:30px"></div>
-          <div><label style="font-size:11px">ສີຈຳນວນ</label><input type="color" id="stockColor" value="#ffffff" style="padding:2px;height:30px"></div>
-          <div><label style="font-size:11px">ສີໄຊສ</label><input type="color" id="sizeColor" value="#ffffff" style="padding:2px;height:30px"></div>
-        </div>
-        
-        <label style="font-size:12px;margin-top:8px;display:block">ຂະໜາດລາຄາ</label><input type="range" id="priceSize" min="18" max="70" value="42">
-        <label style="font-size:12px;margin-top:6px;display:block">ຂະໜາດຂໍ້ຄວາມອື່ນໆ</label>
-        <div style="display:flex;gap:6px">
-          <input type="range" id="codeSize" min="8" max="25" value="11" title="ລະຫັດ">
-          <input type="range" id="stockSize" min="10" max="25" value="12" title="ຈຳນວນ">
-          <input type="range" id="sizeSize" min="10" max="25" value="12" title="ໄຊສ">
-        </div>
-      </div>
-
-    </div>
-
-    <div class="preview-sticky-container">
-      <h3 style="margin-top:0;margin-bottom:10px;color:#ff5555;font-size:15px">🎨 ຕົວຢ່າງຮູບໂປສເຕີ (Real-time Preview)</h3>
-      <div id="poster">
-        <img id="bgImg">
-        <img id="shirt">
-        <div id="logoPoster"><img id="logoPreview"></div>
-        <div id="codeLabel" class="draggable">AP001</div>
-        <div id="priceLabel" class="draggable">299,000 ₭</div>
-        <div id="stockLabel" class="draggable">📦 ມີ 18 ໂຕ</div>
-        <div id="sizeLabel" class="draggable">M</div>
-      </div>
-      
-      <div style="width:100%; display:flex; flex-direction:column; gap:8px; margin-top:15px;">
-        <button class="btn" id="saveAndDownloadBtn" style="padding:14px; font-size:15px; background: linear-gradient(135deg, #ff8800 0%, #d84300 100%); color:#fff; box-shadow: 0 0 15px rgba(255, 136, 0, 0.4);">🚀 ບັນທຶກໜ้าร้าน + ดาวน์โหลดຮູບ (1-Click Action)</button>
-        <button class="btn" id="saveStoreBtn" style="padding:10px; font-size:13px; background: linear-gradient(135deg, #00ff88 0%, #008844 100%); color:#000;">💾 ບັນທຶກສິນຄ້າລົງໜ้าร้าน (Store Sync)</button>
-        <button class="btn" id="downloadBtn" style="padding:10px; font-size:13px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">📥 โหลดຮູບປ້າຍສິນຄ້າ PNG (ดาวน์โหลดເທົ່ານັ້ນ)</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ================= FULLSCREEN WORK TIME & ALARM STUDIO ================= -->
-<div id="workTimeStudioView">
-  <div class="work-time-header">
-    <div style="display:flex; align-items:center; gap:12px;">
-      <span style="font-size:24px;">⏰</span>
-      <div>
-        <h2 style="margin:0; font-size:18px; color:#38bdf8;">ລະບົບເວລາເຮັດວຽກ & ໂມງປຸກແຈ້ງເຕືອນ (Work Time & Alarm Hub)</h2>
-        <span style="font-size:12px; color:#aaa;">ຕັ້ງເວລາແຈ້ງເຕືອນກະການເຮັດວຽກ ພ້ອມເລືອກສຽງປຸກໄດ້ຕາມຕ້ອງການ</span>
-      </div>
-    </div>
-    <button id="closeWorkTimeStudio" style="background:rgba(255,255,255,0.1); color:#fff; border:1px solid rgba(255,255,255,0.2); padding:8px 16px; border-radius:8px; cursor:pointer; font-weight:bold;">✕ ປິດໜ້າຕ່າງໂປຣແກຣມ</button>
-  </div>
-
-  <div class="work-time-body">
-    <div class="work-time-panel">
-      <h3 style="color:#38bdf8; margin-top:0; border-bottom:1px solid rgba(56,189,248,0.2); padding-bottom:8px;">➕ ຕັ້ງເວລາແຈ້ງເຕືອນໃໝ່</h3>
-      
-      <div>
-        <label style="font-size:12px; color:#38bdf8; font-weight:bold; display:block; margin-bottom:4px;">ຫົວຂໍ້ / ກິດຈະກຳວຽກ</label>
-        <input type="text" id="alarmTitleInput" placeholder="ເຊັ່ນ: ເລີ່ມກະເຊົ້າ / ພັກທ່ຽງ / ເຄຼຍອໍເດີ້" value="ເລີ່ມເວລາເຮັດວຽກ">
-      </div>
-
-      <div>
-        <label style="font-size:12px; color:#38bdf8; font-weight:bold; display:block; margin-bottom:4px;">ຕັ້ງເວລາ (Time)</label>
-        <input type="time" id="alarmTimeInput" value="08:00">
-      </div>
-
-      <div>
-        <label style="font-size:12px; color:#38bdf8; font-weight:bold; display:block; margin-bottom:4px;">ເລືອກສຽງແຈ້ງເຕືອນ (Alarm Sound)</label>
-        <select id="alarmSoundSelect">
-          <option value="bell">🔔 ສຽງກະດິ່ງ (Classic Bell)</option>
-          <option value="digital">⏰ ສຽງໂມງດິຈິຕອນ (Digital Beep)</option>
-          <option value="chime">🎶 ສຽງກຣິ່ງດົນຕີ (Soft Chime)</option>
-          <option value="radar">🚨 ສຽງສີເລນເຕືອນ (Radar Alert)</option>
-        </select>
-      </div>
-
-      <div style="display:flex; gap:8px; margin-top:5px;">
-        <button type="button" id="previewSoundBtn" style="background:rgba(56,189,248,0.2); color:#38bdf8; border:1px solid rgba(56,189,248,0.4); flex:1; padding:10px; border-radius:8px; font-weight:bold; cursor:pointer;">▶️ ທົດສອບສຽງ</button>
-        <button type="button" id="testAlarmNowBtn" style="background:rgba(234,179,8,0.2); color:#facc15; border:1px solid rgba(234,179,8,0.4); flex:1; padding:10px; border-radius:8px; font-weight:bold; cursor:pointer;">🔔 ຈຳລອງປຸກທັນທີ</button>
-      </div>
-
-      <button class="btn" id="addAlarmBtn" style="background:linear-gradient(135deg, #0284c7 0%, #0369a1 100%); padding:14px; font-size:15px; margin-top:10px;">💾 ບັນທຶກຕັ້ງເວລາແຈ້ງເຕືອນ</button>
-    </div>
-
-    <div class="work-time-main-area">
-      <div style="display:flex; justify-content:space-between; align-items:center; width:100%; max-width:600px; margin-bottom:15px;">
-        <h3 style="color:#38bdf8; margin:0;">📋 ລາຍການເວລາເຮັດວຽກ & ໂມງປຸກທີ່ຕັ້ງໄວ້</h3>
-        <div id="currentTimeDisplay" style="font-family: monospace; font-size: 16px; background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.3); padding: 6px 12px; border-radius: 8px; color: #38bdf8;">00:00:00</div>
-      </div>
-
-      <div id="alarmListContainer" style="width:100%; display:flex; flex-direction:column; align-items:center;"></div>
-    </div>
-  </div>
-</div>
-
-<!-- ================= MODAL: 🟢 ຜູ້ໃຊ້ອอนไลน์ & ລະບົບແຊທສົດໃນເວັບ (Live Chat & Active Visitors) ================= -->
-<div id="modalOnlineUsers" class="modal-overlay">
-  <div class="modal-content" style="border-color: #10b981; box-shadow: 0 0 40px rgba(16,185,129,0.3); max-width: 800px;">
-    <button class="modal-close" id="closeOnlineUsers">&times;</button>
-    <h3 style="color:#10b981; border-bottom:1px solid rgba(16,185,129,0.2); padding-bottom:8px; margin-top:0;">
-      🟢 ຜູ້ໃຊ້ງານເວັບທີ່ກຳລັງອອນໄລນ໌ & ລະບົບແຊທສົດໃນເວັບ (Live Chat)
-    </h3>
-    <p style="font-size:12px; color:#aaa; margin-bottom:15px;">
-      ກວດຈັບຜູ້ໃຊ້ງານແບບຮຽວທາມ ແລະສາມາດຄລິກຊື່ຜູ້ໃຊ້ອອນໄລນ໌ເພື່ອສົ່ງຂໍ້ຄວາມສົນທະນາກັນໃນລະບົບແຊທໄດ້ທັນທີ
-    </p>
-
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:15px; text-align:center;">
-      <div style="background:rgba(16,185,129,0.1); padding:10px; border-radius:8px; border:1px solid rgba(16,185,129,0.2);">
-        <span style="font-size:11px; color:#10b981; display:block;">ຈຳນວນຜູ້ໃຊ້ອອນໄລນ໌ທັງໝົດ</span>
-        <strong id="activeTotalCount" style="font-size:20px; color:#fff;">1</strong>
-      </div>
-      <div style="background:rgba(56,189,248,0.1); padding:10px; border-radius:8px; border:1px solid rgba(56,189,248,0.2);">
-        <span style="font-size:11px; color:#38bdf8; display:block;">ຕົວຕົນຂອງທ່ານ (Session ID)</span>
-        <strong id="mySessionIdDisplay" style="font-size:14px; color:#38bdf8;">User_XXXX</strong>
-      </div>
-    </div>
-
-    <!-- Layout ແຍກ 2 ຝ່າຍ: รายຊື່ອອນໄລນ໌ (ຊ້າຍ) & ກ່ອງແຊທ (ຂວາ) -->
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; align-items:start;">
-      
-      <!-- ຝ່າຍຊ້າຍ: รายຊື່ຜູ້ໃຊ້ອອນໄລນ໌ -->
-      <div style="background: rgba(0,0,0,0.3); border:1px solid rgba(16,185,129,0.2); border-radius:12px; padding:12px; max-height: 320px; overflow-y: auto;">
-        <h4 style="margin:0 0 8px 0; color:#34d399; font-size:13px;">👥 ຄລິກທີ່ຊື່ເພື່ອເລີ່ມແຊທ</h4>
-        <div id="onlineUsersListContainer" style="display:flex; flex-direction:column; gap:8px;"></div>
-      </div>
-
-      <!-- ຝ່າຍຂວາ: ຫ້ອງແຊທສົດ -->
-      <div style="background: rgba(0,0,0,0.4); border:1px solid rgba(16,185,129,0.3); border-radius:12px; padding:12px; display:flex; flex-direction:column; height:320px;">
-        <div id="chatHeaderTitle" style="font-size:12px; color:#34d399; font-weight:bold; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:6px; margin-bottom:8px;">
-          💬 ເລືອກຜູ້ໃຊ້ຝ່າຍຊ້າຍເພື່ອສົ່ງຂໍ້ຄວາມ
-        </div>
-        
-        <div id="chatMessagesBox" style="flex:1; overflow-y:auto; background:rgba(0,0,0,0.3); border-radius:8px; padding:8px; display:flex; flex-direction:column; gap:6px; font-size:12px;">
-          <div style="color:#777; text-align:center; margin-top:50px;">ຍັງບໍ່ມີການສົນທະນາ ເລືອກຜູ້ໃຊ້ງານເພື່ອສົ່ງຂໍ້ຄວາມຫາກັນໄດ້ເລີຍ</div>
-        </div>
-
-        <div style="display:flex; gap:6px; margin-top:8px;">
-          <input type="text" id="chatInputMsg" placeholder="ພິມຂໍ້ຄວາມສົ່ງໃນເວັບ..." style="margin:0; font-size:12px; padding:8px;" disabled>
-          <button id="sendChatBtn" style="background:#10b981; color:#fff; padding:8px 14px; font-size:12px; border-radius:8px; cursor:pointer;" disabled>ສົ່ງ</button>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-<!-- Modal ຟັງຊັນ 1 -->
-<div id="modalFn1" class="modal-overlay">
-  <div class="modal-content">
-    <button class="modal-close" id="closeFn1">&times;</button>
-    <h3>📌 ຄັງລະຫັດເສື້ອ & AI ກ້ອງສະແກນກວດສອບລະຫັດ</h3>
-    <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; margin-top: 10px;">
-      <label style="font-size:13px; color:#ff8888; font-weight:bold;">📷 ຖ່າຍພາບຫຼືອັບໂຫລດຮູບສິນຄ້າ/ປ້າຍ ເພື່ອให้ AI ກວດສອບຕົວເລກລະຫັດ</label>
-      <input type="file" id="scanInput" accept="image/*" capture="environment" style="margin-top:8px;">
-      <div id="scanStatus" style="font-size:12px; color:#00ff88; margin-top:8px;">ສະຖານະ: ພ້ອມສະແກນພາບເພື່ອຕຣວດສອບລະຫັດ...</div>
-    </div>
-    <div style="max-height: 250px; overflow-y: auto; margin-top: 12px;">
-      <table class="db-table" id="codeOnlyTable">
-        <thead><tr><th>ລະຫັດເສື້ອ</th><th>ສະຖານະ</th><th>ຈັດການ</th></tr></thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<!-- Modal ຟັງຊັນ 2 -->
-<div id="modalFn2" class="modal-overlay">
-  <div class="modal-content">
-    <button class="modal-close" id="closeFn2">&times;</button>
-    <h3>🗂️ ຄັງຂໍ້ມູນລາຍລະອຽດທັງໝົດ</h3>
-    <div style="max-height: 350px; overflow-y: auto; margin-top: 12px;">
-      <table class="db-table" id="allDataTable">
-        <thead><tr><th>ລະຫັດ</th><th>ລາຄາ</th><th>ຈຳນວນ</th><th>ໄຊສ</th><th>ສະຖານະ</th><th>ຈັດການ</th></tr></thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<!-- Modal ຟັງຊັນຊິ້ງໜ้าร้าน -->
-<div id="modalSalesSync" class="modal-overlay">
-  <div class="modal-content" style="border-color: #ff9900; box-shadow: 0 0 40px rgba(255,153,0,0.3);">
-    <button class="modal-close" id="closeSalesSync">&times;</button>
-    <h3 style="color:#ffaa00; border-bottom:1px solid rgba(255,153,0,0.2); padding-bottom:8px; margin-top:0;">
-      🔄 ตຣວດສອບສະຖານະສິນຄ້າການຂາຍ (ຊິ້ງໜ้าร้าน Real-time)
-    </h3>
-    <p style="font-size:12px; color:#aaa; margin-bottom:15px;">
-      ໜ້ານີ້ໃຊ້ເຊັກສະຖານະການຂາຍຫຼ້າສຸດວ່າສິນຄ້າຊິ້ນໃດ ຂາຍອອກແລ້ວ ຫຼື ຍັງພ້ອມຂາຍ ໂດຍອັບເດດຂໍ້ມູນຕົງກັບໜ้าร้าน
-    </p>
-
-    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; margin-bottom:15px; text-align:center;">
-      <div style="background:rgba(255,255,255,0.05); padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.1);">
-        <span style="font-size:11px; color:#aaa; display:block;">ທັງໝົດ</span>
-        <strong id="syncTotalCount" style="font-size:18px; color:#fff;">0</strong>
-      </div>
-      <div style="background:rgba(0,255,136,0.1); padding:10px; border-radius:8px; border:1px solid rgba(0,255,136,0.2);">
-        <span style="font-size:11px; color:#00ff88; display:block;">🟢 ພ້ອມຂາຍ</span>
-        <strong id="syncActiveCount" style="font-size:18px; color:#00ff88;">0</strong>
-      </div>
-      <div style="background:rgba(255,42,42,0.1); padding:10px; border-radius:8px; border:1px solid rgba(255,42,42,0.2);">
-        <span style="font-size:11px; color:#ff4444; display:block;">🔴 ຂາຍແລ້ວ</span>
-        <strong id="syncSoldCount" style="font-size:18px; color:#ff4444;">0</strong>
-      </div>
-    </div>
-
-    <div style="max-height: 300px; overflow-y: auto;">
-      <table class="db-table" id="salesSyncTable">
-        <thead>
-          <tr>
-            <th>ລະຫັດສິນຄ້າ</th>
-            <th>ລາຄາ</th>
-            <th>ຄົງເຫຼືອ</th>
-            <th>ສະຖານະໜ้าร้าน</th>
-            <th>ສະຫຼັບສະຖານະດ່ວນ</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<!-- Modal ຟັງຊັນຕັດຕໍ່ວິດີໂອ -->
-<div id="modalVideoEditor" class="modal-overlay">
-  <div class="modal-content">
-    <button class="modal-close" id="closeVideoEditor">&times;</button>
-    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(0,255,136,0.3); padding-bottom:8px;">
-      <h3 style="margin:0; color:#00ff88; font-size:18px;">🎬 CapCut Pro Studio - ລະບົບຕັດຕໍ່ວິດີໂອໂປຣໂມທขั้นເທບ</h3>
-      <div style="font-size:11px; background:rgba(0,255,136,0.1); color:#00ff88; padding:3px 8px; border-radius:6px; border:1px solid #00ff88;">Multi-Track Editor</div>
-    </div>
-
-    <div class="capcut-container">
-      <div class="capcut-sidebar">
-        <div class="panel" style="background:rgba(0,0,0,0.3); padding:10px;">
-          <h4 style="margin:0 0 8px 0; color:#00ff88; font-size:12px;">📁 ເພີ່ມໄຟລ໌ສື່ (Media)</h4>
-          <label style="font-size:11px; display:block; margin-top:6px;">ອັບໂຫລດຄລິບວິດີໂອດິບ</label>
-          <input type="file" id="vidFile" accept="video/*" style="font-size:11px; padding:6px;">
-          
-          <label style="font-size:11px; display:block; margin-top:8px;">ອັບໂຫລດເພງປະກອບ (MP3)</label>
-          <input type="file" id="audioFile" accept="audio/*" style="font-size:11px; padding:6px;">
-        </div>
-
-        <div class="panel" style="background:rgba(0,0,0,0.3); padding:10px;">
-          <h4 style="margin:0 0 8px 0; color:#00ff88; font-size:12px;">✍️ ຂໍ້ຄວາມພຣີມຽມ (Text Overlay)</h4>
-          <input type="text" id="vidOverlayText" value="🔥 ໂປຣໂມຊັ່ນພິເສດ 299,000 ₭" style="font-size:12px; padding:6px;">
-          
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:6px;">
-            <div>
-              <label style="font-size:10px">ສີຕົວໜັງສື</label>
-              <input type="color" id="vidTextColor" value="#ff3131" style="height:28px; padding:2px;">
+    <!-- ส่วนหลังบ้านและหน้าควบคุม -->
+    <div class="main-wrapper" id="dashboardUI">
+        <div class="panel">
+            <h1>⚙️ หลังบ้านควบคุมระบบโดเนท</h1>
+            
+            <div class="info-box">
+                <b>📌 ลิงก์สำหรับเอาไปใส่ใน OBS Studio:</b><br>
+                ก๊อปปี้ลิงก์นี้ไปใส่ใน <b>Browser Source</b> (ขนาด 1920x1080) จะแสดงผลแบบโปร่งใสทันที
+                <div class="link-box" id="obsLinkDisplay">กำลังสร้างลิงก์...</div>
             </div>
-            <div>
-              <label style="font-size:10px">ຂະໜາດຟອນ</label>
-              <input type="range" id="vidTextSize" min="14" max="40" value="22" style="margin-top:8px;">
+
+            <h2 class="section-title">🎨 ปรับแต่งหน้าตาและการแจ้งเตือน</h2>
+            <div class="row">
+                <div class="form-group">
+                    <label>สีพื้นหลังกล่องแจ้งเตือน</label>
+                    <input type="color" id="cfgBgColor" class="form-control" value="#0f172a" style="height: 35px; cursor: pointer;">
+                </div>
+                <div class="form-group">
+                    <label>หัวข้อแจ้งเตือน</label>
+                    <input type="text" id="cfgTitle" class="form-control" value="🎉 มีผู้สนับสนุนใหม่!">
+                </div>
             </div>
-          </div>
+            <button class="btn" onclick="saveConfig()">บันทึกการตั้งค่า</button>
+
+            <h2 class="section-title">⚡ จำลองยอดโดเนท (ทดสอบส่งเข้า OBS)</h2>
+            <form onsubmit="triggerTestDonate(event)">
+                <div class="form-group">
+                    <label>ชื่อผู้สนับสนุน</label>
+                    <input type="text" id="testName" class="form-control" value="ທ່ານ ສົມຊາຍ" required>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label>จำนวนเงิน (LAK - กีบ)</label>
+                        <input type="number" id="testAmount" class="form-control" value="50000" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>ข้อความให้กำลังใจ (เสียง Siri จะอ่านข้อความนี้)</label>
+                    <input type="text" id="testMsg" class="form-control" value="สู้ๆ ครับแอดมิน ขอให้ไลฟ์สนุกๆ ครับ!">
+                </div>
+                <button type="submit" class="btn" style="background: linear-gradient(135deg, #059669, #10b981);">🚀 ส่งข้อมูลขึ้นจอ OBS ทันที</button>
+            </form>
         </div>
 
-        <div class="panel" style="background:rgba(0,0,0,0.3); padding:10px;">
-          <h4 style="margin:0 0 8px 0; color:#00ff88; font-size:12px;">⚡ ເອັບເຟັກດ່ວນ & ຟິວເຕີ</h4>
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
-            <button class="btn" id="filterCyber" style="font-size:11px; padding:6px; background:#2a2aff;">Cyberpunk</button>
-            <button class="btn" id="filterBw" style="font-size:11px; padding:6px; background:#444;">Black & White</button>
-          </div>
+        <!-- หน้าจอจำลองพรีวิว -->
+        <div class="panel" style="display: flex; flex-direction: column; justify-content: center; align-items: center; background: #090d16;">
+            <p style="color: #64748b; font-size: 0.8rem; margin-bottom: 10px;">สถานะระบบ: พร้อมใช้งานเรียลไทม์</p>
+            <div style="width: 100%; height: 250px; border: 2px dashed #334155; border-radius: 12px; display: flex; align-items: flex-end; justify-content: flex-start; padding: 15px; position: relative; overflow: hidden;">
+                <div class="alert-card show" style="transform: translateY(0); opacity: 1; width: 100%;">
+                    <div class="alert-title" id="previewTitle">🎉 มีผู้สนับสนุนใหม่!</div>
+                    <div class="alert-desc"><span class="alert-name">ທ່ານ ສົມຊາຍ</span> ได้โอนเงินสนับสนุน</div>
+                    <div class="alert-amount">50,000 LAK</div>
+                    <div class="alert-msg">"สู้ๆ ครับแอดมิน ขอให้ไลฟ์สนุกๆ ครับ!"</div>
+                </div>
+            </div>
         </div>
-
-        <button class="btn" id="exportVideoBtn" style="background:linear-gradient(135deg, #00ff88, #008844); color:#000; font-size:13px; padding:10px; margin-top:auto;">💾 ເຣນເດີ & ບັນທຶກວິດີໂອ (Export)</button>
-      </div>
-
-      <div class="capcut-main-workspace">
-        <div class="capcut-preview-screen">
-          <video id="capcutVideoPlayer" style="max-width:100%; max-height:100%; border-radius:8px;" controls></video>
-          <audio id="capcutAudioPlayer"></audio>
-          <div id="liveTextPreview" style="position:absolute; bottom:25px; background:rgba(0,0,0,0.75); padding:6px 14px; border-radius:6px; font-family:'Prompt'; font-weight:bold; color:#ff3131; border:1px solid rgba(255,42,42,0.4); text-shadow:0 0 10px rgba(0,0,0,0.8);">🔥 ໂປຣໂມຊັ່ນພິເສດ 299,000 ₭</div>
-        </div>
-
-        <div class="capcut-timeline">
-          <div style="display:flex; justify-content:space-between; align-items:center; font-size:11px; color:#aaa;">
-            <span>⏱️ Timeline Track (Multi-layer)</span>
-            <span id="videoDurationTimer">00:00 / 00:00</span>
-          </div>
-          <div class="timeline-tracks">
-            <div class="timeline-clip" id="videoTrackClip">📹 ວິດີໂອຫຼັກ (Video Track)</div>
-            <div class="timeline-clip" style="background:linear-gradient(135deg, #00ff88, #005522); color:#000;" id="audioTrackClip">🎵 ແທຣັກສຽງ/ເພງ (Audio Track)</div>
-            <div class="timeline-clip" style="background:linear-gradient(135deg, #2a2aff, #000088);" id="textTrackClip">💬 ຂໍ້ຄວາມ/ຊັບໄຕເຕິ້ນ (Text Layer)</div>
-          </div>
-        </div>
-      </div>
     </div>
-  </div>
-</div>
 
-<script>
-// ================= LOGIN SYSTEM =================
-const SECRET_PASS = "55884249";
-const loginScreen = document.getElementById("loginScreen");
-const mainApp = document.getElementById("mainApp");
-const passInput = document.getElementById("passInput");
-const loginBtn = document.getElementById("loginBtn");
-const loginErr = document.getElementById("loginErr");
-const logoutBtn = document.getElementById("logoutBtn");
+    <!-- ส่วนหน้าจอแจ้งเตือนสำหรับ OBS (จะแสดงผลเฉพาะเมื่อมี #obs ต่อท้ายลิงก์) -->
+    <div id="obsAlertScreen">
+        <div class="alert-card" id="obsAlertCard">
+            <div class="alert-title" id="obsTitle">🎉 มีผู้สนับสนุนใหม่!</div>
+            <div class="alert-desc"><span class="alert-name" id="obsName">-</span> ได้โอนเงินสนับสนุน</div>
+            <div class="alert-amount" id="obsAmount">0 LAK</div>
+            <div class="alert-msg" id="obsMsg">-</div>
+        </div>
+    </div>
 
-function checkLogin() {
-  if (passInput && passInput.value === SECRET_PASS) {
-    sessionStorage.setItem("admin_auth", "true");
-    if(loginScreen) loginScreen.style.display = "none";
-    if(mainApp) mainApp.style.display = "block";
-    if(loginErr) loginErr.style.display = "none";
-  } else {
-    if(loginErr) loginErr.style.display = "block";
-    if(passInput) passInput.value = "";
-  }
-}
+    <audio id="alertSound" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
 
-if(loginBtn) loginBtn.onclick = checkLogin;
-if(passInput) {
-  passInput.onkeydown = (e) => { 
-    if (e.key === "Enter") { e.preventDefault(); checkLogin(); }
-  };
-}
+    <script>
+        // สร้างลิงก์อัตโนมัติสำหรับ OBS
+        const currentUrl = window.location.href.split('#')[0];
+        document.getElementById('obsLinkDisplay').innerText = currentUrl + '#obs';
 
-if(logoutBtn) {
-  logoutBtn.onclick = () => { sessionStorage.removeItem("admin_auth"); location.reload(); };
-}
-
-if (sessionStorage.getItem("admin_auth") === "true") {
-  if(loginScreen) loginScreen.style.display = "none";
-  if(mainApp) mainApp.style.display = "block";
-}
-
-const modalFn1 = document.getElementById("modalFn1");
-const modalFn2 = document.getElementById("modalFn2");
-const modalSalesSync = document.getElementById("modalSalesSync");
-const modalVideoEditor = document.getElementById("modalVideoEditor");
-const workTimeStudioView = document.getElementById("workTimeStudioView");
-const modalOnlineUsers = document.getElementById("modalOnlineUsers");
-
-document.getElementById("openFn1Btn").onclick = () => { modalFn1.style.display = "flex"; };
-document.getElementById("closeFn1").onclick = () => { modalFn1.style.display = "none"; };
-document.getElementById("openFn2Btn").onclick = () => { modalFn2.style.display = "flex"; };
-document.getElementById("closeFn2").onclick = () => { modalFn2.style.display = "none"; };
-
-// ເປີດ-ປິດ ໜ້າຕ່າງຜູ້ໃຊ້ອອນໄລນ໌ & ແຊທ
-document.getElementById("openOnlineUsersBtn").onclick = () => { 
-  renderOnlineUsersList();
-  modalOnlineUsers.style.display = "flex"; 
-};
-document.getElementById("closeOnlineUsers").onclick = () => { modalOnlineUsers.style.display = "none"; };
-
-document.getElementById("openSalesSyncBtn").onclick = () => { 
-  renderSalesSyncTable();
-  modalSalesSync.style.display = "flex"; 
-};
-document.getElementById("closeSalesSync").onclick = () => { modalSalesSync.style.display = "none"; };
-
-document.getElementById("openVideoEditorBtn").onclick = () => { modalVideoEditor.style.display = "flex"; };
-document.getElementById("closeVideoEditor").onclick = () => { modalVideoEditor.style.display = "none"; };
-
-document.getElementById("openWorkTimeStudioBtn").onclick = () => { workTimeStudioView.style.display = "flex"; };
-document.getElementById("closeWorkTimeStudio").onclick = () => { workTimeStudioView.style.display = "none"; };
-
-window.onclick = (e) => {
-  if(e.target === modalFn1) modalFn1.style.display = "none";
-  if(e.target === modalFn2) modalFn2.style.display = "none";
-  if(e.target === modalSalesSync) modalSalesSync.style.display = "none";
-  if(e.target === modalVideoEditor) modalVideoEditor.style.display = "none";
-  if(e.target === modalOnlineUsers) modalOnlineUsers.style.display = "none";
-};
-
-// ================= ONLINE USERS & LIVE CHAT SYSTEM =================
-const onlineChannel = new BroadcastChannel("active_visitors_channel");
-
-let mySessionId = sessionStorage.getItem("my_session_id");
-if (!mySessionId) {
-  mySessionId = "User_" + Math.random().toString(36).substring(2, 6).toUpperCase();
-  sessionStorage.setItem("my_session_id", mySessionId);
-}
-
-const mySessionDisplayEl = document.getElementById("mySessionIdDisplay");
-if(mySessionDisplayEl) mySessionDisplayEl.textContent = mySessionId;
-
-const isMobileDevice = /Mobi|Android|iPhone/i.test(navigator.userAgent);
-const myDeviceName = isMobileDevice ? "📱 ມືຖື" : "💻 ຄອມພິວເຕີ";
-const loginTimeStr = new Date().toLocaleTimeString();
-
-let currentChatTarget = null; // ຜູ້ໃຊ້ທີ່ກຳລັງແຊທດ້ວຍ
-
-function pingPresence() {
-  const presenceData = {
-    id: mySessionId,
-    device: myDeviceName,
-    time: loginTimeStr,
-    lastSeen: Date.now()
-  };
-
-  try {
-    onlineChannel.postMessage({ type: "USER_PING", ...presenceData });
-  } catch(e){}
-
-  try {
-    let allStoredUsers = JSON.parse(localStorage.getItem("active_users_db") || "{}");
-    allStoredUsers[mySessionId] = presenceData;
-    localStorage.setItem("active_users_db", JSON.stringify(allStoredUsers));
-  } catch(e){}
-
-  cleanAndRenderOnlineUsers();
-}
-
-onlineChannel.onmessage = (event) => {
-  if (event.data) {
-    if (event.data.type === "USER_PING") {
-      const user = event.data;
-      try {
-        let allStoredUsers = JSON.parse(localStorage.getItem("active_users_db") || "{}");
-        allStoredUsers[user.id] = user;
-        localStorage.setItem("active_users_db", JSON.stringify(allStoredUsers));
-      } catch(e){}
-      cleanAndRenderOnlineUsers();
-    } else if (event.data.type === "CHAT_MESSAGE") {
-      const msg = event.data;
-      if (msg.to === mySessionId) {
-        saveAndAppendChatMessage(msg);
-        playAlarmSound('chime');
-        if (modalOnlineUsers.style.display !== "flex") {
-          alert(`💬 ມີຂໍ້ຄວາມໃໝ່ຈາກ ${msg.from}: "${msg.text}"`);
+        // ตรวจสอบโหมดเปิดหน้าเว็บ (ถ้ามี #obs แสดงว่าเป็นหน้าจอ OBS)
+        if (window.location.hash === '#obs') {
+            document.getElementById('dashboardUI').style.display = 'none';
+            document.getElementById('obsAlertScreen').style.display = 'flex';
+            
+            // เปิดระบบเช็คข้อมูลอัตโนมัติทุกๆ 300 มิลลิวินาที
+            setInterval(checkNewData, 300);
         }
-      }
-    }
-  }
-};
 
-window.addEventListener("storage", (event) => {
-  if (event.key === "active_users_db") {
-    cleanAndRenderOnlineUsers();
-  } else if (event.key === "chat_messages_db") {
-    if (currentChatTarget) {
-      renderChatMessages(currentChatTarget);
-    }
-  }
-});
-
-function cleanAndRenderOnlineUsers() {
-  let allStoredUsers = {};
-  try {
-    allStoredUsers = JSON.parse(localStorage.getItem("active_users_db") || "{}");
-  } catch(e) {
-    allStoredUsers = {};
-  }
-
-  const now = Date.now();
-  let activeCount = 0;
-  const container = document.getElementById("onlineUsersListContainer");
-  if (container) container.innerHTML = "";
-
-  Object.keys(allStoredUsers).forEach((key) => {
-    const user = allStoredUsers[key];
-    if (now - user.lastSeen < 10000) {
-      activeCount++;
-      if (container) {
-        const isMe = user.id === mySessionId;
-        const div = document.createElement("div");
-        div.style.cssText = `background: ${currentChatTarget === user.id ? 'rgba(16,185,129,0.2)' : 'rgba(255,255,255,0.03)'}; border:1px solid ${currentChatTarget === user.id ? '#10b981' : 'rgba(255,255,255,0.1)'}; padding:8px 10px; border-radius:8px; cursor:pointer; display:flex; justify-content:space-between; align-items:center;`;
-        div.innerHTML = `
-          <div>
-            <b style="color:${isMe ? '#34d399' : '#fff'}">${user.id}</b> ${isMe ? '(ທ່ານ)' : ''}
-            <div style="font-size:10px; color:#aaa;">${user.device} • ເຂົ້າເມື່ອ ${user.time}</div>
-          </div>
-          <span style="font-size:11px; color:#10b981; font-weight:bold;">${isMe ? '🟢 ອອນໄລນ໌' : '💬 ແຊທ'}</span>
-        `;
-        if (!isMe) {
-          div.onclick = () => selectChatTarget(user.id);
+        function saveConfig() {
+            const config = {
+                title: document.getElementById('cfgTitle').value,
+                bgColor: document.getElementById('cfgBgColor').value
+            };
+            localStorage.setItem('stream_config', JSON.stringify(config));
+            alert("บันทึกการตั้งค่าสำเร็จ!");
         }
-        container.appendChild(div);
-      }
-    } else {
-      delete allStoredUsers[key];
-    }
-  });
 
-  try {
-    localStorage.setItem("active_users_db", JSON.stringify(allStoredUsers));
-  } catch(e){}
+        // ฟังก์ชันกดส่งข้อมูล
+        function triggerTestDonate(e) {
+            e.preventDefault();
+            const donation = {
+                name: document.getElementById('testName').value,
+                amount: document.getElementById('testAmount').value,
+                message: document.getElementById('testMsg').value,
+                timestamp: Date.now()
+            };
 
-  const headerCountEl = document.getElementById("headerOnlineCount");
-  if (headerCountEl) headerCountEl.textContent = Math.max(1, activeCount);
-
-  const activeTotalEl = document.getElementById("activeTotalCount");
-  if (activeTotalEl) activeTotalEl.textContent = Math.max(1, activeCount);
-}
-
-function renderOnlineUsersList() {
-  cleanAndRenderOnlineUsers();
-}
-
-function selectChatTarget(targetId) {
-  currentChatTarget = targetId;
-  document.getElementById("chatHeaderTitle").textContent = `💬 ກຳລັງສົນທະນາກັບ: ${targetId}`;
-  document.getElementById("chatInputMsg").disabled = false;
-  document.getElementById("sendChatBtn").disabled = false;
-  renderChatMessages(targetId);
-  cleanAndRenderOnlineUsers();
-}
-
-function saveAndAppendChatMessage(msg) {
-  try {
-    let chatHistory = JSON.parse(localStorage.getItem("chat_messages_db") || "[]");
-    chatHistory.push(msg);
-    localStorage.setItem("chat_messages_db", JSON.stringify(chatHistory));
-  } catch(e){}
-
-  if (currentChatTarget === msg.from || currentChatTarget === msg.to) {
-    renderChatMessages(currentChatTarget);
-  }
-}
-
-function renderChatMessages(targetId) {
-  const chatBox = document.getElementById("chatMessagesBox");
-  if (!chatBox) return;
-  chatBox.innerHTML = "";
-
-  let chatHistory = [];
-  try {
-    chatHistory = JSON.parse(localStorage.getItem("chat_messages_db") || "[]");
-  } catch(e){ chatHistory = []; }
-
-  const relevantMsgs = chatHistory.filter(m => 
-    (m.from === mySessionId && m.to === targetId) || 
-    (m.from === targetId && m.to === mySessionId)
-  );
-
-  if (relevantMsgs.length === 0) {
-    chatBox.innerHTML = `<div style="color:#777; text-align:center; margin-top:30px;">ຍັງບໍ່ມີຂໍ້ຄວາມກັບ ${targetId} ເລີ່ມພິມທັກທາຍໄດ້ເລີຍ!</div>`;
-    return;
-  }
-
-  relevantMsgs.forEach(m => {
-    const isMe = m.from === mySessionId;
-    const bubble = document.createElement("div");
-    bubble.style.cssText = `max-width:80%; padding:6px 10px; border-radius:8px; align-self: ${isMe ? 'flex-end' : 'flex-start'}; background: ${isMe ? '#10b981' : 'rgba(255,255,255,0.1)'}; color:#fff; font-size:12px; word-break:break-word;`;
-    bubble.innerHTML = `<div>${m.text}</div><div style="font-size:9px; color:${isMe ? '#d1fae5' : '#aaa'}; text-align:right; margin-top:2px;">${m.time}</div>`;
-    chatBox.appendChild(bubble);
-  });
-
-  chatBox.scrollTop = chatBox.scrollHeight;
-}
-
-const sendChatBtn = document.getElementById("sendChatBtn");
-const chatInputMsg = document.getElementById("chatInputMsg");
-
-function sendChatMessage() {
-  const text = chatInputMsg.value.trim();
-  if (!text || !currentChatTarget) return;
-
-  const msg = {
-    from: mySessionId,
-    to: currentChatTarget,
-    text: text,
-    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-  };
-
-  try {
-    onlineChannel.postMessage({ type: "CHAT_MESSAGE", ...msg });
-  } catch(e){}
-
-  saveAndAppendChatMessage(msg);
-  chatInputMsg.value = "";
-}
-
-if(sendChatBtn) sendChatBtn.onclick = sendChatMessage;
-if(chatInputMsg) {
-  chatInputMsg.onkeydown = (e) => {
-    if (e.key === "Enter") { e.preventDefault(); sendChatMessage(); }
-  };
-}
-
-pingPresence();
-setInterval(pingPresence, 3000);
-
-window.addEventListener("beforeunload", () => {
-  try {
-    let allStoredUsers = JSON.parse(localStorage.getItem("active_users_db") || "{}");
-    delete allStoredUsers[mySessionId];
-    localStorage.setItem("active_users_db", JSON.stringify(allStoredUsers));
-  } catch(e){}
-});
-
-// ================= BROADCAST CHANNEL CROSS-APP SYNC =================
-const syncChannel = new BroadcastChannel("app_store_sync");
-
-function broadcastProductData() {
-  const code = document.getElementById("codeInput")?.value.trim() || "AP001";
-  const price = Number((document.getElementById("priceInput")?.value || "0").replace(/,/g, ""));
-  const stock = Number(document.getElementById("stockInput")?.value || "0");
-  const sizeSelect = document.getElementById("sizeSelect")?.value || "M";
-  const sizeCustom = document.getElementById("sizeCustom")?.value || "";
-  const size = sizeSelect === 'custom' ? sizeCustom : sizeSelect;
-  const status = document.getElementById("statusSelect")?.value || "active";
-  const shirtImg = document.getElementById("shirt")?.src || "";
-
-  syncChannel.postMessage({
-    type: "SYNC_PRODUCTS",
-    codeOnlyDB: codeOnlyDB,
-    allDataDB: allDataDB,
-    activePoster: { code, price, stock, size, status, img: shirtImg }
-  });
-}
-
-syncChannel.onmessage = (event) => {
-  const { type, purchasedCodes } = event.data;
-  if (type === "NEW_ORDER" && Array.isArray(purchasedCodes)) {
-    purchasedCodes.forEach(code => {
-      const item1 = codeOnlyDB.find(i => i.code === code);
-      if (item1) item1.status = 'sold';
-      
-      const item2 = allDataDB.find(i => i.code === code);
-      if (item2) item2.status = 'sold';
-    });
-    renderDatabases();
-    renderSalesSyncTable();
-    alert("🔔 ມີລາຍການສັ່ງຊື້ໃໝ່ຈາກໜ้าร้าน! ລະບົບອັບເດດສະຖານະເປັນຂາຍອອກຮຽບຮ້ອຍແລ້ວ");
-  }
-};
-
-// ================= DATABASE STORAGE =================
-let codeOnlyDB = JSON.parse(localStorage.getItem("codeOnlyDB") || "[]");
-let allDataDB = JSON.parse(localStorage.getItem("allDataDB") || "[]");
-
-function generateUniqueCode() {
-  let newCode = "";
-  let isDuplicate = true;
-  while(isDuplicate) {
-    const randomNum = Math.floor(1000 + Math.random() * 9000);
-    newCode = "AP" + randomNum;
-    isDuplicate = allDataDB.some(item => item.code === newCode);
-  }
-  return newCode;
-}
-
-document.getElementById("randomCodeBtn").onclick = () => {
-  const newCode = generateUniqueCode();
-  document.getElementById("codeInput").value = newCode;
-  document.getElementById("codeLabel").textContent = newCode;
-};
-
-function renderDatabases() {
-  const codeTableBody = document.querySelector("#codeOnlyTable tbody");
-  if(codeTableBody) {
-    codeTableBody.innerHTML = "";
-    if(codeOnlyDB.length === 0) {
-      codeTableBody.innerHTML = `<tr><td colspan="3" style="text-align:center;color:#777">ຍັງບໍ່ມີຂໍ້ມູນລະຫັດເສື້ອ</td></tr>`;
-    } else {
-      codeOnlyDB.forEach((item, index) => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td><b>${item.code}</b></td>
-          <td>${item.status === 'sold' ? '<span class="badge-sold">ຂາຍອອກແລ້ວ</span>' : '<span class="badge-stock">ປົກກະຕິ</span>'}</td>
-          <td><button onclick="deleteCodeItem(${index})" style="background:rgba(255,42,42,0.2);color:#ff5555;border:1px solid rgba(255,42,42,0.4);padding:4px 8px;font-size:11px;border-radius:4px;cursor:pointer;">🗑️ ລຶບ</button></td>
-        `;
-        codeTableBody.appendChild(tr);
-      });
-    }
-  }
-
-  const allTableBody = document.querySelector("#allDataTable tbody");
-  if(allTableBody) {
-    allTableBody.innerHTML = "";
-    if(allDataDB.length === 0) {
-      allTableBody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:#777">ຍັງບໍ່ມີຂໍ້ມູນໃນລະບົບ</td></tr>`;
-    } else {
-      allDataDB.forEach((item, index) => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td><b>${item.code}</b></td>
-          <td>${item.price}</td>
-          <td>${item.stock}</td>
-          <td>${item.size}</td>
-          <td>${item.status === 'sold' ? '<span class="badge-sold">ຂາຍອອກແລ້ວ</span>' : '<span class="badge-stock">ພ້ອມຂາຍ</span>'}</td>
-          <td>
-            <button onclick="editAllItem(${index})" style="background:rgba(42,42,255,0.2);color:#8888ff;border:1px solid rgba(42,42,255,0.4);padding:4px 8px;font-size:11px;border-radius:4px;cursor:pointer;margin-right:4px;">✏️ ແກ້ໄຂ</button>
-            <button onclick="deleteAllItem(${index})" style="background:rgba(255,42,42,0.2);color:#ff5555;border:1px solid rgba(255,42,42,0.4);padding:4px 8px;font-size:11px;border-radius:4px;cursor:pointer;">🗑️ ລຶບ</button>
-          </td>
-        `;
-        allTableBody.appendChild(tr);
-      });
-    }
-  }
-
-  localStorage.setItem("codeOnlyDB", JSON.stringify(codeOnlyDB));
-  localStorage.setItem("allDataDB", JSON.stringify(allDataDB));
-  
-  renderSalesSyncTable();
-  broadcastProductData();
-}
-
-function renderSalesSyncTable() {
-  const syncTableBody = document.querySelector("#salesSyncTable tbody");
-  if (!syncTableBody) return;
-
-  syncTableBody.innerHTML = "";
-
-  let total = allDataDB.length;
-  let activeCount = 0;
-  let soldCount = 0;
-
-  if (total === 0) {
-    syncTableBody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#777">ຍັງບໍ່ມີຂໍ້ມູນສິນຄ້າໃນລະບົບໜ้าร้าน</td></tr>`;
-  } else {
-    allDataDB.forEach((item, index) => {
-      const isSold = item.status === 'sold';
-      if (isSold) soldCount++; else activeCount++;
-
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td><b>${item.code}</b></td>
-        <td>${item.price} ₭</td>
-        <td>${item.stock} ໂຕ</td>
-        <td>${isSold ? '<span class="badge-sold">🔴 ຂາຍອອກແລ້ວ</span>' : '<span class="badge-stock">🟢 ພ້ອມຂາຍ</span>'}</td>
-        <td>
-          <button onclick="toggleProductStatus(${index})" style="background:${isSold ? 'rgba(0,255,136,0.2)' : 'rgba(255,42,42,0.2)'}; color:${isSold ? '#00ff88' : '#ff5555'}; border:1px solid ${isSold ? '#00ff88' : '#ff5555'}; padding:4px 8px; font-size:11px; border-radius:4px; cursor:pointer;">
-            ${isSold ? '🔄 ປ່ຽນເປັນພ້ອມຂາຍ' : '🏷️ ປ່ຽນເປັນຂາຍແລ້ວ'}
-          </button>
-        </td>
-      `;
-      syncTableBody.appendChild(tr);
-    });
-  }
-
-  const totalEl = document.getElementById("syncTotalCount");
-  const activeEl = document.getElementById("syncActiveCount");
-  const soldEl = document.getElementById("syncSoldCount");
-
-  if(totalEl) totalEl.textContent = total;
-  if(activeEl) activeEl.textContent = activeCount;
-  if(soldEl) soldEl.textContent = soldCount;
-}
-
-function toggleProductStatus(index) {
-  if (!allDataDB[index]) return;
-  const currentStatus = allDataDB[index].status || 'active';
-  const newStatus = currentStatus === 'sold' ? 'active' : 'sold';
-  
-  allDataDB[index].status = newStatus;
-  const codeItem = codeOnlyDB.find(i => i.code === allDataDB[index].code);
-  if (codeItem) codeItem.status = newStatus;
-
-  renderDatabases();
-}
-
-function deleteCodeItem(index) {
-  if(confirm("ຕ້ອງການລຶບລະຫັດນີ້ອອກຈາກຄັງລະຫັດເສື້ອ ຫຼືບໍ່?")) {
-    codeOnlyDB.splice(index, 1);
-    renderDatabases();
-  }
-}
-
-function deleteAllItem(index) {
-  if(confirm("ຕ້ອງການລຶບຂໍ້ມູນນີ້ອອກຈາກຄັງຂໍ້ມູນທັງໝົດ ຫຼືບໍ່?")) {
-    allDataDB.splice(index, 1);
-    renderDatabases();
-  }
-}
-
-function editAllItem(index) {
-  const item = allDataDB[index];
-  if (!item) return;
-
-  document.getElementById("codeInput").value = item.code;
-  document.getElementById("codeLabel").textContent = item.code;
-  document.getElementById("priceInput").value = item.price;
-  document.getElementById("priceLabel").textContent = Number(String(item.price).replace(/,/g, "")).toLocaleString() + " ₭";
-  document.getElementById("stockInput").value = item.stock;
-  document.getElementById("stockLabel").textContent = "📦 ມີ " + item.stock + " ໂຕ";
-  document.getElementById("statusSelect").value = item.status || "active";
-
-  const sizeSelect = document.getElementById("sizeSelect");
-  if (['S', 'M', 'L', 'XL'].includes(item.size)) {
-    sizeSelect.value = item.size;
-    document.getElementById("sizeCustom").style.display = "none";
-  } else {
-    sizeSelect.value = "custom";
-    document.getElementById("sizeCustom").style.display = "block";
-    document.getElementById("sizeCustom").value = item.size;
-  }
-  document.getElementById("sizeLabel").textContent = item.size;
-
-  if (item.img) {
-    document.getElementById("shirt").src = item.img;
-  }
-
-  modalFn2.style.display = "none";
-  alert(`📝 โหลดຂໍ້ມູນລະຫັດ ${item.code} ຂຶ້ນມາແກ້ໄຂເທິງໜ້າຈໍຮຽບຮ້ອຍແລ້ວ`);
-}
-
-function saveStoreData(showAlert = true) {
-  const code = document.getElementById("codeInput")?.value.trim() || "";
-  const price = document.getElementById("priceInput")?.value || "";
-  const stock = document.getElementById("stockInput")?.value || "";
-  const status = document.getElementById("statusSelect")?.value || "active";
-  const sizeSelect = document.getElementById("sizeSelect")?.value || "M";
-  const sizeCustom = document.getElementById("sizeCustom")?.value || "";
-  const size = sizeSelect === 'custom' ? sizeCustom : sizeSelect;
-  const shirtImg = document.getElementById("shirt")?.src || "";
-
-  if(!code) {
-    alert("ກະລຸນາລະບຸລະຫັດສິນຄ້າກ່ອນບັນທຶກ");
-    return false;
-  }
-
-  const existingIndex = allDataDB.findIndex(i => i.code === code);
-  
-  if (!codeOnlyDB.some(i => i.code === code)) {
-    codeOnlyDB.push({ code: code, status: status });
-  } else {
-    const codeObj = codeOnlyDB.find(i => i.code === code);
-    if(codeObj) codeObj.status = status;
-  }
-
-  const newData = { code, price, stock, size, status, img: shirtImg };
-
-  if(existingIndex >= 0) {
-    allDataDB[existingIndex] = { ...allDataDB[existingIndex], ...newData };
-  } else {
-    allDataDB.push(newData);
-  }
-  
-  renderDatabases();
-
-  if (showAlert) {
-    alert(`✅ ບັນທຶກສິນຄ້າ [ລະຫັດ: ${code}] ລົງໜ้าร้านສຳເລັດຮຽບຮ້ອຍແລ້ວ!`);
-  }
-  return true;
-}
-
-async function downloadPosterImage() {
-  const poster = document.getElementById("poster");
-  const code = document.getElementById("codeInput")?.value.trim() || "poster";
-  if(poster && typeof html2canvas !== 'undefined') {
-    try {
-      const canvas = await html2canvas(poster, { scale: 2, backgroundColor: null, useCORS: true });
-      const a = document.createElement("a");
-      a.download = `${code}.png`;
-      a.href = canvas.toDataURL("image/png");
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      return true;
-    } catch(err) {
-      console.error("Canvas error:", err);
-      throw err;
-    }
-  }
-  throw new Error("html2canvas not available");
-}
-
-const saveStoreBtn = document.getElementById("saveStoreBtn");
-if(saveStoreBtn) {
-  saveStoreBtn.onclick = () => {
-    saveStoreData(true);
-  };
-}
-
-const saveAndDownloadBtn = document.getElementById("saveAndDownloadBtn");
-if(saveAndDownloadBtn) {
-  saveAndDownloadBtn.onclick = async () => {
-    const isSaved = saveStoreData(false);
-    if(isSaved) {
-      try {
-        await downloadPosterImage();
-        const code = document.getElementById("codeInput")?.value.trim() || "";
-        alert(`🚀 ສຳເລັດ! ບັນທຶກສິນຄ້າ [ລະຫັດ: ${code}] ລົງໜ้าร้าน ແລະ ดาวน์โหลดຮູບພາບຮຽບຮ້ອຍແລ້ວ`);
-      } catch(err) {
-        alert("❌ ບັນທຶກໜ้าร้านສຳເລັດ ແຕ່ເກີດຂໍ້ຜິດພາດໃນການดาวน์โหลดຮູບພາບ");
-      }
-    }
-  };
-}
-
-// ================= AI SCAN SYSTEM =================
-const scanInput = document.getElementById("scanInput");
-if(scanInput) {
-  scanInput.onchange = async (e) => {
-    const file = e.target.files[0];
-    if(!file) return;
-    const statusEl = document.getElementById("scanStatus");
-    if(statusEl) statusEl.textContent = "🤖 AI ກຳລັງປະມວນຜົນອ່ານຕົວເລກຈາກຮູບພາບ...";
-
-    try {
-      if (typeof Tesseract !== 'undefined') {
-        const worker = await Tesseract.createWorker('eng');
-        const ret = await worker.recognize(file);
-        await worker.terminate();
-
-        let rawText = ret.data.text;
-        const matches = rawText.match(/[A-Za-z0-9]+/g) || [];
-        const detectedText = matches.join("").toUpperCase();
-
-        if(statusEl) statusEl.textContent = `🔍 AI ອ່ານຂໍ້ຄວາມໃນຮູບໄດ້: "${detectedText}" ກຳລັງທຽບຂໍ້ມູນ...`;
-
-        let found = false;
-        codeOnlyDB.forEach(item => {
-          if(detectedText.includes(item.code.toUpperCase())) { item.status = 'sold'; found = true; }
-        });
-        allDataDB.forEach(item => {
-          if(detectedText.includes(item.code.toUpperCase())) { item.status = 'sold'; found = true; }
-        });
-
-        if(found) {
-          renderDatabases();
-          if(statusEl) statusEl.textContent = "✅ ສຳເລັດ: ລະຫັດຕົງກັບຂໍ້ມູນໃນລະບົບ ປ່ຽນສະຖານະເປັນຂາຍອອກແລ້ວ!";
-          alert("🎉 ຕຣວດພົບລະຫັດສິນຄ້າໃນຮູບຕົງກັບຖານຂໍ້ມູນ ແລະປ່ຽນສະຖານະເປັນຂາຍອອກຮຽບຮ້ອຍແລ້ວ!");
-        } else {
-          if(statusEl) statusEl.textContent = `❌ ບໍ່ພົບລະຫັດທີ່ຕົງກັບໃນລະບົບ (ອ່ານໄດ້: ${detectedText})`;
-          alert(`❌ ບໍ່ພົບລະຫັດສິນຄ້າໃນລະບົບທີ່ຕົງກັບຮູບພາບນີ້ (ອ່ານໄດ້: ${detectedText})`);
+            // บันทึกข้อมูลลงใน Storage เพื่อให้หน้า OBS ดึงไปแสดงผลทันที
+            localStorage.setItem('stream_latest_donation', JSON.stringify(donation));
+            
+            // เล่นเสียงและเสียงพูดในหน้าหลังบ้านด้วยเพื่อให้รู้ว่าระบบทำงาน
+            playAlertAction(donation);
+            alert("ส่งข้อมูลไปที่หน้าจอ OBS สำเร็จ!");
         }
-      }
-    } catch(err) {
-      console.error(err);
-      if(statusEl) statusEl.textContent = "❌ ເກີດຂໍ້ຜິດພາດໃນການສະແກນດ້ວຍ AI";
-    }
-  };
-}
-renderDatabases();
 
-// ================= POSTER STUDIO SCRIPTS =================
-let zoomScale = 1, shirtX = 0, shirtY = 0, shirtRot = 0, shirtB = 0;
-let bgZoomScale = 1, bgX = 0, bgY = 0, bgRot = 0, bgB = 0;
-let originalShirtSrc = "";
+        let lastTimestamp = 0;
+        function checkNewData() {
+            const rawData = localStorage.getItem('stream_latest_donation');
+            if (!rawData) return;
+            const data = JSON.parse(rawData);
 
-const shirt = document.getElementById("shirt");
-const bgImg = document.getElementById("bgImg");
-const zoom = document.getElementById("zoom");
-const bgZoom = document.getElementById("bgZoom");
-const poster = document.getElementById("poster");
-
-function updateShirt() {
-  if(shirt) {
-    shirt.style.transform = `translate(calc(-50% + ${shirtX}px), calc(-50% + ${shirtY}px)) scale(${zoomScale}) rotate(${shirtRot}deg)`;
-    shirt.style.filter = `blur(${shirtB}px)`;
-  }
-  if(zoom) zoom.value = Math.round(zoomScale * 100);
-}
-function updateBg() {
-  if(bgImg) {
-    bgImg.style.transform = `translate(calc(-50% + ${bgX}px), calc(-50% + ${bgY}px)) scale(${bgZoomScale}) rotate(${bgRot}deg)`;
-    bgImg.style.filter = `blur(${bgB}px)`;
-  }
-}
-
-if(shirt) {
-  shirt.addEventListener("wheel", (e) => {
-    e.preventDefault();
-    let delta = e.deltaY;
-    if (delta < 0) {
-      zoomScale += 0.05;
-    } else {
-      zoomScale -= 0.05;
-    }
-    zoomScale = Math.max(0.3, Math.min(3.0, zoomScale));
-    updateShirt();
-  }, { passive: false });
-}
-
-const bgColorPicker = document.getElementById("bgColorPicker");
-const resetBgColorBtn = document.getElementById("resetBgColorBtn");
-
-if(bgColorPicker) {
-  bgColorPicker.oninput = (e) => {
-    if(poster) poster.style.backgroundColor = e.target.value;
-  };
-}
-if(resetBgColorBtn) {
-  resetBgColorBtn.onclick = () => {
-    if(poster) poster.style.backgroundColor = "#111111";
-    if(bgColorPicker) bgColorPicker.value = "#111111";
-  };
-}
-
-const bgUpload = document.getElementById("bgUpload");
-if(bgUpload) {
-  bgUpload.onchange = e => {
-    const f = e.target.files[0]; if (!f) return;
-    const r = new FileReader();
-    r.onload = x => { if(bgImg) { bgImg.src = x.target.result; bgImg.style.display = "block"; updateBg(); } };
-    r.readAsDataURL(f);
-  };
-}
-
-const removeBgBtn = document.getElementById("removeBgBtn");
-if(removeBgBtn) {
-  removeBgBtn.onclick = () => { 
-    if(bgImg) { bgImg.src = ""; bgImg.style.display = "none"; }
-    if(bgUpload) bgUpload.value = ""; 
-  };
-}
-
-if(bgZoom) bgZoom.oninput = () => { bgZoomScale = parseFloat(bgZoom.value) / 100; updateBg(); };
-const bgRotate = document.getElementById("bgRotate");
-if(bgRotate) bgRotate.oninput = (e) => { bgRot = e.target.value; updateBg(); };
-const bgBlur = document.getElementById("bgBlur");
-if(bgBlur) bgBlur.oninput = (e) => { bgB = e.target.value; updateBg(); };
-
-if(zoom) zoom.oninput = () => { zoomScale = parseFloat(zoom.value) / 100; updateShirt(); };
-const shirtRotate = document.getElementById("shirtRotate");
-if(shirtRotate) shirtRotate.oninput = (e) => { shirtRot = e.target.value; updateShirt(); };
-const shirtBlur = document.getElementById("shirtBlur");
-if(shirtBlur) shirtBlur.oninput = (e) => { shirtB = e.target.value; updateShirt(); };
-
-let draggingShirt = false, sx = 0, sy = 0;
-if(shirt) {
-  shirt.addEventListener("pointerdown", (e) => { draggingShirt = true; sx = e.clientX; sy = e.clientY; shirt.setPointerCapture(e.pointerId); });
-  shirt.addEventListener("pointermove", (e) => {
-    if (!draggingShirt) return;
-    shirtX += e.clientX - sx; shirtY += e.clientY - sy;
-    sx = e.clientX; sy = e.clientY; updateShirt();
-  });
-  shirt.addEventListener("pointerup", () => draggingShirt = false);
-}
-
-let draggingBg = false, bsx = 0, bsy = 0;
-if(bgImg) {
-  bgImg.addEventListener("pointerdown", (e) => { draggingBg = true; bsx = e.clientX; bsy = e.clientY; bgImg.setPointerCapture(e.pointerId); });
-  bgImg.addEventListener("pointermove", (e) => {
-    if (!draggingBg) return;
-    bgX += e.clientX - bsx; bgY += e.clientY - bsy;
-    bsx = e.clientX; bsy = e.clientY; updateBg();
-  });
-  bgImg.addEventListener("pointerup", () => draggingBg = false);
-}
-
-const logoUpload = document.getElementById("logoUpload");
-if(logoUpload) {
-  logoUpload.onchange = e => {
-    const f = e.target.files[0]; if (!f) return;
-    const r = new FileReader();
-    r.onload = x => {
-      const logoPreview = document.getElementById("logoPreview");
-      const logoPoster = document.getElementById("logoPoster");
-      const showLogo = document.getElementById("showLogo");
-      if(logoPreview) logoPreview.src = x.target.result;
-      if(logoPoster) logoPoster.style.display = (showLogo && showLogo.checked) ? "block" : "none";
-    };
-    r.readAsDataURL(f);
-  };
-}
-
-const showLogo = document.getElementById("showLogo");
-if(showLogo) {
-  showLogo.onchange = () => {
-    const logoPoster = document.getElementById("logoPoster");
-    const logoPreview = document.getElementById("logoPreview");
-    if(logoPoster) logoPoster.style.display = (showLogo.checked && logoPreview && logoPreview.src) ? "block" : "none";
-  };
-}
-
-const shirtUpload = document.getElementById("shirtUpload");
-if(shirtUpload) {
-  shirtUpload.onchange = e => {
-    const f = e.target.files[0]; if (!f) return;
-    const r = new FileReader();
-    r.onload = x => { 
-      if(shirt) { 
-        shirt.src = x.target.result; 
-        originalShirtSrc = x.target.result; 
-        updateShirt(); 
-        broadcastProductData();
-      } 
-    };
-    r.readAsDataURL(f);
-  };
-}
-
-const codeInput = document.getElementById("codeInput");
-if(codeInput) {
-  codeInput.oninput = (e) => {
-    const codeLabel = document.getElementById("codeLabel");
-    if(codeLabel) codeLabel.textContent = e.target.value || "AP001";
-    broadcastProductData();
-  };
-}
-
-const priceInput = document.getElementById("priceInput");
-if(priceInput) {
-  priceInput.oninput = (e) => {
-    const n = Number(e.target.value.replace(/,/g, ""));
-    const priceLabel = document.getElementById("priceLabel");
-    if(e.target.value && priceLabel) priceLabel.textContent = n.toLocaleString() + " ₭";
-    broadcastProductData();
-  };
-}
-
-const stockInput = document.getElementById("stockInput");
-if(stockInput) {
-  stockInput.oninput = (e) => {
-    const stockLabel = document.getElementById("stockLabel");
-    if(stockLabel) stockLabel.textContent = "📦 ມີ " + e.target.value + " ໂຕ";
-    broadcastProductData();
-  };
-}
-
-const statusSelect = document.getElementById("statusSelect");
-if(statusSelect) {
-  statusSelect.onchange = () => {
-    broadcastProductData();
-  };
-}
-
-const sizeSelect = document.getElementById("sizeSelect");
-if(sizeSelect) {
-  sizeSelect.onchange = (e) => {
-    const sizeCustom = document.getElementById("sizeCustom");
-    const sizeLabel = document.getElementById("sizeLabel");
-    if (e.target.value === "custom") {
-      if(sizeCustom) sizeCustom.style.display = "block";
-    } else {
-      if(sizeCustom) sizeCustom.style.display = "none";
-      if(sizeLabel) sizeLabel.textContent = e.target.value;
-    }
-    broadcastProductData();
-  };
-}
-
-const sizeCustom = document.getElementById("sizeCustom");
-if(sizeCustom) {
-  sizeCustom.oninput = (e) => {
-    const sizeLabel = document.getElementById("sizeLabel");
-    if(sizeLabel) sizeLabel.textContent = e.target.value;
-    broadcastProductData();
-  };
-}
-
-const info = { "4/5": "1080×1350 Facebook", "9/16": "1080×1920 TikTok", "16/9": "1280×720 YouTube", "1/1": "1080×1080 Instagram", "custom": "ຂະໜາດປັບเองແບບຕາມໃຈມັກ" };
-const customRatioBox = document.getElementById("customRatioBox");
-
-document.querySelectorAll(".platform").forEach(btn => {
-  btn.onclick = () => {
-    document.querySelectorAll(".platform").forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-    const ratio = btn.dataset.ratio;
-    
-    if (ratio === "custom") {
-      if(customRatioBox) customRatioBox.style.display = "block";
-    } else {
-      if(customRatioBox) customRatioBox.style.display = "none";
-      if(poster) {
-        poster.style.aspectRatio = ratio;
-        poster.style.width = "440px";
-        poster.style.height = "auto";
-      }
-    }
-    const platformInfo = document.getElementById("platformInfo");
-    if(platformInfo) platformInfo.textContent = info[ratio];
-    updateShirt();
-  };
-});
-
-const applyCustomRatio = document.getElementById("applyCustomRatio");
-if(applyCustomRatio) {
-  applyCustomRatio.onclick = () => {
-    const w = document.getElementById("customWidthInput").value;
-    const h = document.getElementById("customHeightInput").value;
-    if(poster && w && h) {
-      poster.style.aspectRatio = `${w} / ${h}`;
-      poster.style.width = Math.min(w, 500) + "px";
-      const platformInfo = document.getElementById("platformInfo");
-      if(platformInfo) platformInfo.textContent = `ຂະໜາດຕາມໃຈມັກ: ${w}×${h} px`;
-      updateShirt();
-    }
-  };
-}
-
-function drag(el) {
-  if(!el) return;
-  let active = false, startX, startY, startLeft, startTop;
-  el.addEventListener("pointerdown", (e) => {
-    active = true;
-    const r = el.getBoundingClientRect();
-    const p = poster ? poster.getBoundingClientRect() : {left:0, top:0};
-    startLeft = r.left - p.left; startTop = r.top - p.top;
-    startX = e.clientX; startY = e.clientY;
-    el.style.left = startLeft + "px"; el.style.top = startTop + "px";
-    el.style.right = "auto"; el.style.bottom = "auto";
-    el.setPointerCapture(e.pointerId);
-  });
-  el.addEventListener("pointermove", (e) => {
-    if (!active || !poster) return;
-    const x = startLeft + (e.clientX - startX);
-    const y = startTop + (e.clientY - startY);
-    el.style.left = Math.max(0, Math.min(x, poster.clientWidth - el.offsetWidth)) + "px";
-    el.style.top = Math.max(0, Math.min(y, poster.clientHeight - el.offsetHeight)) + "px";
-  });
-  el.addEventListener("pointerup", (e) => {
-    active = false;
-    try { el.releasePointerCapture(e.pointerId); } catch(err) {}
-  });
-}
-["priceLabel", "codeLabel", "stockLabel", "sizeLabel"].forEach(id => drag(document.getElementById(id)));
-
-const priceSize = document.getElementById("priceSize");
-if(priceSize) priceSize.oninput = (e) => { const l = document.getElementById("priceLabel"); if(l) l.style.fontSize = e.target.value + "px"; };
-
-const priceFontSelect = document.getElementById("priceFontSelect");
-if(priceFontSelect) {
-  priceFontSelect.onchange = (e) => {
-    const l = document.getElementById("priceLabel");
-    if(l) l.style.fontFamily = e.target.value;
-  };
-}
-
-const priceColor = document.getElementById("priceColor");
-if(priceColor) priceColor.oninput = (e) => { const l = document.getElementById("priceLabel"); if(l) l.style.color = e.target.value; };
-const codeColor = document.getElementById("codeColor");
-if(codeColor) codeColor.oninput = (e) => { const l = document.getElementById("codeLabel"); if(l) l.style.color = e.target.value; };
-const stockColor = document.getElementById("stockColor");
-if(stockColor) stockColor.oninput = (e) => { const l = document.getElementById("stockLabel"); if(l) l.style.color = e.target.value; };
-const sizeColor = document.getElementById("sizeColor");
-if(sizeColor) sizeColor.oninput = (e) => { const l = document.getElementById("sizeLabel"); if(l) l.style.color = e.target.value; };
-
-const codeSize = document.getElementById("codeSize");
-if(codeSize) codeSize.oninput = (e) => { const l = document.getElementById("codeLabel"); if(l) l.style.fontSize = e.target.value + "px"; };
-const stockSize = document.getElementById("stockSize");
-if(stockSize) stockSize.oninput = (e) => { const l = document.getElementById("stockLabel"); if(l) l.style.fontSize = e.target.value + "px"; };
-const sizeSize = document.getElementById("sizeSize");
-if(sizeSize) sizeSize.oninput = (e) => { const l = document.getElementById("sizeLabel"); if(l) l.style.fontSize = e.target.value + "px"; };
-
-const downloadBtn = document.getElementById("downloadBtn");
-if(downloadBtn) {
-  downloadBtn.onclick = async () => {
-    try {
-      await downloadPosterImage();
-    } catch(err) {
-      alert("❌ ເກີດຂໍ້ຜິດພາດໃນການดาวน์โหลดຮູບພາບ");
-    }
-  };
-}
-
-// ================= AI CLOTHES CUTOUT =================
-const cutoutBtn = document.getElementById("cutoutBtn");
-if(cutoutBtn) {
-  cutoutBtn.onclick = async () => {
-    if (!shirt || !shirt.src) { alert("ກະລຸນາເລືອກຮູບເສືື່ອກ່ອນใช้งาน AI ตัดພື້ນຫຼັງ"); return; }
-    const aiLoading = document.getElementById("aiLoading");
-    const loadingBar = document.getElementById("loadingBar");
-    const aiStatusText = document.getElementById("aiStatusText");
-    
-    if(aiLoading) aiLoading.style.display = "block";
-    if(loadingBar) loadingBar.style.width = "0%";
-    
-    const totalSteps = 30;
-    for (let i = 1; i <= totalSteps; i++) {
-      await new Promise(r => setTimeout(r, 1000));
-      let percent = Math.floor((i / totalSteps) * 100);
-      if(loadingBar) loadingBar.style.width = percent + "%";
-      if(aiStatusText) {
-        if(i <= 10) aiStatusText.textContent = `🤖 ກຳລັງວິເຄາະໂຄງສ້າງເສື້ອ ແລະຕຣວດຈັບຂອບເຂດ (${percent}%)...`;
-        else if(i <= 20) aiStatusText.textContent = `✂️ ຄຳສັ່ງສະເພາະເຈາະຈົງ: ตัดສະເພາະຕົວເສື້ອ ແລະແຂນເສື້ອ ອອກຈາກພື້ນຫຼັງ (${percent}%)...`;
-        else aiStatusText.textContent = `✨ ກຳລັງເກັບລາຍລະອຽດຂອບເສື້ອໃຫ້ລຽບງາມ (${percent}%)...`;
-      }
-    }
-    
-    try {
-      const m = await import("https://cdn.jsdelivr.net/npm/@imgly/background-removal/+esm");
-      const blob = await m.removeBackground(shirt.src, {
-        model: "medium",
-        output: {
-          format: "image/png",
-          quality: 0.95
+            if (data.timestamp > lastTimestamp) {
+                lastTimestamp = data.timestamp;
+                playAlertAction(data);
+            }
         }
-      });
-      shirt.src = URL.createObjectURL(blob);
-      updateShirt();
-      broadcastProductData();
-      alert("🎉 ตัดພື້ນຫຼັງສະເພາະຮູບເສື້ອສຳເລັດຮຽບຮ້ອຍແລ້ວ!");
-    } catch (e) {
-      alert("❌ AI ບໍ່ສາມາດตัดພື້ນຫຼັງໄດ້ ກະລຸນາຕຣວດສອບການເຊື່ອມຕໍ່ອິນເຕີເນັດ");
-      console.error(e);
-    }
-    if(aiLoading) aiLoading.style.display = "none";
-  };
-}
 
-const restoreBtn = document.getElementById("restoreBtn");
-if(restoreBtn) {
-  restoreBtn.onclick = () => {
-    if (originalShirtSrc && shirt) { 
-      shirt.src = originalShirtSrc; 
-      updateShirt(); 
-      broadcastProductData();
-    }
-  };
-}
+        // ฟังก์ชันสั่งงานภาพ เสียง และเสียง Siri อ่านข้อความ
+        function playAlertAction(data) {
+            // โหลดการตั้งค่าสีและหัวข้อ
+            const savedCfg = JSON.parse(localStorage.getItem('stream_config') || '{}');
+            const titleText = savedCfg.title || "🎉 มีผู้สนับสนุนใหม่!";
+            const bgColor = savedCfg.bgColor || "";
 
-// ================= VIDEO EDITOR LOGIC =================
-const vidFile = document.getElementById("vidFile");
-const audioFile = document.getElementById("audioFile");
-const capcutVideoPlayer = document.getElementById("capcutVideoPlayer");
-const capcutAudioPlayer = document.getElementById("capcutAudioPlayer");
-const vidOverlayText = document.getElementById("vidOverlayText");
-const liveTextPreview = document.getElementById("liveTextPreview");
-const vidTextColor = document.getElementById("vidTextColor");
-const vidTextSize = document.getElementById("vidTextSize");
-const exportVideoBtn = document.getElementById("exportVideoBtn");
-const videoTrackClip = document.getElementById("videoTrackClip");
-const audioTrackClip = document.getElementById("audioTrackClip");
+            // อัปเดตข้อความบนการ์ด OBS
+            document.getElementById('obsTitle').innerText = titleText;
+            document.getElementById('obsName').innerText = data.name;
+            document.getElementById('obsAmount').innerText = Number(data.amount).toLocaleString() + ' LAK';
+            document.getElementById('obsMsg').innerText = `"${data.message || 'ไม่มีข้อความ'}"`;
+            
+            if (bgColor) {
+                document.getElementById('obsAlertCard').style.background = bgColor;
+            }
 
-if(vidFile) {
-  vidFile.onchange = (e) => {
-    const file = e.target.files[0];
-    if(file) {
-      capcutVideoPlayer.src = URL.createObjectURL(file);
-      videoTrackClip.textContent = "📹 " + file.name;
-    }
-  };
-}
+            const card = document.getElementById('obsAlertCard');
+            const sound = document.getElementById('alertSound');
 
-if(audioFile) {
-  audioFile.onchange = (e) => {
-    const file = e.target.files[0];
-    if(file) {
-      capcutAudioPlayer.src = URL.createObjectURL(file);
-      audioTrackClip.textContent = "🎵 " + file.name;
-      capcutVideoPlayer.onplay = () => capcutAudioPlayer.play();
-      capcutVideoPlayer.onpause = () => capcutAudioPlayer.pause();
-      capcutVideoPlayer.onseeked = () => { capcutAudioPlayer.currentTime = capcutVideoPlayer.currentTime; };
-    }
-  };
-}
+            // 1. เล่นเสียงเอฟเฟกต์
+            sound.currentTime = 0;
+            sound.play().catch(err => console.log("Audio play restricted"));
 
-if(vidOverlayText) {
-  vidOverlayText.oninput = (e) => {
-    if(liveTextPreview) liveTextPreview.textContent = e.target.value;
-  };
-}
+            // 2. เด้งการ์ดขึ้นมา
+            card.classList.add('show');
 
-if(vidTextColor) {
-  vidTextColor.oninput = (e) => {
-    if(liveTextPreview) liveTextPreview.style.color = e.target.value;
-  };
-}
+            // 3. ระบบเสียง Siri อ่านข้อความ (ภาษาไทย)
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const textToSpeak = `คุณ ${data.name} โอนเงินจำนวน ${Number(data.amount).toLocaleString()} กีบ. ข้อความว่า, ${data.message}`;
+                const utterance = new SpeechSynthesisUtterance(textToSpeak);
+                
+                const voices = window.speechSynthesis.getVoices();
+                const thaiVoice = voices.find(v => v.lang.includes('th') || v.lang.includes('TH'));
+                if (thaiVoice) utterance.voice = thaiVoice;
 
-if(vidTextSize) {
-  vidTextSize.oninput = (e) => {
-    if(liveTextPreview) liveTextPreview.style.fontSize = e.target.value + "px";
-  };
-}
+                utterance.lang = 'th-TH';
+                utterance.rate = 1.0;
+                utterance.pitch = 1.0;
+                window.speechSynthesis.speak(utterance);
+            }
 
-const filterCyber = document.getElementById("filterCyber");
-const filterBw = document.getElementById("filterBw");
-if(filterCyber) {
-  filterCyber.onclick = () => {
-    capcutVideoPlayer.style.filter = "hue-rotate(90deg) contrast(1.2)";
-    alert("⚡ ใช้ຟິວເຕີ Cyberpunk ສຳເລັດ!");
-  };
-}
-if(filterBw) {
-  filterBw.onclick = () => {
-    capcutVideoPlayer.style.filter = "grayscale(100%) contrast(1.3)";
-    alert("⚡ ใช้ຟິວເຕີ Black & White ສຳເລັດ!");
-  };
-}
-
-if(exportVideoBtn) {
-  exportVideoBtn.onclick = () => {
-    alert("🎉 ເຣນເດີຄລິບວິດີໂອໂປຣໂມທສຳເລັດ! ວິດີໂອພ້ອມใช้งานສຳລັບໂພສລົງ TikTok / Facebook Reels / YouTube Shorts ແລ້ວ");
-  };
-}
-
-// ================= WORK TIME & ALARM SYSTEM SCRIPTS =================
-let alarmsList = JSON.parse(localStorage.getItem("workAlarmsList") || JSON.stringify([
-  { id: 1, title: "ເລີ່ມກະເຮັດວຽກເຊົ້າ", time: "08:00", sound: "bell", active: true },
-  { id: 2, title: "ເວລາພັກທ່ຽງ / ພັກຜ່ອນ", time: "12:00", sound: "chime", active: true },
-  { id: 3, title: "ສະຫຼຸບຍອດຂາຍປະຈຳວັນ / ປິດກະ", time: "18:00", sound: "digital", active: true }
-]));
-
-function playAlarmSound(soundType) {
-  try {
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    if (soundType === 'bell') {
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(880, audioCtx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 1.5);
-      gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.5);
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start();
-      osc.stop(audioCtx.currentTime + 1.5);
-    } else if (soundType === 'digital') {
-      for (let i = 0; i < 3; i++) {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'square';
-        osc.frequency.setValueAtTime(1200, audioCtx.currentTime + (i * 0.15));
-        gain.gain.setValueAtTime(0.15, audioCtx.currentTime + (i * 0.15));
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + (i * 0.15) + 0.1);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start(audioCtx.currentTime + (i * 0.15));
-        osc.stop(audioCtx.currentTime + (i * 0.15) + 0.1);
-      }
-    } else if (soundType === 'chime') {
-      const notes = [523.25, 659.25, 783.99];
-      notes.forEach((freq, idx) => {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(freq, audioCtx.currentTime + (idx * 0.15));
-        gain.gain.setValueAtTime(0.2, audioCtx.currentTime + (idx * 0.15));
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + (idx * 0.15) + 0.6);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start(audioCtx.currentTime + (idx * 0.15));
-        osc.stop(audioCtx.currentTime + (idx * 0.15) + 0.6);
-      });
-    } else {
-      for (let i = 0; i < 4; i++) {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(440, audioCtx.currentTime + (i * 0.2));
-        osc.frequency.linearRampToValueAtTime(880, audioCtx.currentTime + (i * 0.2) + 0.18);
-        gain.gain.setValueAtTime(0.15, audioCtx.currentTime + (i * 0.2));
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + (i * 0.2) + 0.2);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start(audioCtx.currentTime + (i * 0.2));
-        osc.stop(audioCtx.currentTime + (i * 0.2) + 0.2);
-      }
-    }
-  } catch (e) {
-    console.error("Audio Context Error:", e);
-  }
-}
-
-function renderAlarmList() {
-  const container = document.getElementById("alarmListContainer");
-  if(!container) return;
-  container.innerHTML = "";
-
-  if(alarmsList.length === 0) {
-    container.innerHTML = `<div style="color:#777; text-align:center; padding:30px;">ຍັງບໍ່ມີການຕັ້ງເວລາແຈ້ງເຕືອນວຽກ</div>`;
-    return;
-  }
-
-  alarmsList.forEach((alarm, idx) => {
-    const soundNames = { bell: "🔔 ກະດິ່ງ", digital: "⏰ ດິຈິຕອນ", chime: "🎶 ກຣິ່ງດົນຕີ", radar: "🚨 ສີເລນ" };
-    const card = document.createElement("div");
-    card.className = "alarm-card";
-    card.innerHTML = `
-      <div>
-        <div style="font-size:18px; font-weight:bold; color:${alarm.active ? '#38bdf8' : '#777'};">${alarm.time} ນ.</div>
-        <div style="font-size:14px; color:#fff; margin-top:2px;">${alarm.title}</div>
-        <div style="font-size:11px; color:#aaa; margin-top:4px;">ສຽງ: ${soundNames[alarm.sound] || 'ກະດິ່ງ'}</div>
-      </div>
-      <div style="display:flex; align-items:center; gap:10px;">
-        <button onclick="toggleAlarmStatus(${idx})" style="background:${alarm.active ? 'rgba(56,189,248,0.2)' : 'rgba(255,255,255,0.05)'}; color:${alarm.active ? '#38bdf8' : '#aaa'}; border:1px solid ${alarm.active ? '#38bdf8' : 'rgba(255,255,255,0.1)'}; padding:6px 12px; border-radius:6px; cursor:pointer; font-size:12px;">
-          ${alarm.active ? '🟢 ເປີດใช้งาน' : '⚪ ປິດຢູ່'}
-        </button>
-        <button onclick="deleteAlarm(${idx})" style="background:rgba(255,42,42,0.2); color:#ff5555; border:1px solid rgba(255,42,42,0.4); padding:6px 10px; border-radius:6px; cursor:pointer; font-size:12px;">🗑️ ລຶບ</button>
-      </div>
-    `;
-    container.appendChild(card);
-  });
-
-  localStorage.setItem("workAlarmsList", JSON.stringify(alarmsList));
-}
-
-window.toggleAlarmStatus = function(idx) {
-  alarmsList[idx].active = !alarmsList[idx].active;
-  renderAlarmList();
-};
-
-window.deleteAlarm = function(idx) {
-  if(confirm("ຕ້ອງການລຶບໂມງປຸກນີ້ ຫຼືບໍ່?")) {
-    alarmsList.splice(idx, 1);
-    renderAlarmList();
-  }
-};
-
-const addAlarmBtn = document.getElementById("addAlarmBtn");
-if(addAlarmBtn) {
-  addAlarmBtn.onclick = () => {
-    const title = document.getElementById("alarmTitleInput").value.trim() || "ເວລາເຮັດວຽກ";
-    const time = document.getElementById("alarmTimeInput").value;
-    const sound = document.getElementById("alarmSoundSelect").value;
-
-    if(!time) {
-      alert("ກະລຸນາກຳນົດເວລາໃຫ້ຮຽບຮ້ອຍ");
-      return;
-    }
-
-    alarmsList.push({ id: Date.now(), title, time, sound, active: true });
-    renderAlarmList();
-    alert(`✅ ຕັ້ງເວລາແຈ້ງເຕືອນ [${time} - ${title}] ຮຽບຮ້ອຍແລ້ວ!`);
-  };
-}
-
-const previewSoundBtn = document.getElementById("previewSoundBtn");
-if(previewSoundBtn) {
-  previewSoundBtn.onclick = () => {
-    const sound = document.getElementById("alarmSoundSelect").value;
-    playAlarmSound(sound);
-  };
-}
-
-const testAlarmNowBtn = document.getElementById("testAlarmNowBtn");
-if(testAlarmNowBtn) {
-  testAlarmNowBtn.onclick = () => {
-    const sound = document.getElementById("alarmSoundSelect").value;
-    playAlarmSound(sound);
-    alert("⏰ [ຈຳລອງການປຸກ] ສຽງແຈ້ງເຕືອນເວລາເຮັດວຽກດັງຂຶ້ນແລ້ວ!");
-  };
-}
-
-setInterval(() => {
-  const now = new Date();
-  const hours = String(now.getHours()).padStart(2, '0');
-  const minutes = String(now.getMinutes()).padStart(2, '0');
-  const seconds = String(now.getSeconds()).padStart(2, '0');
-  const currentTimeStr = `${hours}:${minutes}`;
-  const currentFullStr = `${hours}:${minutes}:${seconds}`;
-
-  const timeDisplay = document.getElementById("currentTimeDisplay");
-  if(timeDisplay) timeDisplay.textContent = currentFullStr;
-
-  if (seconds === "00") {
-    alarmsList.forEach(alarm => {
-      if (alarm.active && alarm.time === currentTimeStr) {
-        playAlarmSound(alarm.sound);
-        alert(`⏰ [ແຈ້ງເຕືອນເວລາເຮັດວຽກ!] ເຖິງເວລາ: ${alarm.time} ນ. - ${alarm.title}`);
-      }
-    });
-  }
-}, 1000);
-
-renderAlarmList();
-</script>
+            // 4. ซ่อนการ์ดอัตโนมัติหลังผ่านไป 7 วินาที
+            setTimeout(() => {
+                card.classList.remove('show');
+            }, 7000);
+        }
+    </script>
 </body>
 </html>
