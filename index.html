@@ -144,11 +144,11 @@
 
                 <div class="bg-zinc-950 rounded-xl p-4 border border-zinc-800 mb-6 grid grid-cols-3 gap-4 text-center">
                     <div>
-                        <span class="text-[10px] text-zinc-400">ລາຍຮັບรวมทั้งเดือน</span>
+                        <span class="text-[10px] text-zinc-400">ລາຍຮັບລວມເບິດເດືອນ</span>
                         <p id="mTotalIncome" class="text-emerald-400 font-bold text-base mt-1">0 ₭</p>
                     </div>
                     <div>
-                        <span class="text-[10px] text-zinc-400">ລາຍຈ່າຍรวมทั้งเดือน</span>
+                        <span class="text-[10px] text-zinc-400">ລາຍຈ່າຍລວມເບິດເດືອນ</span>
                         <p id="mTotalExpense" class="text-red-400 font-bold text-base mt-1">0 ₭</p>
                     </div>
                     <div>
@@ -157,7 +157,7 @@
                     </div>
                 </div>
 
-                <h4 class="text-sm font-semibold text-zinc-300 mb-2">ประวัติการสรุปยอดรายวันในเดือนนี้:</h4>
+                <h4 class="text-sm font-semibold text-zinc-300 mb-2">ປະຫວັດສະລຸບຍອດລາຍວັນເດືອນນີ້</h4>
                 <div id="monthlyHistoryList" class="space-y-3">
                     <!-- ประวัติแต่ละวันจะแสดงตรงนี้ -->
                 </div>
@@ -168,7 +168,7 @@
         <div id="slipModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
             <div class="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-3xl p-6 shadow-2xl text-zinc-100 max-h-[90vh] overflow-y-auto">
                 <div class="flex justify-between items-center border-b border-zinc-800 pb-4 mb-4">
-                    <h3 class="text-lg font-bold text-red-500">🖼️ คลังภาพสลิป & สรุปยอดประจำวัน</h3>
+                    <h3 class="text-lg font-bold text-red-500">🖼️ ປະຫວັດຮູບສະລຸບຍອດປະຈຳວັນ</h3>
                     <button onclick="closeSlipModal()" class="text-zinc-400 hover:text-white text-sm bg-zinc-800 px-3 py-1 rounded-lg">ປິດ X</button>
                 </div>
 
@@ -199,7 +199,7 @@
         <div class="mt-10 flex justify-center">
             <div id="captureArea" class="w-full max-w-md bg-gradient-to-b from-zinc-900 to-zinc-950 border-2 border-red-900/60 rounded-2xl p-6 shadow-2xl text-zinc-100 hidden">
                 <div class="text-center border-b border-red-900/40 pb-4 mb-4">
-                    <h3 class="text-lg font-bold text-red-500 tracking-wider">📊 ສະລຸບວັນຊີປະຈຳວັນ</h3>
+                    <h3 class="text-lg font-bold text-red-500 tracking-wider">📊 ສະລຸບບັນຊີປະຈຳວັນ</h3>
                     <p id="captureDate" class="text-xs text-zinc-400 mt-1"></p>
                 </div>
 
@@ -246,7 +246,6 @@
         const saveStatus = document.getElementById('saveStatus');
         const companyBalanceEl = document.getElementById('companyBalance');
 
-        // 
         window.addEventListener('DOMContentLoaded', () => {
             const savedUrl = localStorage.getItem('discord_webhook_url');
             if (savedUrl) {
@@ -314,18 +313,24 @@
             let expense = 0;
             let html = '';
 
-            transactions.forEach((item) => {
+            transactions.forEach((item, index) => {
                 if (item.type === 'income') {
                     income += item.price;
                     html += `<div class="flex justify-between items-center bg-zinc-950/50 p-2 rounded border border-zinc-800/50 text-xs">
                         <span>🟢 ${item.code}</span>
-                        <span class="text-emerald-400 font-semibold">+${item.price.toLocaleString()} ₭</span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-emerald-400 font-semibold">+${item.price.toLocaleString()} ₭</span>
+                            <button onclick="removeDailyItem(${index})" class="text-zinc-500 hover:text-red-400 px-1">✕</button>
+                        </div>
                     </div>`;
                 } else {
                     expense += item.price;
                     html += `<div class="flex justify-between items-center bg-zinc-950/50 p-2 rounded border border-zinc-800/50 text-xs">
                         <span>🔴 ${item.code}</span>
-                        <span class="text-red-400 font-semibold">-${item.price.toLocaleString()} ₭</span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-red-400 font-semibold">-${item.price.toLocaleString()} ₭</span>
+                            <button onclick="removeDailyItem(${index})" class="text-zinc-500 hover:text-red-400 px-1">✕</button>
+                        </div>
                     </div>`;
                 }
             });
@@ -339,6 +344,12 @@
 
             sendBtn.disabled = false;
             sendBtn.className = "w-full md:w-auto px-8 bg-red-700 hover:bg-red-600 text-white font-semibold py-3 rounded-xl text-sm transition shadow-lg shadow-red-900/40 cursor-pointer";
+        }
+
+        // ฟังก์ชันลบรายการในหน้าแรก (รายวัน)
+        function removeDailyItem(index) {
+            transactions.splice(index, 1);
+            updateUI();
         }
 
         async function captureAndSend() {
@@ -428,6 +439,7 @@
             }
 
             db[yearMonth].push({
+                id: 'rec_' + Date.now() + Math.random().toString(36).substr(2, 5),
                 date: fullDateStr,
                 timestamp: dateObj.getTime(),
                 income: income,
@@ -501,9 +513,14 @@
 
                     historyHtml += `
                         <div class="bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-xs">
-                            <div class="flex justify-between font-semibold text-zinc-200 mb-2 border-b border-zinc-800/60 pb-1">
+                            <div class="flex justify-between items-center font-semibold text-zinc-200 mb-2 border-b border-zinc-800/60 pb-1">
                                 <span>📅 ${rec.date}</span>
-                                <span class="${rec.net >= 0 ? 'text-emerald-400' : 'text-red-400'}">ຍອດ: ${rec.net.toLocaleString()} ₭</span>
+                                <div class="flex items-center gap-3">
+                                    <span class="${rec.net >= 0 ? 'text-emerald-400' : 'text-red-400'}">ຍອດ: ${rec.net.toLocaleString()} ₭</span>
+                                    <button onclick="deleteMonthlyRecord('${ym}', '${rec.id}')" class="bg-zinc-800 hover:bg-red-900/80 text-zinc-400 hover:text-white px-2 py-0.5 rounded text-[10px] transition" title="ລຶບປະຫວັດນີ້">
+                                        🗑️ ລຶບ
+                                    </button>
+                                </div>
                             </div>
                             <div class="space-y-1 mb-2">
                                 ${itemsHtml}
@@ -525,6 +542,21 @@
             mNetEl.className = monthNet >= 0 ? "text-emerald-400 font-bold text-base mt-1" : "text-red-500 font-bold text-base mt-1";
 
             document.getElementById('monthlyHistoryList').innerHTML = historyHtml;
+        }
+
+        // ฟังก์ชันลบประวัติในเมนูสรุปยอดรายเดือน
+        function deleteMonthlyRecord(ym, recordId) {
+            if (confirm("ເຈົ້າຕ້ອງການລຶບປະຫວັດສະຫຼຸບຍອດວັນນີ້ແທ້ບໍ?")) {
+                let db = JSON.parse(localStorage.getItem('accounting_monthly_db')) || {};
+                if (db[ym]) {
+                    db[ym] = db[ym].filter(r => r.id !== recordId);
+                    if (db[ym].length === 0) {
+                        delete db[ym];
+                    }
+                    localStorage.setItem('accounting_monthly_db', JSON.stringify(db));
+                    populateMonthDropdown(); // รีเฟรชข้อมูลใหม่
+                }
+            }
         }
 
         function openSlipModal() {
@@ -586,9 +618,14 @@
                                 <img src="${rec.slipImage}" alt="Slip" class="w-full h-40 object-cover group-hover:scale-105 transition duration-300">
                             </div>
                         </div>
-                        <button onclick="openImagePreview('${rec.slipImage}', '${rec.date}')" class="w-full bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs py-1.5 rounded-lg transition border border-zinc-700">
-                            🔍 ເບີ່ງຮູບຂະໜາດໃຫຍ່ / ກົດດາວໂຫລດເດີເພິນ
-                        </button>
+                        <div class="flex gap-2">
+                            <button onclick="openImagePreview('${rec.slipImage}', '${rec.date}')" class="w-full bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs py-1.5 rounded-lg transition border border-zinc-700">
+                                🔍 ຂະຫຍາຍ
+                            </button>
+                            <button onclick="deleteSlipRecord('${ym}', '${rec.id}')" class="bg-red-950/80 hover:bg-red-900 text-red-200 text-xs px-3 py-1.5 rounded-lg transition border border-red-900/60" title="ລຶບຮູບນີ້">
+                                🗑️
+                            </button>
+                        </div>
                     `;
                     grid.appendChild(card);
                 }
@@ -596,6 +633,21 @@
 
             if (!hasImage) {
                 grid.innerHTML = `<p class="text-zinc-500 text-center py-10 text-xs col-span-full">ยังบ่มีรูปภาพสลิป/สรุปยอดในเดือนนี้</p>`;
+            }
+        }
+
+        // ฟังก์ชันลบรูปภาพสลิป / ประวัติในคลังภาพ
+        function deleteSlipRecord(ym, recordId) {
+            if (confirm("ເຈົ້າຕ້ອງການລຶບຮູບພາບສລິບແລະປະຫວັດນີ້ແທ້ບໍ?")) {
+                let db = JSON.parse(localStorage.getItem('accounting_monthly_db')) || {};
+                if (db[ym]) {
+                    db[ym] = db[ym].filter(r => r.id !== recordId);
+                    if (db[ym].length === 0) {
+                        delete db[ym];
+                    }
+                    localStorage.setItem('accounting_monthly_db', JSON.stringify(db));
+                    populateSlipMonthDropdown(); // รีเฟรชแกลเลอรีใหม่
+                }
             }
         }
 
