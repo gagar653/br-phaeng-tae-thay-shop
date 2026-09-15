@@ -3,19 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>บอทมีมเตือนเล่นเกมดิสคอร์ด (Custom รายวัน)</title>
+    <title>บอทมีมเตือนเล่นเกมดิสคอร์ด (จำค่าอัตโนมัติ)</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
 <body class="bg-gray-900 text-white min-h-screen flex items-center justify-center p-4">
     <div class="bg-gray-800 border border-gray-700 p-6 rounded-2xl shadow-2xl w-full max-w-xl">
-        <h1 class="text-2xl font-bold text-center text-red-500 mb-2">🎮 บอทเตือนเล่นเกม (ตั้งค่าเองได้ + แจ้งเตือนทุกวัน)</h1>
-        <p class="text-gray-400 text-center text-sm mb-6">ตั้งเวลา พิมพ์ข้อความ และใส่ลิงก์มีม/วิดีโอเองได้ บันทึกค่าให้อัตโนมัติ</p>
+        <h1 class="text-2xl font-bold text-center text-red-500 mb-2">🎮 บอทเตือนเล่นเกม (จำ URL & ตั้งเวลาทุกวัน)</h1>
+        <p class="text-gray-400 text-center text-sm mb-6">พิมพ์ครั้งเดียวจำตลอดไป! ตั้งเวลา พิมพ์ข้อความ และส่งมีม/วิดีโอเข้าดิสคอร์ดอัตโนมัติ</p>
 
         <!-- ฟอร์มตั้งค่าหลัก -->
         <div class="space-y-4">
             <div>
-                <label class="block text-sm font-medium text-gray-300 mb-1">Discord Webhook URL:</label>
+                <label class="block text-sm font-medium text-gray-300 mb-1">Discord Webhook URL (บันทึกอัตโนมัติ):</label>
                 <input type="text" id="webhookUrl" placeholder="https://discord.com/api/webhooks/..." 
+                    oninput="saveSettings()"
                     class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-sm focus:outline-none focus:border-red-500">
             </div>
 
@@ -23,6 +24,7 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-300 mb-1">เวลาแจ้งเตือนทุกวัน:</label>
                     <input type="time" id="alertTime" value="20:00" 
+                        onchange="saveSettings()"
                         class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-sm focus:outline-none focus:border-red-500">
                 </div>
                 <div>
@@ -35,15 +37,17 @@
 
             <!-- ส่วนกำหนดข้อความและมีมเอง -->
             <div class="border-t border-gray-700 pt-4 space-y-3">
-                <h3 class="text-sm font-semibold text-gray-300">💬 ข้อความกวน ๆ (ใส่หลายบรรทัด บอทจะสุ่มเลือก 1 อันทุกวัน):</h3>
+                <h3 class="text-sm font-semibold text-gray-300">💬 ข้อความกวน ๆ (ใส่หลายบรรทัด บอทจะสุ่มเลือก 1 อัน):</h3>
                 <textarea id="customMessages" rows="3" 
+                    oninput="saveSettings()"
                     class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-sm focus:outline-none focus:border-red-500 font-mono"
                     placeholder="เฮ้ย! ถึงเวลาเล่นเกมแล้วไอ้เวร ลุกขึ้นมาแจกได้แล้ว!&#10;พวกเวรตื่น! เปิดคอมได้แล้ว โดนตบยับแน่"></textarea>
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-gray-300 mb-1">🎬 ลิงก์รูปภาพ หรือ วิดีโอสั้น / GIF (ใส่หลายบรรทัด บอทจะสุ่มเลือก 1 อัน):</label>
+                <label class="block text-sm font-medium text-gray-300 mb-1">🎬 ลิงก์รูปภาพ หรือ วิดีโอสั้น / GIF (ใส่หลายบรรทัด บอทจะสุ่ม):</label>
                 <textarea id="customMedia" rows="2" 
+                    oninput="saveSettings()"
                     class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-sm focus:outline-none focus:border-red-500 font-mono"
                     placeholder="https://media.giphy.com/media/3oKIPnAiaMCws8nOsE/giphy.gif&#10;https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"></textarea>
             </div>
@@ -73,7 +77,6 @@
         let timerInterval = null;
         let lastTriggeredDate = "";
 
-        // ค่าเริ่มต้นถ้ายังไม่มีในเครื่อง
         const defaultMessages = [
             "เฮ้ย! ถึงเวลาเล่นเกมแล้วไอ้เวร ลุกขึ้นมาแจกได้แล้ว!",
             "พวกเวรตื่น! เปิดคอมได้แล้ว โดนตบยับแน่ถ้าไม่มาตอนนี้",
@@ -85,20 +88,25 @@
             "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"
         ];
 
-        // โหลดข้อมูลที่บันทึกไว้ใน Browser (LocalStorage) เมื่อเปิดเว็บ
+        // โหลดข้อมูลที่จดจำไว้ทันทีที่เปิดเว็บ
         window.addEventListener('DOMContentLoaded', () => {
             const savedWebhook = localStorage.getItem('discord_webhook');
             const savedTime = localStorage.getItem('discord_time');
             const savedMsg = localStorage.getItem('discord_messages');
             const savedMedia = localStorage.getItem('discord_media');
 
-            if (savedWebhook) document.getElementById('webhookUrl').value = savedWebhook;
+            if (savedWebhook) {
+                document.getElementById('webhookUrl').value = savedWebhook;
+                log("📌 โหลด Discord Webhook ที่บันทึกไว้สำเร็จ");
+            }
             if (savedTime) document.getElementById('alertTime').value = savedTime;
+            
             if (savedMsg) {
                 document.getElementById('customMessages').value = savedMsg;
             } else {
                 document.getElementById('customMessages').value = defaultMessages.join('\n');
             }
+
             if (savedMedia) {
                 document.getElementById('customMedia').value = savedMedia;
             } else {
@@ -106,12 +114,17 @@
             }
         });
 
-        // ฟังก์ชันบันทึกข้อมูลอัตโนมัติเมื่อมีการเปลี่ยนแปลง
+        // ฟังก์ชันจดจำและบันทึกข้อมูลอัตโนมัติทุกครั้งที่มีการพิมพ์หรือเปลี่ยนค่า
         function saveSettings() {
-            localStorage.setItem('discord_webhook', document.getElementById('webhookUrl').value.trim());
-            localStorage.setItem('discord_time', document.getElementById('alertTime').value);
-            localStorage.setItem('discord_messages', document.getElementById('customMessages').value);
-            localStorage.setItem('discord_media', document.getElementById('customMedia').value);
+            const webhook = document.getElementById('webhookUrl').value.trim();
+            const time = document.getElementById('alertTime').value;
+            const messages = document.getElementById('customMessages').value;
+            const media = document.getElementById('customMedia').value;
+
+            localStorage.setItem('discord_webhook', webhook);
+            localStorage.setItem('discord_time', time);
+            localStorage.setItem('discord_messages', messages);
+            localStorage.setItem('discord_media', media);
         }
 
         function log(text) {
@@ -122,7 +135,7 @@
         }
 
         function toggleBot() {
-            saveSettings(); // บันทึกค่าก่อนเปิดระบบ
+            saveSettings();
             const webhook = document.getElementById('webhookUrl').value.trim();
             if (!webhook && !isRunning) {
                 alert("กรุณาใส่ Discord Webhook URL ก่อนครับ!");
@@ -161,14 +174,12 @@
                 return;
             }
 
-            // ดึงข้อความจาก Textarea มาแยกบรรทัด
             const rawMsgText = document.getElementById('customMessages').value.trim();
             const messages = rawMsgText ? rawMsgText.split('\n').filter(m => m.trim() !== '') : defaultMessages;
 
             const rawMediaText = document.getElementById('customMedia').value.trim();
             const mediaList = rawMediaText ? rawMediaText.split('\n').filter(m => m.trim() !== '') : defaultMedia;
 
-            // สุ่มข้อความและมีม/วิดีโอ
             const randomMsg = messages[Math.floor(Math.random() * messages.length)];
             const randomMedia = mediaList[Math.floor(Math.random() * mediaList.length)];
 
