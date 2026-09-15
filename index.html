@@ -9,12 +9,12 @@
 <body class="bg-gray-900 text-white min-h-screen flex items-center justify-center p-4">
     <div class="bg-gray-800 border border-gray-700 p-6 rounded-2xl shadow-2xl w-full max-w-xl">
         <h1 class="text-2xl font-bold text-center text-red-500 mb-2">🎮 บอทเตือนเล่นเกม (รันบน GitHub 24 ชม.)</h1>
-        <p class="text-gray-400 text-center text-sm mb-6">ตั้งค่าครั้งเดียว ระบบจะรันอัตโนมัติบน GitHub โดยไม่ต้องเปิดแท็บทิ้งไว้!</p>
+        <p class="text-gray-400 text-center text-sm mb-6">ระบบรันอัตโนมัติบน GitHub ไม่ต้องเปิดแท็บทิ้งไว้!</p>
 
         <!-- ฟอร์มตั้งค่าหลัก -->
         <div class="space-y-4">
             <div>
-                <label class="block text-sm font-medium text-gray-300 mb-1">Discord Webhook URL:</label>
+                <label class="block text-sm font-medium text-gray-300 mb-1">Discord Webhook URL (บันทึกในเครื่องคุณ):</label>
                 <input type="text" id="webhookUrl" placeholder="https://discord.com/api/webhooks/..." 
                     oninput="saveSettings()"
                     class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-sm focus:outline-none focus:border-red-500">
@@ -22,11 +22,10 @@
 
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-1">เวลาแจ้งเตือน (UTC / แปลงเวลาไทย):</label>
-                    <input type="time" id="alertTime" value="13:00" 
+                    <label class="block text-sm font-medium text-gray-300 mb-1">เวลาแจ้งเตือน:</label>
+                    <input type="time" id="alertTime" value="20:00" 
                         onchange="saveSettings()"
                         class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-sm focus:outline-none focus:border-red-500">
-                    <p class="text-xs text-gray-500 mt-1">*GitHub ใช้เวลา UTC (เวลาไทย - 7 ชม. เช่น อยากให้ส่ง 20:00 ให้ตั้ง 13:00)</p>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-300 mb-1">สถานะระบบ:</label>
@@ -51,16 +50,6 @@
                     oninput="saveSettings()"
                     class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-sm focus:outline-none focus:border-red-500 font-mono"
                     placeholder="https://media.giphy.com/media/3oKIPnAiaMCws8nOsE/giphy.gif&#10;https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"></textarea>
-            </div>
-
-            <!-- คำแนะนำการใช้งาน GitHub Secrets -->
-            <div class="bg-gray-900 p-4 rounded-lg border border-gray-700 text-xs text-gray-300 space-y-2">
-                <p class="font-bold text-yellow-400">💡 วิธีตั้งค่าให้ GitHub รันแทนคุณ 24 ชม.:</p>
-                <ol class="list-decimal list-inside space-y-1 text-gray-400">
-                    <li>นำโค้ดนี้ไปใส่ในไฟล์ <code class="text-white">index.html</code> ใน GitHub ของคุณ</li>
-                    <li>สร้างไฟล์สคริปต์รันบอท และตั้งค่า <code class="text-white">Repository Secrets</code> ชื่อ <code class="text-green-400">DISCORD_WEBHOOK</code></li>
-                    <li>เพิ่ม GitHub Actions Workflow เพื่อให้ระบบทำงานตามเวลาโดยไม่ต้องเปิดเว็บเลย</li>
-                </ol>
             </div>
 
             <!-- ปุ่มควบคุม -->
