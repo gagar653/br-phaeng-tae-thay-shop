@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>บอทมีมเตือนเล่นเกมดิสคอร์ด (จำค่าอัตโนมัติ)</title>
+    <title>บอทมีมเตือนเล่นเกมดิสคอร์ด (GitHub Actions Auto-Bot)</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
 <body class="bg-gray-900 text-white min-h-screen flex items-center justify-center p-4">
     <div class="bg-gray-800 border border-gray-700 p-6 rounded-2xl shadow-2xl w-full max-w-xl">
-        <h1 class="text-2xl font-bold text-center text-red-500 mb-2">🎮 บอทเตือนเล่นเกม (จำ URL & ตั้งเวลาทุกวัน)</h1>
-        <p class="text-gray-400 text-center text-sm mb-6">พิมพ์ครั้งเดียวจำตลอดไป! ตั้งเวลา พิมพ์ข้อความ และส่งมีม/วิดีโอเข้าดิสคอร์ดอัตโนมัติ</p>
+        <h1 class="text-2xl font-bold text-center text-red-500 mb-2">🎮 บอทเตือนเล่นเกม (รันบน GitHub 24 ชม.)</h1>
+        <p class="text-gray-400 text-center text-sm mb-6">ตั้งค่าครั้งเดียว ระบบจะรันอัตโนมัติบน GitHub โดยไม่ต้องเปิดแท็บทิ้งไว้!</p>
 
         <!-- ฟอร์มตั้งค่าหลัก -->
         <div class="space-y-4">
             <div>
-                <label class="block text-sm font-medium text-gray-300 mb-1">Discord Webhook URL (บันทึกอัตโนมัติ):</label>
+                <label class="block text-sm font-medium text-gray-300 mb-1">Discord Webhook URL:</label>
                 <input type="text" id="webhookUrl" placeholder="https://discord.com/api/webhooks/..." 
                     oninput="saveSettings()"
                     class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-sm focus:outline-none focus:border-red-500">
@@ -22,15 +22,16 @@
 
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-1">เวลาแจ้งเตือนทุกวัน:</label>
-                    <input type="time" id="alertTime" value="20:00" 
+                    <label class="block text-sm font-medium text-gray-300 mb-1">เวลาแจ้งเตือน (UTC / แปลงเวลาไทย):</label>
+                    <input type="time" id="alertTime" value="13:00" 
                         onchange="saveSettings()"
                         class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-sm focus:outline-none focus:border-red-500">
+                    <p class="text-xs text-gray-500 mt-1">*GitHub ใช้เวลา UTC (เวลาไทย - 7 ชม. เช่น อยากให้ส่ง 20:00 ให้ตั้ง 13:00)</p>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-300 mb-1">สถานะระบบ:</label>
-                    <div id="statusBadge" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-sm text-center text-yellow-400 font-semibold flex items-center justify-center">
-                        ⏸️ ปิดทำงาน
+                    <div class="w-full bg-gray-900 border border-green-600 rounded-lg p-3 text-sm text-center text-green-400 font-semibold flex items-center justify-center">
+                        🚀 รันอัตโนมัติบน GitHub
                     </div>
                 </div>
             </div>
@@ -52,13 +53,20 @@
                     placeholder="https://media.giphy.com/media/3oKIPnAiaMCws8nOsE/giphy.gif&#10;https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"></textarea>
             </div>
 
+            <!-- คำแนะนำการใช้งาน GitHub Secrets -->
+            <div class="bg-gray-900 p-4 rounded-lg border border-gray-700 text-xs text-gray-300 space-y-2">
+                <p class="font-bold text-yellow-400">💡 วิธีตั้งค่าให้ GitHub รันแทนคุณ 24 ชม.:</p>
+                <ol class="list-decimal list-inside space-y-1 text-gray-400">
+                    <li>นำโค้ดนี้ไปใส่ในไฟล์ <code class="text-white">index.html</code> ใน GitHub ของคุณ</li>
+                    <li>สร้างไฟล์สคริปต์รันบอท และตั้งค่า <code class="text-white">Repository Secrets</code> ชื่อ <code class="text-green-400">DISCORD_WEBHOOK</code></li>
+                    <li>เพิ่ม GitHub Actions Workflow เพื่อให้ระบบทำงานตามเวลาโดยไม่ต้องเปิดเว็บเลย</li>
+                </ol>
+            </div>
+
             <!-- ปุ่มควบคุม -->
             <div class="flex gap-3 pt-2">
-                <button onclick="toggleBot()" id="toggleBtn" class="flex-1 bg-green-600 hover:bg-green-500 font-bold py-3 rounded-lg transition">
-                    ▶️ เปิดระบบแจ้งเตือนทุกวัน
-                </button>
-                <button onclick="sendTestMessage(true)" class="bg-blue-600 hover:bg-blue-500 font-bold px-4 py-3 rounded-lg transition">
-                    🚀 เทสส่งทันที
+                <button onclick="sendTestMessage()" class="w-full bg-blue-600 hover:bg-blue-500 font-bold py-3 rounded-lg transition">
+                    🚀 เทสส่งข้อความเข้า Discord ทันที
                 </button>
             </div>
         </div>
@@ -67,16 +75,12 @@
         <div class="mt-6">
             <label class="block text-sm font-medium text-gray-300 mb-1">Log การทำงาน:</label>
             <div id="logBox" class="bg-gray-900 border border-gray-700 rounded-lg p-3 h-32 overflow-y-auto text-xs text-green-400 font-mono">
-                [System] โหลดค่าที่บันทึกไว้เรียบร้อย...
+                [System] โหลดหน้าเว็บสำเร็จ... พร้อมเชื่อมต่อ GitHub Actions
             </div>
         </div>
     </div>
 
     <script>
-        let isRunning = false;
-        let timerInterval = null;
-        let lastTriggeredDate = "";
-
         const defaultMessages = [
             "เฮ้ย! ถึงเวลาเล่นเกมแล้วไอ้เวร ลุกขึ้นมาแจกได้แล้ว!",
             "พวกเวรตื่น! เปิดคอมได้แล้ว โดนตบยับแน่ถ้าไม่มาตอนนี้",
@@ -88,43 +92,23 @@
             "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"
         ];
 
-        // โหลดข้อมูลที่จดจำไว้ทันทีที่เปิดเว็บ
         window.addEventListener('DOMContentLoaded', () => {
             const savedWebhook = localStorage.getItem('discord_webhook');
             const savedTime = localStorage.getItem('discord_time');
             const savedMsg = localStorage.getItem('discord_messages');
             const savedMedia = localStorage.getItem('discord_media');
 
-            if (savedWebhook) {
-                document.getElementById('webhookUrl').value = savedWebhook;
-                log("📌 โหลด Discord Webhook ที่บันทึกไว้สำเร็จ");
-            }
+            if (savedWebhook) document.getElementById('webhookUrl').value = savedWebhook;
             if (savedTime) document.getElementById('alertTime').value = savedTime;
-            
-            if (savedMsg) {
-                document.getElementById('customMessages').value = savedMsg;
-            } else {
-                document.getElementById('customMessages').value = defaultMessages.join('\n');
-            }
-
-            if (savedMedia) {
-                document.getElementById('customMedia').value = savedMedia;
-            } else {
-                document.getElementById('customMedia').value = defaultMedia.join('\n');
-            }
+            document.getElementById('customMessages').value = savedMsg || defaultMessages.join('\n');
+            document.getElementById('customMedia').value = savedMedia || defaultMedia.join('\n');
         });
 
-        // ฟังก์ชันจดจำและบันทึกข้อมูลอัตโนมัติทุกครั้งที่มีการพิมพ์หรือเปลี่ยนค่า
         function saveSettings() {
-            const webhook = document.getElementById('webhookUrl').value.trim();
-            const time = document.getElementById('alertTime').value;
-            const messages = document.getElementById('customMessages').value;
-            const media = document.getElementById('customMedia').value;
-
-            localStorage.setItem('discord_webhook', webhook);
-            localStorage.setItem('discord_time', time);
-            localStorage.setItem('discord_messages', messages);
-            localStorage.setItem('discord_media', media);
+            localStorage.setItem('discord_webhook', document.getElementById('webhookUrl').value.trim());
+            localStorage.setItem('discord_time', document.getElementById('alertTime').value);
+            localStorage.setItem('discord_messages', document.getElementById('customMessages').value);
+            localStorage.setItem('discord_media', document.getElementById('customMedia').value);
         }
 
         function log(text) {
@@ -134,43 +118,11 @@
             box.scrollTop = box.scrollHeight;
         }
 
-        function toggleBot() {
-            saveSettings();
-            const webhook = document.getElementById('webhookUrl').value.trim();
-            if (!webhook && !isRunning) {
-                alert("กรุณาใส่ Discord Webhook URL ก่อนครับ!");
-                return;
-            }
-
-            isRunning = !isRunning;
-            const btn = document.getElementById('toggleBtn');
-            const badge = document.getElementById('statusBadge');
-            const targetTime = document.getElementById('alertTime').value;
-
-            if (isRunning) {
-                btn.innerText = "⏹️ ปิดระบบ";
-                btn.className = "flex-1 bg-red-600 hover:bg-red-500 font-bold py-3 rounded-lg transition";
-                badge.innerText = "🟢 รอเวลาแจ้งเตือนทุกวัน";
-                badge.className = "w-full bg-gray-900 border border-green-600 rounded-lg p-3 text-sm text-center text-green-400 font-semibold flex items-center justify-center";
-                log(`เปิดระบบสำเร็จ! บันทึก URL เรียบร้อย จะแจ้งเตือนทุกวันเวลา ${targetTime} น. (ห้ามปิดแท็บเว็บนี้)`);
-                
-                // เช็คเวลาทุกๆ 10 วินาที
-                timerInterval = setInterval(checkDailyTimer, 10000);
-            } else {
-                btn.innerText = "▶️ เปิดระบบแจ้งเตือนทุกวัน";
-                btn.className = "flex-1 bg-green-600 hover:bg-green-500 font-bold py-3 rounded-lg transition";
-                badge.innerText = "⏸️ ปิดทำงาน";
-                badge.className = "w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-sm text-center text-yellow-400 font-semibold flex items-center justify-center";
-                log("ปิดการทำงานระบบแจ้งเตือนรายวันแล้ว");
-                clearInterval(timerInterval);
-            }
-        }
-
-        async function sendTestMessage(isManual = false) {
+        async function sendTestMessage() {
             saveSettings();
             const webhook = document.getElementById('webhookUrl').value.trim();
             if (!webhook) {
-                if (isManual) alert("กรุณาใส่ Discord Webhook URL ก่อนครับ!");
+                alert("กรุณาใส่ Discord Webhook URL ก่อนครับ!");
                 return;
             }
 
@@ -187,7 +139,7 @@
                 content: `@everyone ${randomMsg}\n\n🎬 ${randomMedia}`
             };
 
-            if (isManual) log("กำลังส่งข้อความเทสเข้า Discord...");
+            log("กำลังส่งข้อความเทสเข้า Discord...");
 
             try {
                 const response = await fetch(webhook, {
@@ -203,24 +155,6 @@
                 }
             } catch (err) {
                 log("⚠️ เกิดข้อผิดพลาดในการเชื่อมต่อ (CORS หรือ URL ผิด)");
-            }
-        }
-
-        function checkDailyTimer() {
-            if (!isRunning) return;
-
-            const now = new Date();
-            const currentHours = String(now.getHours()).padStart(2, '0');
-            const currentMinutes = String(now.getMinutes()).padStart(2, '0');
-            const currentTimeStr = `${currentHours}:${currentMinutes}`;
-            
-            const currentDateStr = now.toDateString();
-            const targetTime = document.getElementById('alertTime').value;
-
-            if (currentTimeStr === targetTime && lastTriggeredDate !== currentDateStr) {
-                lastTriggeredDate = currentDateStr;
-                log(`⏰ ถึงเวลา ${targetTime} น. แล้ว! กำลังส่งมีมรายวันเข้า Discord...`);
-                sendTestMessage(false);
             }
         }
     </script>
